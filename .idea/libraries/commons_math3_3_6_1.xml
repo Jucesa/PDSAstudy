@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="commons-math3-3.6.1">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/pastas/JAR/commons-math3-3.6.1/commons-math3-3.6.1-javadoc.jar!/" />
+      <root url="jar://$PROJECT_DIR$/pastas/JAR/commons-math3-3.6.1/commons-math3-3.6.1-tools.jar!/" />
+      <root url="jar://$PROJECT_DIR$/pastas/JAR/commons-math3-3.6.1/commons-math3-3.6.1-test-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/pastas/JAR/commons-math3-3.6.1/commons-math3-3.6.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/pastas/JAR/commons-math3-3.6.1/commons-math3-3.6.1-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/pastas/JAR/commons-math3-3.6.1/commons-math3-3.6.1-tests.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
