@@ -8,10 +8,8 @@ package evolucionario;
 import dp.Avaliador;
 import dp.Const;
 import dp.Pattern;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
+
+import java.util.*;
 
 
 /**
@@ -85,6 +83,28 @@ public class SELECAO {
         }else{
             return indiceP2;                     
         }        
+    }
+
+    public static int torneioN(Pattern[] P, int n){
+        HashMap<Integer, Double> indices = new HashMap<>(n);
+        for(int i = 0; i < n; i++){
+            int index = Const.random.nextInt(P.length);
+            indices.putIfAbsent(index, P[index].getQualidade());
+        }
+
+        int bestIndex = -1;
+        double bestQuality = Double.NEGATIVE_INFINITY;
+
+        for (Map.Entry<Integer, Double> entry : indices.entrySet()) {
+            int index = entry.getKey();
+            double quality = entry.getValue();
+
+            if (quality > bestQuality) {
+                bestQuality = quality;
+                bestIndex = index;
+            }
+        }
+        return bestIndex;
     }
 
     /**
