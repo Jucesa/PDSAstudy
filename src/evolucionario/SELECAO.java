@@ -86,7 +86,7 @@ public class SELECAO {
     }
 
     public static int torneioN(Pattern[] P, int n){
-        HashMap<Integer, Double> indices = new HashMap<>(n);
+        HashMap<Integer, Double> indices =  HashMap.newHashMap(n);
         for(int i = 0; i < n; i++){
             int index = Const.random.nextInt(P.length);
             indices.putIfAbsent(index, P[index].getQualidade());

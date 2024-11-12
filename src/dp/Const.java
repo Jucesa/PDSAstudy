@@ -15,6 +15,9 @@ import java.util.Random;
 public class Const {
     public final static String ALGORITMO_SSDP = "SSDP";
     public final static String ALGORITMO_PDSA = "PDSA";
+    public final static String ALGORITMO_TPSD = "TPSD";
+    public final static String ALGORITMO_TPSDnD = "TPSDnD";
+
     public final static String ALGORITMO_SSDPmais = "SSDPplus";
     public final static String ALGORITMO_SSDPmaisS00 = "SSDPplusS00";
     public final static String ALGORITMO_SSDPmaisS10 = "SSDPplusS10";
@@ -98,14 +101,14 @@ public class Const {
 //    public final static String CAMINHO_DICIONARIOS = Const.CAMINHO + "dicionarios/";
 //    public final static String CAMINHO_INDICE = Const.CAMINHO + "indice.txt";
 
-    public final static String CAMINHO_BASES = "..//subgroupAlgorithms//pastas/bases//";
-    public final static String CAMINHO_BASES_EDITADAS = "../subgroupAlgorithms/pastas/bases_editadas/";
-    public final static String CAMINHO_RESULTADOS = "..//subgroupAlgorithms//pastas//resultados//";
-    public final static String CAMINHO_RESULTADOS_OBJ = "../subgroupAlgorithms/pastas/resultados_obj/";
-    public final static String CAMINHO_RELATORIO = "..//subgroupAlgorithms//pastas//relatorios//";
-    public final static String CAMINHO_DICIONARIOS = "../subgroupAlgorithms/pastas/dicionarios/";
-    public final static String CAMINHO_INDICE = "../subgroupAlgorithms/pastas/indice.txt";
-       
+    public final static String CAMINHO_BASES = "./PDSAstudy/pastas/bases";
+    public final static String CAMINHO_BASES_EDITADAS = "./PDSAstudy/pastas/bases_editadas/";
+    public final static String CAMINHO_RESULTADOS = "./PDSAstudy/pastas/resultados/";
+    public final static String CAMINHO_RESULTADOS_OBJ = "./PDSAstudy/pastas/resultados_obj/";
+    public final static String CAMINHO_RELATORIO = "./PDSAstudy/pastas/relatorios/";
+    public final static String CAMINHO_DICIONARIOS = "./PDSAstudy/pastas/dicionarios/";
+    public final static String CAMINHO_INDICE = "./PDSAstudy/pastas/indice.txt";
+
     public static Random random;
     public static final long[] SEEDS = {179424673, 125164703, 132011827, 124987441, 123979721 , 119777719, 117705823 , 112131119, 108626351, 107980007,
         106368047, 99187427, 98976029, 97875523, 96763291, 95808337, 94847387, 87552823, 86842271 , 80650457, 78220001, 74585729, 73852469 , 68750849, 58160551 , 

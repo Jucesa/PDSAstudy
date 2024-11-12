@@ -19,7 +19,6 @@ import java.util.Iterator;
  */
 public class CRUZAMENTO {
     
-    
     /////////////////////////////////////////////////////////////
     //UNIFORME TRADICIONAL //////////////////////////////////////
     /////////////////////////////////////////////////////////////
@@ -82,20 +81,20 @@ public class CRUZAMENTO {
         HashSet<Integer> novoItens1 = new HashSet<>();
         HashSet<Integer> novoItens2 = new HashSet<>();
 
-        Iterator iterator = p1.getItens().iterator();
+        Iterator<Integer> iterator = p1.getItens().iterator();
         while(iterator.hasNext()){
             if(Const.random.nextBoolean()){
-                novoItens1.add((Integer)iterator.next());
+                novoItens1.add(iterator.next());
             }else{          
-                novoItens2.add((Integer)iterator.next());
+                novoItens2.add(iterator.next());
             }
         }
         iterator = p2.getItens().iterator();
         while(iterator.hasNext()){
             if(Const.random.nextBoolean()){
-                novoItens1.add((Integer)iterator.next());
+                novoItens1.add(iterator.next());
             }else{          
-                novoItens2.add((Integer)iterator.next());
+                novoItens2.add(iterator.next());
             }
         }
         novosPattern[0] = new Pattern(novoItens1, tipoAvaliacao);
@@ -249,12 +248,12 @@ public class CRUZAMENTO {
         novoitens3.addAll(p1.getItens());
         novoitens3.addAll(p2.getItens());
         
-        Iterator iterator = novoitens3.iterator();
+        Iterator<Integer> iterator = novoitens3.iterator();
         while(iterator.hasNext()){
             if(Const.random.nextBoolean()){
-                novoitens1.add((Integer)iterator.next());
+                novoitens1.add(iterator.next());
             }else{          
-                novoitens2.add((Integer)iterator.next());
+                novoitens2.add(iterator.next());
             }
         }
                
@@ -279,11 +278,11 @@ public class CRUZAMENTO {
 
         HashSet<Integer> novoItens = new HashSet<>();                  
 
-        while(novoItens.size() == 0){
-            Iterator iterator = itens.iterator();
+        while(novoItens.isEmpty()){
+            Iterator<Integer> iterator = itens.iterator();
             while(iterator.hasNext()){
                 if(Const.random.nextBoolean()){
-                    novoItens.add((Integer)iterator.next());
+                    novoItens.add(iterator.next());
                 }
             }
         }     

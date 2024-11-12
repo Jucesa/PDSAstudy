@@ -21,10 +21,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Random;
 import java.util.Scanner;
 import sd.SD;
+import sd.TPSD;
 
 /**
  *
@@ -39,14 +39,14 @@ public class SimulacaoGeral {
         this.fileIndiceUltimaSimulacao = fileIndiceUltimaSimulacao;
         this.indiceUltimaSimulacao = this.getIndiceUltimaSimulacao();
     }
-    
+
     //Retorna índice da última simulação realizada
     private int getIndiceUltimaSimulacao() throws FileNotFoundException, IOException{
         Scanner sc = new Scanner(this.fileIndiceUltimaSimulacao);
         String indicesStr = sc.nextLine();
         return Integer.parseInt( indicesStr );
     }
-    
+
     //Atualizar os índices inciais no arquivo
     private void atualizarIndiceUltimaSimulacao(int indiceUltimaSimulacao) throws IOException{
         FileWriter fileWriter = new FileWriter(this.fileIndiceUltimaSimulacao);
@@ -54,14 +54,14 @@ public class SimulacaoGeral {
         bufferedWriter.write( indiceUltimaSimulacao + "" );
         bufferedWriter.close();
     }
-    
+
     //Salvar resultados das simulações em arquivo
     private void salvarResultado(Simulacao s) throws IOException{
         String nomeAlgoritmo = s.getAlgoritmo();
         String nomeBase = s.getNomeBase();
-        
+
         StringBuilder sb = new StringBuilder();
-        Resultado[] resultados = s.getResultados();        
+        Resultado[] resultados = s.getResultados();
         for(int i = 0; i < resultados.length; i++){
             Resultado r = resultados[i];
             sb.append("@rep:").append(i + 1);
@@ -72,7 +72,7 @@ public class SimulacaoGeral {
             sb.append("\n");
             sb.append("@seed:").append(r.getSeed());
             sb.append("\n");
-            
+
             Pattern[] dps = r.getDPs();
             sb.append( "@dps-begin:");
             sb.append("\n");
@@ -87,24 +87,24 @@ public class SimulacaoGeral {
             sb.append("\n");
         }
         String nomeArquivo = nomeAlgoritmo + "_" + nomeBase + ".txt";
-        
+
         //Abrindo arquivo para gravação de tabelão
         File file = new File(Const.CAMINHO_RESULTADOS + nomeArquivo);
         file.createNewFile();
         // creates a FileWriter Object
-        FileWriter writer = new FileWriter(file); 
-        writer.write(sb + ""); 
+        FileWriter writer = new FileWriter(file);
+        writer.write(sb + "");
         writer.flush();
         writer.close();
     }
-    
+
     //Imprimir DP1: 1-100
     public void imprimirTopkDP1(String caminhoPastaArquivos, int k) throws FileNotFoundException, IOException{
         String tipoAvaliacao = Avaliador.METRICA_AVALIACAO_QG;
-                
+
         File diretorio = new File(caminhoPastaArquivos);
         File arquivos[] = diretorio.listFiles();
-        
+
         //Cada Base
         for (File arquivo : arquivos) {
             String caminhoBase = arquivo.getAbsolutePath();
@@ -120,12 +120,12 @@ public class SimulacaoGeral {
                 System.out.print("[" + i + "]:" + p.getQualidade() + ",");
             }
         }
-        
-        
+
+
     }
-    
-    public void run(int[] K, int numeroRepeticoes, String[] algoritmos, String separadorBase, String tipoAvaliacao, double tempoMaximoSegundosAlgoritmos) throws FileNotFoundException, IOException{        
-        
+
+    public void run(int[] K, int numeroRepeticoes, String[] algoritmos, String separadorBase, String tipoAvaliacao, double tempoMaximoSegundosAlgoritmos) throws IOException{
+
         D.SEPARADOR = separadorBase;
         File diretorio = new File(Const.CAMINHO_BASES);
         File[] arquivos = diretorio.listFiles();
@@ -134,39 +134,45 @@ public class SimulacaoGeral {
         int totalSimulacoes = algoritmos.length * K.length * arquivos.length;
         int indiceSimulacoes = 1; //Controle para simulação continuar de onde parou caso algum erro ocorra.
         for(int i = 0; i < K.length; i++){
-            int k = K[i];           
+            int k = K[i];
             Pattern.maxSimulares = k;
             //Cada Base
-            for(int j = 0; j < arquivos.length; j++){                
+            for(int j = 0; j < arquivos.length; j++){
                 String caminhoBase = arquivos[j].getAbsolutePath();
                 String nomeBase = arquivos[j].getName().replace(".CSV", "");
                 nomeBase = nomeBase.replace(".csv", "");
-                
+
                 D.CarregarArquivo(caminhoBase, D.TIPO_CSV);
                 D.GerarDpDn("p");
-                
+
                 //Cada algoritmo
-                for(int m = 0; m < algoritmos.length; m++){                    
-                    
-                    if(indiceSimulacoes < this.indiceUltimaSimulacao){                        
+                for(int m = 0; m < algoritmos.length; m++){
+
+                    if(indiceSimulacoes < this.indiceUltimaSimulacao){
                         indiceSimulacoes++;
                         continue;
                     }else{
                         this.atualizarIndiceUltimaSimulacao(indiceSimulacoes);//Salvando índices inciais
                     }
-                    
+
                     String algoritmo = algoritmos[m];
                     Resultado[] resultados = new Resultado[numeroRepeticoes];
                     System.out.println("\n\n[" + indiceSimulacoes + "/" + totalSimulacoes + "]: K[" + i + "]:" + k + " Base[" + j + "]:" + nomeBase + " - Alg[" + m + "]:" + algoritmo);
                     //Cada repetição
                     System.out.print("Repeticao:");
-                    for(int n = 0; n < numeroRepeticoes; n++){                    
+                    for(int n = 0; n < numeroRepeticoes; n++){
                         System.out.print(n+",");
                         Pattern.numeroIndividuosGerados = 0;
                         Pattern[] p = null;
                         Const.random = new Random(Const.SEEDS[n]);
-                        long t0 = System.currentTimeMillis();                
+                        long t0 = System.currentTimeMillis();
                         switch(algoritmo){
+                            case Const.ALGORITMO_TPSDnD:
+                                p = TPSD.runDk(5,5,tipoAvaliacao);
+                                break;
+                            case Const.ALGORITMO_TPSD:
+                                p = TPSD.run(5,5,tipoAvaliacao);
+                                break;
                             case Const.ALGORITMO_PDSA:
                                 p = PDSA.run(k, tipoAvaliacao, tempoMaximoSegundosAlgoritmos);
                                 break;
@@ -175,13 +181,13 @@ public class SimulacaoGeral {
                                 break;
                             case Const.ALGORITMO_SD:
                                 SD sd = new SD();
-                                double min_suport = Math.sqrt( (double)D.numeroExemplosPositivo ) / (double)D.numeroExemplos;
-                                p = sd.run(min_suport, 2*k, tipoAvaliacao, k, tempoMaximoSegundosAlgoritmos);                                
-                                //p = sd.run(min_suport, k, tipoAvaliacao, k);                                
+                                double min_suport = Math.sqrt(D.numeroExemplosPositivo) / D.numeroExemplos;
+                                p = sd.run(min_suport, 2*k, tipoAvaliacao, k, tempoMaximoSegundosAlgoritmos);
+                                //p = sd.run(min_suport, k, tipoAvaliacao, k);
                                 break;
                             case Const.ALGORITMO_SD_RSS:
                                 SD sd2 = new SD();
-                                double min_suport2 = Math.sqrt( (double)D.numeroExemplosPositivo ) / (double)D.numeroExemplos;
+                                double min_suport2 = Math.sqrt(D.numeroExemplosPositivo) / D.numeroExemplos;
                                 p = sd2.run(min_suport2, 2*k, tipoAvaliacao, 2*k, tempoMaximoSegundosAlgoritmos);
                                 p = RSS.run(p, k);
                                 break;
@@ -208,13 +214,13 @@ public class SimulacaoGeral {
                                 break;
                             case Const.ALGORITMO_SSDPmaisS60:
                                 p = SSDPmais.run(k, tipoAvaliacao, 0.6, tempoMaximoSegundosAlgoritmos);
-                                break;                            
+                                break;
                             case Const.ALGORITMO_SSDPmaisS70:
                                 p = SSDPmais.run(k, tipoAvaliacao, 0.7, tempoMaximoSegundosAlgoritmos);
-                                break;                            
+                                break;
                             case Const.ALGORITMO_SSDPmaisS80:
                                 p = SSDPmais.run(k, tipoAvaliacao, 0.8, tempoMaximoSegundosAlgoritmos);
-                                break;                     
+                                break;
                             case Const.ALGORITMO_SSDPmaisS90:
                                 p = SSDPmais.run(k, tipoAvaliacao, 0.9, tempoMaximoSegundosAlgoritmos);
                                 break;
@@ -224,79 +230,59 @@ public class SimulacaoGeral {
                             case Const.ALGORITMO_GulosoDplus:
                                 p = GulosoD.run(k, D.numeroExemplosPositivo, tipoAvaliacao, 0.7, tempoMaximoSegundosAlgoritmos, 4);
                                 break;
-                        }                       
-                                                
+                        }
+
                         double tempo = (System.currentTimeMillis() - t0)/1000.0;
                         int numeroTentativas = Pattern.numeroIndividuosGerados;
-                        
+
                         if(n == numeroRepeticoes-1){
                             System.out.println("\nÚltima repetição:");
                             System.out.println("Qualidade média: " + Avaliador.avaliarMedia(p,k));
-                            System.out.println("Dimensão média: " + Avaliador.avaliarMediaDimensoes(p,k));        
+                            System.out.println("Dimensão média: " + Avaliador.avaliarMediaDimensoes(p,k));
                             System.out.println("Cobertura +: " + Avaliador.coberturaPositivo(p,k));
                             System.out.println("Tempo +: " + tempo);
                             System.out.println("Tentativas +: " + numeroTentativas);
                             System.out.println("Size: " + p.length);
                             Avaliador.imprimir(p, k);
                         }
-                        resultados[n] = new Resultado(p, tempo, numeroTentativas, Const.SEEDS[n]);                    
-                    }                    
-                    
+                        resultados[n] = new Resultado(p, tempo, numeroTentativas, Const.SEEDS[n]);
+                    }
+
                     Simulacao simulacao = new Simulacao(algoritmo + "-k" + K[i] + "-fo" + tipoAvaliacao, nomeBase, resultados);
-                    
+
                     this.salvarResultado(simulacao);
                     indiceSimulacoes++;
-                }  
-            }            
+                }
+            }
         }
     }
-    
 
-    
+
+
     public static void main(String[] args) throws IOException {
-                
+
         Pattern.ITENS_OPERATOR = Const.PATTERN_AND;
         Pattern.maxSimulares = 3;
         Pattern.medidaSimilaridade = Const.SIMILARIDADE_JACCARD;
 
-        int[] K = {1};
-        int numeroRepeticoes = 3;
+        int[] K = {10};
+        int numeroRepeticoes = 30;
         int hours = 1;
-        double  tempoMaximoSegundosAlgoritmos = 60*60*hours; //max 1h
+        double  tempoMaximoSegundosAlgoritmos = 60*60*(double)hours; //max 1h
         String[] algoritmos = {
-            Const.ALGORITMO_PDSA
+            Const.ALGORITMO_TPSD,
+                Const.ALGORITMO_TPSDnD
         };
 
         SimulacaoGeral sg = new SimulacaoGeral(new File(Const.CAMINHO_INDICE));
-        String tipoAvaliacao = Avaliador.METRICA_AVALIACAO_WRACC_NORMALIZED;
-        
+        String tipoAvaliacao = Avaliador.METRICA_AVALIACAO_QG;
+
         sg.run(K, numeroRepeticoes, algoritmos, ",", tipoAvaliacao, tempoMaximoSegundosAlgoritmos);
 
         //Tabelão
         String[] metricas = {
                 Const.METRICA_WRACC,
-                Const.METRICA_WRACC_NORMALIZED,
-                //Const.METRICA_TIME,
-                Const.METRICA_SIZE,
-                Const.METRICA_TP,
-                Const.METRICA_FP,
-                Const.METRICA_OVERALL_SUPP_POSITIVO,
-                Const.METRICA_COVER_REDUNDANCY_POSITIVO,
-                Const.METRICA_DESCRIPTION_REDUNDANCY_DENSITY,
-                Const.METRICA_DESCRIPTION_REDUNDANCY_DOMINATOR,
                 Const.METRICA_Qg,
-                Const.METRICA_CHI_QUAD,
-                Const.METRICA_P_VALUE,
-                Const.METRICA_LIFT,
-                Const.METRICA_DIFF_SUP,
-                Const.METRICA_K,
-                Const.METRICA_GROWTH_RATE,
-                Const.METRICA_ODDS_RATIO,
-                Const.METRICA_COV,
-                Const.METRICA_CONF,
-                Const.METRICA_SUPP,
-                Const.METRICA_SUPP_POSITIVO,
-                Const.METRICA_SUPP_NEGATIVO
         };
         String separadorBase = ",";
         String separadorRelatorio = ",";
