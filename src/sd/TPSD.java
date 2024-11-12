@@ -60,6 +60,43 @@ public class TPSD {
         return P;
     }
 
+    public static Pattern[] runDk(int quantidadeTorneio, int tentativasMelhoria, String tipoAvaliacao) {
+        Pattern[] P = INICIALIZAR.aleatorio1_D(tipoAvaliacao, 2, D.numeroItensUtilizados); // inicializa P com todos os indivíduos de 1D
+
+        int naoMudou = 0;
+        while (naoMudou < 3) {
+            // Seleciona o melhor índice entre quantidadeTorneio índices
+            int index = SELECAO.torneioN(P, quantidadeTorneio);
+            Pattern p = P[index];
+            Pattern melhorP = p;
+
+            boolean melhorou = false; // Flag para verificar se houve melhoria
+
+            // Tenta melhorar o indivíduo selecionado
+            for (int i = 0; i < tentativasMelhoria; i++) {
+                HashSet<Integer> itemNovo = new HashSet<>(melhorP.getItens()); // Adiciona itens existentes de p
+                itemNovo.add(SELECAO.torneioN(P, quantidadeTorneio)); // Adiciona um novo índice aleatório
+
+                Pattern paux = new Pattern(itemNovo, tipoAvaliacao);
+                if (paux.getQualidade() > melhorP.getQualidade()) {
+                    melhorP = paux;
+                    melhorou = true; // Marca que houve uma melhoria
+                }
+            }
+
+            // Atualiza o indivíduo na população
+            P[index] = melhorP;
+
+            // Verifica se houve alguma melhoria neste ciclo
+            if (melhorou) {
+                naoMudou = 0; // Reseta o contador de tentativas sem melhoria
+            } else {
+                naoMudou++; // Incrementa se o indivíduo não foi melhorado
+            }
+        }
+        return P;
+    }
+
 
 
     public static void main(String[] args) throws FileNotFoundException {
@@ -83,7 +120,7 @@ public class TPSD {
         int k = 10;
         String metricaAvaliacao = Const.METRICA_Qg;
         D.GerarDpDn("p");
-        Pattern[] p = run(20, 5, metricaAvaliacao);
+        Pattern[] p = runDk(20, 5, metricaAvaliacao);
         Pattern[] pOrdenado = Arrays.stream(p)
                 .sorted(Comparator.comparingDouble(Pattern::getQualidade).reversed()) //ordenar p
                 .toArray(Pattern[]::new);
