@@ -292,9 +292,9 @@ public class Pattern implements Comparable<Pattern>, Serializable{
 //        //Capturando e ordenando conteúdo
 //        Iterator iterator = itens.iterator();
 //        int[] itensArray = new int[itens.size()];
-//        int indice = 0;
+//        int indice.txt = 0;
 //        while(iterator.hasNext()){
-//            itensArray[indice++] = (int)iterator.next();
+//            itensArray[indice.txt++] = (int)iterator.next();
 //        }           
 //        Arrays.sort(itensArray);
 //

@@ -230,7 +230,7 @@ public class D {
         int[][] dadosInt = new int[D.numeroExemplos][D.numeroAtributos]; //dados no formato inteiro: mais rápido compararinteiros que strings
         int indiceItem = 0; //Indice vai de zero ao número de itens total
         for(int indiceAtributo = 0; indiceAtributo < valoresDistintosAtributos.size(); indiceAtributo++){
-            Iterator valoresDistintosAtributoIterator = valoresDistintosAtributos.get(indiceAtributo).iterator(); //Capturando valores distintos do atributo de indice i
+            Iterator valoresDistintosAtributoIterator = valoresDistintosAtributos.get(indiceAtributo).iterator(); //Capturando valores distintos do atributo de indice.txt i
             int indiceValor = 0; //vai mapear um inteiro distinto para cada valor distinto de cada variável
             
             //Para cada atributo: 

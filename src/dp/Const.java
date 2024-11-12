@@ -92,22 +92,14 @@ public class Const {
     public final static int PATTERN_OR = 0;
     public final static int PATTERN_AND = 1;
 
-//    public final static String CAMINHO = "../dist/pastas/";
-//    public final static String CAMINHO_BASES = Const.CAMINHO + "bases/";
-//    public final static String CAMINHO_BASES_EDITADAS = Const.CAMINHO + "bases_editadas/";
-//    public final static String CAMINHO_RESULTADOS = Const.CAMINHO + "resultados/";
-//    public final static String CAMINHO_RESULTADOS_OBJ = Const.CAMINHO + "resultados_obj/";  
-//    public final static String CAMINHO_RELATORIO = Const.CAMINHO + "relatorios/";
-//    public final static String CAMINHO_DICIONARIOS = Const.CAMINHO + "dicionarios/";
-//    public final static String CAMINHO_INDICE = Const.CAMINHO + "indice.txt";
-
-    public final static String CAMINHO_BASES = "./PDSAstudy/pastas/bases";
-    public final static String CAMINHO_BASES_EDITADAS = "./PDSAstudy/pastas/bases_editadas/";
-    public final static String CAMINHO_RESULTADOS = "./PDSAstudy/pastas/resultados/";
-    public final static String CAMINHO_RESULTADOS_OBJ = "./PDSAstudy/pastas/resultados_obj/";
-    public final static String CAMINHO_RELATORIO = "./PDSAstudy/pastas/relatorios/";
-    public final static String CAMINHO_DICIONARIOS = "./PDSAstudy/pastas/dicionarios/";
-    public final static String CAMINHO_INDICE = "./PDSAstudy/pastas/indice.txt";
+    private final static String CAMINHO_PC = "C:/Users/jc160/IdeaProjects/PDSAstudy";
+    public final static String CAMINHO_BASES = CAMINHO_PC+"/pastas/bases";
+    public final static String CAMINHO_BASES_EDITADAS = CAMINHO_PC+"/pastas/bases_editadas/";
+    public final static String CAMINHO_RESULTADOS = CAMINHO_PC+"/pastas/resultados/";
+    public final static String CAMINHO_RESULTADOS_OBJ = CAMINHO_PC+"/pastas/resultados_obj/";
+    public final static String CAMINHO_RELATORIO = CAMINHO_PC+"/pastas/relatorios/";
+    public final static String CAMINHO_DICIONARIOS = CAMINHO_PC+"/pastas/dicionarios/";
+    public final static String CAMINHO_INDICE = CAMINHO_PC+"/pastas/indice.txt";
 
     public static Random random;
     public static final long[] SEEDS = {179424673, 125164703, 132011827, 124987441, 123979721 , 119777719, 117705823 , 112131119, 108626351, 107980007,

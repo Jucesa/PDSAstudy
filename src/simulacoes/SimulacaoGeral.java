@@ -21,6 +21,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Random;
 import java.util.Scanner;
 import sd.SD;
@@ -35,13 +36,13 @@ public class SimulacaoGeral {
     private int indiceUltimaSimulacao;
     private File fileIndiceUltimaSimulacao;
 
-    public SimulacaoGeral(File fileIndiceUltimaSimulacao) throws FileNotFoundException, IOException {
+    public SimulacaoGeral(File fileIndiceUltimaSimulacao) throws IOException {
         this.fileIndiceUltimaSimulacao = fileIndiceUltimaSimulacao;
         this.indiceUltimaSimulacao = this.getIndiceUltimaSimulacao();
     }
 
     //Retorna índice da última simulação realizada
-    private int getIndiceUltimaSimulacao() throws FileNotFoundException, IOException{
+    private int getIndiceUltimaSimulacao() throws IOException{
         Scanner sc = new Scanner(this.fileIndiceUltimaSimulacao);
         String indicesStr = sc.nextLine();
         return Integer.parseInt( indicesStr );
@@ -99,16 +100,16 @@ public class SimulacaoGeral {
     }
 
     //Imprimir DP1: 1-100
-    public void imprimirTopkDP1(String caminhoPastaArquivos, int k) throws FileNotFoundException, IOException{
+    public void imprimirTopkDP1(String caminhoPastaArquivos, int k) throws IOException{
         String tipoAvaliacao = Avaliador.METRICA_AVALIACAO_QG;
 
         File diretorio = new File(caminhoPastaArquivos);
-        File arquivos[] = diretorio.listFiles();
+        File[] arquivos = diretorio.listFiles();
 
         //Cada Base
+        assert arquivos != null;
         for (File arquivo : arquivos) {
             String caminhoBase = arquivo.getAbsolutePath();
-            String nomeBase = arquivo.getName().replace(".CSV", "");
             D.CarregarArquivo(caminhoBase, D.TIPO_CSV);
 
             //Levantado ranking DP1 para cálculo do número de incites e incites parciais!!!
@@ -168,7 +169,7 @@ public class SimulacaoGeral {
                         long t0 = System.currentTimeMillis();
                         switch(algoritmo){
                             case Const.ALGORITMO_TPSDnD:
-                                p = TPSD.runDk(5,5,tipoAvaliacao);
+                                p = TPSD.run(5,5,tipoAvaliacao, 2);
                                 break;
                             case Const.ALGORITMO_TPSD:
                                 p = TPSD.run(5,5,tipoAvaliacao);
@@ -243,7 +244,7 @@ public class SimulacaoGeral {
                             System.out.println("Tempo +: " + tempo);
                             System.out.println("Tentativas +: " + numeroTentativas);
                             System.out.println("Size: " + p.length);
-                            Avaliador.imprimir(p, k);
+                            Avaliador.imprimirRegras(p, k);
                         }
                         resultados[n] = new Resultado(p, tempo, numeroTentativas, Const.SEEDS[n]);
                     }
@@ -260,7 +261,6 @@ public class SimulacaoGeral {
 
 
     public static void main(String[] args) throws IOException {
-
         Pattern.ITENS_OPERATOR = Const.PATTERN_AND;
         Pattern.maxSimulares = 3;
         Pattern.medidaSimilaridade = Const.SIMILARIDADE_JACCARD;
@@ -271,7 +271,8 @@ public class SimulacaoGeral {
         double  tempoMaximoSegundosAlgoritmos = 60*60*(double)hours; //max 1h
         String[] algoritmos = {
             Const.ALGORITMO_TPSD,
-                Const.ALGORITMO_TPSDnD
+                Const.ALGORITMO_TPSDnD,
+                //Const.ALGORITMO_SSDP
         };
 
         SimulacaoGeral sg = new SimulacaoGeral(new File(Const.CAMINHO_INDICE));

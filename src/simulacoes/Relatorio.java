@@ -295,7 +295,7 @@ public class Relatorio{
     
     
     
-    public static void main(String[] args) throws IOException, ClassNotFoundException{
+    public static void main(String[] args) throws IOException{
         
         String separadorBase = ",";
         String separadorRelatorio = ",";

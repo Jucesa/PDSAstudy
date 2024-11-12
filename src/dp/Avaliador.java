@@ -455,14 +455,13 @@ public class Avaliador {
      * @return 
      */
     private static boolean patternContemplaExemploOR(HashSet<Integer> itens, int[] exemplo){
-        Iterator iterator = itens.iterator();
-        while(iterator.hasNext()){
-            int item = (int)iterator.next();
+        for (Integer iten : itens) {
+            int item = iten;
             int itemAtributo = D.itemAtributo[item];
             int itemValor = D.itemValor[item];
-            if(exemplo[itemAtributo] == itemValor){
-                return true;                    
-            } 
+            if (exemplo[itemAtributo] == itemValor) {
+                return true;
+            }
         }       
         return false; 
     }
