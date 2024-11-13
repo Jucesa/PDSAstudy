@@ -8,8 +8,6 @@ import evolucionario.INICIALIZAR;
 import evolucionario.SELECAO;
 
 import java.io.FileNotFoundException;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.logging.Level;
@@ -30,8 +28,7 @@ public class TPSD {
         while (naoMudou < 3) {
             // Seleciona o melhor índice entre quantidadeTorneio índices
             int index = SELECAO.torneioN(P, quantidadeTorneio);
-            Pattern p = P[index];
-            Pattern melhorP = p;
+            Pattern melhorP = P[index];
 
             boolean melhorou = false; // Flag para verificar se houve melhoria
 
@@ -75,8 +72,7 @@ public class TPSD {
         while (naoMudou < 3) {
             // Seleciona o melhor índice entre quantidadeTorneio índices
             int index = SELECAO.torneioN(P, quantidadeTorneio);
-            Pattern p = P[index];
-            Pattern melhorP = p;
+            Pattern melhorP = P[index];
 
             boolean melhorou = false; // Flag para verificar se houve melhoria
 
@@ -105,15 +101,14 @@ public class TPSD {
         return P;
     }
 
-    public static Pattern[] runKillTheWeek(int quantidadeTorneio, int tentativasMelhoria, String tipoAvaliacao, int dimensaoMaxInicial) {
+    public static Pattern[] runKillTheWeek(int quantidadeTorneio, int tentativasMelhoria, int falhasAteParada, int dimensaoMaxInicial, String tipoAvaliacao) {
         Pattern[] P = INICIALIZAR.aleatorio1_D(tipoAvaliacao, dimensaoMaxInicial, D.numeroItensUtilizados); // inicializa P com todos os indivíduos de 1D
 
         int naoMudou = 0;
-        while (naoMudou < 3) {
+        while (naoMudou < falhasAteParada) {
             // Seleciona o melhor índice entre quantidadeTorneio índices
             int index = SELECAO.torneioN(P, quantidadeTorneio);
-            Pattern p = P[index];
-            Pattern melhorP = p;
+            Pattern melhorP = P[index];
 
             boolean melhorou = false; // Flag para verificar se houve melhoria
 
@@ -129,15 +124,11 @@ public class TPSD {
                 }
             }
 
-            // Organiza a população e atualiza o pior indivíduo na população
-            P = Arrays.stream(P)
-                    .sorted(Comparator.comparingDouble(Pattern::getQualidade).reversed()) //ordenar p
-                    .toArray(Pattern[]::new);
-
+            // atualiza o indivíduo na população
+            P[index] = melhorP;
 
             // Verifica se houve alguma melhoria neste ciclo
             if (melhorou) {
-                P[P.length - 1] = melhorP;
                 naoMudou = 0; // Reseta o contador de tentativas sem melhoria
             } else {
                 naoMudou++; // Incrementa se o indivíduo não foi melhorado
@@ -154,6 +145,7 @@ public class TPSD {
                 diretorioBases+"/ENEM2014.csv",
                 diretorioBases+"/matrixBinaria-Global-100-p.csv"};
         String base = bases[0];
+
         try {
             D.CarregarArquivo(base, 0);
         } catch (FileNotFoundException e) {
@@ -167,8 +159,7 @@ public class TPSD {
         int k = 10;
         String metricaAvaliacao = Const.METRICA_Qg;
         D.GerarDpDn("p");
-        Pattern[] p = runKillTheWeek(20, 5, metricaAvaliacao, 2);
-
+        Pattern[] p = runKillTheWeek(20, 5, 10,2, metricaAvaliacao);
         Avaliador.imprimirRegras(p, k);
     }
 }
