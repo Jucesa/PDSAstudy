@@ -70,6 +70,12 @@ public class Pattern implements Comparable<Pattern>, Serializable{
         Pattern.numeroIndividuosGerados++;
     }
 
+
+    //Construtor com base em outro Pattern Cópia (para o PSO)
+    public Pattern(Pattern outro) {
+        this(outro.getItens(), outro.getTipoAvaliacao());
+    }
+
       
     public HashSet<Integer> getItens() {
         return itens;
