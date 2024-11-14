@@ -8,7 +8,7 @@ package dp;
 import static java.lang.Math.sqrt;
 import java.util.HashSet;
 import java.util.Iterator;
-import org.apache.commons.math3.stat.inference.ChiSquareTest;
+import org.apache.commons.math4.legacy.stat.inference.*;
 
 /**
  *

@@ -98,13 +98,13 @@ public class Const {
 //    public final static String CAMINHO_DICIONARIOS = Const.CAMINHO + "dicionarios/";
 //    public final static String CAMINHO_INDICE = Const.CAMINHO + "indice.txt";
 
-    public final static String CAMINHO_BASES = "..//subgroupAlgorithms//pastas/bases//";
-    public final static String CAMINHO_BASES_EDITADAS = "../subgroupAlgorithms/pastas/bases_editadas/";
-    public final static String CAMINHO_RESULTADOS = "..//subgroupAlgorithms//pastas//resultados//";
-    public final static String CAMINHO_RESULTADOS_OBJ = "../subgroupAlgorithms/pastas/resultados_obj/";
-    public final static String CAMINHO_RELATORIO = "..//subgroupAlgorithms//pastas//relatorios//";
-    public final static String CAMINHO_DICIONARIOS = "../subgroupAlgorithms/pastas/dicionarios/";
-    public final static String CAMINHO_INDICE = "../subgroupAlgorithms/pastas/indice.txt";
+    public final static String CAMINHO_BASES = "pastas\\bases";
+    public final static String CAMINHO_BASES_EDITADAS = "pastas\\bases_editadas";
+    public final static String CAMINHO_RESULTADOS = "pastas\\resultados";
+    public final static String CAMINHO_RESULTADOS_OBJ = "pastas\\resultados_obj";
+    public final static String CAMINHO_RELATORIO = "pastas\\relatorios";
+    public final static String CAMINHO_DICIONARIOS = "pastas\\dicionarios";
+    public final static String CAMINHO_INDICE = "pastas\\indice.txt";
        
     public static Random random;
     public static final long[] SEEDS = {179424673, 125164703, 132011827, 124987441, 123979721 , 119777719, 117705823 , 112131119, 108626351, 107980007,
