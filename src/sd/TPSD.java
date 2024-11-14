@@ -147,7 +147,7 @@ public class TPSD {
         String base = bases[0];
 
         try {
-            D.CarregarArquivo(base, 0);
+            D.CarregarArquivo(base, D.TIPO_CSV);
         } catch (FileNotFoundException e) {
             logger.log(Level.WARNING, e.getMessage());
             return;
