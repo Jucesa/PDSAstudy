@@ -15,7 +15,9 @@ import java.util.Random;
 public class Const {
     public final static String ALGORITMO_SSDP = "SSDP";
     public final static String ALGORITMO_PDSA = "PDSA";
-    public final static String ALGORITMO_TPSD = "TPSD";
+    public final static String ALGORITMO_TPSDt5 = "TPSDt5";
+    public final static String ALGORITMO_TPSDt10 = "TPSDt10";
+    public final static String ALGORITMO_TPSDt50 = "TPSDt50";
     public final static String ALGORITMO_TPSDnD = "TPSDnD";
 
     public final static String ALGORITMO_SSDPmais = "SSDPplus";
@@ -92,7 +94,8 @@ public class Const {
     public final static int PATTERN_OR = 0;
     public final static int PATTERN_AND = 1;
 
-    private final static String CAMINHO_PC = "C:/Users/jc160/IdeaProjects/PDSAstudy";
+    //private final static String CAMINHO_PC = "C:/Users/jc160/IdeaProjects/PDSAstudy";
+    private final static String CAMINHO_PC = "C:/Users/11305645413/IdeaProjects/PDSAstudy";
     public final static String CAMINHO_BASES = CAMINHO_PC+"/pastas/bases";
     public final static String CAMINHO_BASES_EDITADAS = CAMINHO_PC+"/pastas/bases_editadas/";
     public final static String CAMINHO_RESULTADOS = CAMINHO_PC+"/pastas/resultados/";

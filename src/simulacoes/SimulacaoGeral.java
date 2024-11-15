@@ -168,12 +168,14 @@ public class SimulacaoGeral {
                         Const.random = new Random(Const.SEEDS[n]);
                         long t0 = System.currentTimeMillis();
                         switch(algoritmo){
-                            case Const.ALGORITMO_TPSDnD:
+                            case Const.ALGORITMO_TPSDt5:
                                 p = TPSD.run(5,5,tipoAvaliacao, 2);
                                 break;
-                            case Const.ALGORITMO_TPSD:
-                                p = TPSD.run(5,5,tipoAvaliacao);
+                            case Const.ALGORITMO_TPSDt10:
+                                p = TPSD.run(10,5,tipoAvaliacao, 2);
                                 break;
+                            case Const.ALGORITMO_TPSDt50:
+                                p = TPSD.run(50, 5, tipoAvaliacao, 2);
                             case Const.ALGORITMO_PDSA:
                                 p = PDSA.run(k, tipoAvaliacao, tempoMaximoSegundosAlgoritmos);
                                 break;
@@ -266,13 +268,14 @@ public class SimulacaoGeral {
         Pattern.medidaSimilaridade = Const.SIMILARIDADE_JACCARD;
 
         int[] K = {10};
-        int numeroRepeticoes = 30;
+        int numeroRepeticoes = 10;
         int hours = 1;
-        double  tempoMaximoSegundosAlgoritmos = 60*60*(double)hours; //max 1h
+        double  tempoMaximoSegundosAlgoritmos = 60*60*(double)hours;
         String[] algoritmos = {
-            Const.ALGORITMO_TPSD,
-                Const.ALGORITMO_TPSDnD,
-                //Const.ALGORITMO_SSDP
+            Const.ALGORITMO_TPSDt5,
+                Const.ALGORITMO_TPSDt10,
+                Const.ALGORITMO_TPSDt50,
+                Const.ALGORITMO_SSDP
         };
 
         SimulacaoGeral sg = new SimulacaoGeral(new File(Const.CAMINHO_INDICE));
