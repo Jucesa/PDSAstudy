@@ -28,7 +28,7 @@ public class SELECAO {
      * A quantidade de índies retornado é sempre do mesmo do tamanho da população.
      *@author Tarcísio Lucas
      * @param tamanhoPopulacao
-     * @return int[]
+     * @return int[]vou
      * @since 14/01/2016
      * @version 1.0
      */
@@ -87,9 +87,31 @@ public class SELECAO {
 
     public static int torneioN(Pattern[] P, int n){
         HashMap<Integer, Double> indices =  HashMap.newHashMap(n);
-        for(int i = 0; i < n; i++){
-            int index = Const.random.nextInt(P.length);
-            indices.putIfAbsent(index, P[index].getQualidade());
+        while(indices.size() < n){
+            int indice = Const.random.nextInt(P.length);
+            indices.putIfAbsent(indice, P[indice].getQualidade());
+        }
+
+        int bestIndex = -1;
+        double bestQuality = Double.NEGATIVE_INFINITY;
+
+        for (Map.Entry<Integer, Double> entry : indices.entrySet()) {
+            int index = entry.getKey();
+            double quality = entry.getValue();
+
+            if (quality > bestQuality) {
+                bestQuality = quality;
+                bestIndex = index;
+            }
+        }
+        return bestIndex;
+    }
+
+    public static int torneioNparticao(Pattern[] P, int n, int inf, int sup){
+        HashMap<Integer, Double> indices =  HashMap.newHashMap(n);
+        while(indices.size() < n){
+            int indice = Const.random.nextInt(inf, sup);
+            indices.putIfAbsent(indice, P[indice].getQualidade());
         }
 
         int bestIndex = -1;

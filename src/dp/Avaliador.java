@@ -481,9 +481,9 @@ public class Avaliador {
     //Imprime regras em texto
     public static void imprimirRegras(Pattern[] p, int kPrimeiros){
         Pattern vazio = new Pattern(new HashSet<>(), p[0].getTipoAvaliacao());
-        System.out.println(vazio.toString2());
+        System.out.println(vazio.toString2()+" Avaliação-> "+vazio.getTipoAvaliacao());
         for(int i = 0; i < kPrimeiros; i++){
-            System.out.println(p[i].toString2());        
+            System.out.println(p[i].toString2());
         }        
     }
     
