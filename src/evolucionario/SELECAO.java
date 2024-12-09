@@ -111,7 +111,7 @@ public class SELECAO {
         HashMap<Integer, Double> indices =  HashMap.newHashMap(n);
         while(indices.size() < n){
             int indice = Const.random.nextInt(inf, sup);
-            indices.putIfAbsent(indice, P[indice].getQualidade());
+            indices.put(indice, P[indice].getQualidade());
         }
 
         int bestIndex = -1;
@@ -141,11 +141,10 @@ public class SELECAO {
      */
     public static Pattern[] selecionarMelhoresDistintos(Pattern[] P, Pattern[] Pnovo){
         int tamanhoPopulacao = P.length;
-        Pattern[] PAsterisco = new Pattern[tamanhoPopulacao];        
-        ArrayList<Pattern> patternAux = new ArrayList<>();
-        
+        Pattern[] PAsterisco = new Pattern[tamanhoPopulacao];
+
         //System.out.println("\tAdicioando P");
-        patternAux.addAll(Arrays.asList(P));
+        ArrayList<Pattern> patternAux = new ArrayList<>(Arrays.asList(P));
         
         //System.out.println("\tAdicioando Pnovos");
         for (Pattern pnovo : Pnovo) {
