@@ -142,33 +142,27 @@ public class TPSD {
      * @param quantidadeTorneio int - quantidade de individos selecionados no torneio
      * @param tentativasMelhoria int - quantidade de vezes que o algoritmo tenta melhorar um individuo
      * @param maxIndividuosGerados int -criterio de parada
-     * @param p double - chance inicial de selecionar um item solo acima da particao
      * @param tipoAvaliacao String - tipo de avaliação utilizado para qualificar indivíduo (WRacc valoriza subgrupos menores enquanto Qg, maiores
      * @return Pattern[] - conjunto final de individuos melhorados
      */
     public static Pattern[] runP(int quantidadeTorneio, int tentativasMelhoria, int maxIndividuosGerados, String tipoAvaliacao, int k) {
+
         Pattern[] P = INICIALIZAR.D1(tipoAvaliacao);
         Arrays.sort(P, (p1, p2) -> Double.compare(p2.getQualidade(), p1.getQualidade()));
+
         int gerou = 0;
         int tamanhoP = P.length;
         int particao = tamanhoP;
 
-        float p = (float) particao /P.length;
         //criterio parada: individuos gerados
-        while (gerou < maxIndividuosGerados && particao > k) {
+        while (gerou < maxIndividuosGerados) {
+            float p = (float) particao/tamanhoP;
             System.out.println("Probabilidade acima da partição: " + p);
 
             System.out.println("Partição: " + particao);
-            // Seleciona ou um indice acima ou abaixo de particao
-            int index;
-            double aDouble = Const.random.nextDouble(0, 1);
-            if (aDouble < p) {
-                System.out.println("Melhorando acima da partição");
-                index = SELECAO.torneioNparticao(P, quantidadeTorneio, 0, particao-1);
-            } else {
-                System.out.println("Melhorando abaixo da partição");
-                index = SELECAO.torneioNparticao(P, quantidadeTorneio, particao, tamanhoP-1);
-            }
+            // Seleciona um indice acima da particao
+            int index = SELECAO.torneioNparticao(P, quantidadeTorneio, 0, particao-1);
+
             Pattern individuo = P[index];
             System.out.println("Individuo para melhorar: " + individuo.getItens());
             System.out.println("Qualidade individuo: " + individuo.getQualidade());
@@ -176,34 +170,39 @@ public class TPSD {
             // Tenta melhorar o indivíduo selecionado
             for (int i = 0; i < tentativasMelhoria; i++) {
                 HashSet<Integer> itemNovo = new HashSet<>(individuo.getItens()); // Adiciona itens existentes de p a ser melhorado
-                itemNovo.add(SELECAO.torneioN(P, quantidadeTorneio)); // Adiciona um novo índice aleatório
+
+                double aDouble = Const.random.nextDouble(0, 1);
+                if(aDouble < p) {
+                    System.out.println("Melhorando acima da partição");
+                    itemNovo.add(SELECAO.torneioNparticao(P, quantidadeTorneio, 0, particao-1));
+                } else {
+                    System.out.println("Melhorando abaixo da partição");
+                    itemNovo.add(SELECAO.torneioNparticao(P, quantidadeTorneio, particao, tamanhoP-1));
+                }
 
                 Pattern paux = new Pattern(itemNovo, tipoAvaliacao);
                 System.out.println("\nNovo individuo gerado: " + paux.getItens());
                 System.out.println("Qualidade individuo: " + paux.getQualidade());
 
-                System.out.println("\nTentando substituir por individuo: " + P[particao].getItens());
-                System.out.println("Qualidade individuo: " + P[particao].getQualidade());
+                System.out.println("\nTentando substituir por individuo: " + P[particao-1].getItens());
+                System.out.println("Qualidade individuo: " + P[particao-1].getQualidade());
+                //if (paux.getQualidade() > P[particao-1].getQualidade()){
                 if (SELECAO.ehRelevante(paux, P)) {
-                    P[particao] = paux;
                     particao--;
+                    P[particao] = paux;
                     System.out.println("\nSubstituiu! Partição: " + particao);
                 } else {
                     System.out.println("\nNão substituiu. Partição: " + particao);
                 }
                 gerou++;
-                System.out.println("Individuos gerados: " +gerou);
+                System.out.println("Individuos gerados: " + gerou);
             }
             System.out.println("Tentativas de melhoria encerradas\n");
         }
+
         Arrays.sort(P, (p1, p2) -> Double.compare(p2.getQualidade(), p1.getQualidade()));
-        Pattern[] Pk = new Pattern[k];
-        //Inicializa Pk com indivíduos vazios
-        for (int i = 0; i < Pk.length; i++) {
-            Pk[i] = new Pattern(new HashSet<Integer>(), tipoAvaliacao);
-        }
-        SELECAO.salvandoRelevantes(Pk, P);
-        return Pk;
+
+        return P;
     }
 
     public static void main(String[] args) throws FileNotFoundException {

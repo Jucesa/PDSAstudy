@@ -473,8 +473,8 @@ public class SELECAO {
      * @return boolean - se novo indivíduo é relevante
      */
     public static boolean ehRelevante(Pattern p, Pattern[] Pk){
-        for(int i = 0; i  < Pk.length; i++){
-            if(Pk[i].sobrescreve(p) != -1){
+        for (Pattern pattern : Pk) {
+            if (pattern.sobrescreve(p) != -1) {
                 return false;
             }
         }
