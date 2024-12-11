@@ -89,7 +89,7 @@ public class SELECAO {
         HashMap<Integer, Double> indices =  HashMap.newHashMap(n);
         while(indices.size() < n){
             int indice = Const.random.nextInt(P.length);
-            indices.putIfAbsent(indice, P[indice].getQualidade());
+            indices.put(indice, P[indice].getQualidade());
         }
 
         int bestIndex = -1;

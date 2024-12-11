@@ -161,7 +161,7 @@ public class TPSD {
 
             System.out.println("Partição: " + particao);
             // Seleciona um indice acima da particao
-            int index = SELECAO.torneioNparticao(P, quantidadeTorneio, 0, particao-1);
+            int index = SELECAO.torneioN(P, quantidadeTorneio);
 
             Pattern individuo = P[index];
             System.out.println("Individuo para melhorar: " + individuo.getItens());
@@ -186,11 +186,12 @@ public class TPSD {
 
                 System.out.println("\nTentando substituir por individuo: " + P[particao-1].getItens());
                 System.out.println("Qualidade individuo: " + P[particao-1].getQualidade());
-                //if (paux.getQualidade() > P[particao-1].getQualidade()){
-                if (SELECAO.ehRelevante(paux, P)) {
+                if (paux.getQualidade() > P[particao-1].getQualidade()){
+                //if (SELECAO.ehRelevante(paux, P)) {
                     particao--;
                     P[particao] = paux;
                     System.out.println("\nSubstituiu! Partição: " + particao);
+                    break;
                 } else {
                     System.out.println("\nNão substituiu. Partição: " + particao);
                 }
@@ -222,7 +223,7 @@ public class TPSD {
             return;
         }
         D.SEPARADOR = ","; //separator database
-        Const.random = new Random(Const.SEEDS[0]); //Seed
+        Const.random = new Random(Const.SEEDS[5]); //Seed
         D.GerarDpDn("p");
 
         //Parameters of the algorithm
