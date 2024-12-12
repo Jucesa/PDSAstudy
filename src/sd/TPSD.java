@@ -17,135 +17,11 @@ public class TPSD {
      *@author Jucesa
      * @param quantidadeTorneio int - quantidade de individos selecionados no torneio
      * @param tentativasMelhoria int - quantidade de vezes que o algoritmo tenta melhorar um individuo
-     * @param tipoAvaliacao String - tipo de avaliação utilizado para qualificar indivíduo (WRacc valoriza subgrupos menores enquanto Qg, maiores
-     * @return Pattern[] - conjunto final de individuos melhorados
-     */
-    public static Pattern[] run(int quantidadeTorneio, int tentativasMelhoria, String tipoAvaliacao) {
-        Pattern[] P = INICIALIZAR.D1(tipoAvaliacao); // inicializa P com todos os indivíduos de 1D
-
-        int naoMudou = 0;
-        while (naoMudou < 3) {
-            // Seleciona o melhor índice entre quantidadeTorneio índices
-            int index = SELECAO.torneioN(P, quantidadeTorneio);
-            Pattern melhorP = P[index];
-
-            boolean melhorou = false; // Flag para verificar se houve melhoria
-
-            // Tenta melhorar o indivíduo selecionado
-            for (int i = 0; i < tentativasMelhoria; i++) {
-                HashSet<Integer> itemNovo = new HashSet<>(melhorP.getItens()); // Adiciona itens existentes de p
-                itemNovo.add(SELECAO.torneioN(P, quantidadeTorneio)); // Adiciona um novo índice aleatório
-
-                Pattern paux = new Pattern(itemNovo, tipoAvaliacao);
-                if (paux.getQualidade() > melhorP.getQualidade()) {
-                    melhorP = paux;
-                    melhorou = true; // Marca que houve uma melhoria
-                }
-            }
-
-            // Atualiza o indivíduo na população
-            P[index] = melhorP;
-
-            // Verifica se houve alguma melhoria neste ciclo
-            if (melhorou) {
-                naoMudou = 0; // Reseta o contador de tentativas sem melhoria
-            } else {
-                naoMudou++; // Incrementa se o indivíduo não foi melhorado
-            }
-        }
-        return P;
-    }
-
-    /**
-     *@author Jucesa
-     * @param quantidadeTorneio int - quantidade de individos selecionados no torneio
-     * @param tentativasMelhoria int - quantidade de vezes que o algoritmo tenta melhorar um individuo
-     * @param tipoAvaliacao String - tipo de avaliação utilizado para qualificar indivíduo (WRacc valoriza subgrupos menores enquanto Qg, maiores
-     * @param dimensaoMaxInicial int - dimensao maxima dos itens inicializados em P0
-     * @return Pattern[] - conjunto final de individuos melhorados
-     */
-    public static Pattern[] run(int quantidadeTorneio, int tentativasMelhoria, String tipoAvaliacao, int dimensaoMaxInicial) {
-        Pattern[] P = INICIALIZAR.aleatorio1_D(tipoAvaliacao, dimensaoMaxInicial, D.numeroItensUtilizados); // inicializa P com todos os indivíduos de 1D
-        Arrays.sort(P, (p1, p2) -> Double.compare(p2.getQualidade(), p1.getQualidade()));
-
-        int naoMudou = 0;
-        while (naoMudou < 3) {
-            // Seleciona o melhor índice entre quantidadeTorneio índices
-            int index = SELECAO.torneioN(P, quantidadeTorneio);
-            Pattern melhorP = P[index];
-
-            boolean melhorou = false; // Flag para verificar se houve melhoria
-
-            // Tenta melhorar o indivíduo selecionado
-            for (int i = 0; i < tentativasMelhoria; i++) {
-                HashSet<Integer> itemNovo = new HashSet<>(melhorP.getItens()); // Adiciona itens existentes de p
-                itemNovo.add(SELECAO.torneioN(P, quantidadeTorneio)); // Adiciona um novo índice aleatório
-
-                Pattern paux = new Pattern(itemNovo, tipoAvaliacao);
-                if (paux.getQualidade() > melhorP.getQualidade()) {
-                    melhorP = paux;
-                    melhorou = true; // Marca que houve uma melhoria
-                }
-            }
-
-            // Atualiza o indivíduo na população
-            P[index] = melhorP;
-
-            // Verifica se houve alguma melhoria neste ciclo
-            if (melhorou) {
-                naoMudou = 0; // Reseta o contador de tentativas sem melhoria
-            } else {
-                naoMudou++; // Incrementa se o indivíduo não foi melhorado
-            }
-        }
-        return P;
-    }
-
-    public static Pattern[] runKillTheWeek(int quantidadeTorneio, int tentativasMelhoria, int falhasAteParada, int dimensaoMaxInicial, String tipoAvaliacao) {
-        Pattern[] P = INICIALIZAR.aleatorio1_D(tipoAvaliacao, dimensaoMaxInicial, D.numeroItensUtilizados); // inicializa P com todos os indivíduos de 1D
-        Arrays.sort(P);
-        int naoMudou = 0;
-        while (naoMudou < falhasAteParada) {
-            // Seleciona o melhor índice entre quantidadeTorneio índices
-            int index = SELECAO.torneioN(P, quantidadeTorneio);
-            Pattern melhorP = P[index];
-
-            boolean melhorou = false; // Flag para verificar se houve melhoria
-
-            // Tenta melhorar o indivíduo selecionado
-            for (int i = 0; i < tentativasMelhoria; i++) {
-                HashSet<Integer> itemNovo = new HashSet<>(melhorP.getItens()); // Adiciona itens existentes de p
-                itemNovo.add(SELECAO.torneioN(P, quantidadeTorneio)); // Adiciona um novo índice aleatório
-
-                Pattern paux = new Pattern(itemNovo, tipoAvaliacao);
-                if (paux.getQualidade() > melhorP.getQualidade()) {
-                    melhorP = paux;
-                    melhorou = true; // Marca que houve uma melhoria
-                }
-            }
-
-            // atualiza o pior indivíduo na população
-            P[index] = melhorP;
-
-            // Verifica se houve alguma melhoria neste ciclo
-            if (melhorou) {
-                naoMudou = 0; // Reseta o contador de tentativas sem melhoria
-            } else {
-                naoMudou++; // Incrementa se o indivíduo não foi melhorado
-            }
-        }
-        return P;
-    }
-
-    /**
-     *@author Jucesa
-     * @param quantidadeTorneio int - quantidade de individos selecionados no torneio
-     * @param tentativasMelhoria int - quantidade de vezes que o algoritmo tenta melhorar um individuo
      * @param maxIndividuosGerados int -criterio de parada
-     * @param tipoAvaliacao String - tipo de avaliação utilizado para qualificar indivíduo (WRacc valoriza subgrupos menores enquanto Qg, maiores
-     * @return Pattern[] - conjunto final de individuos melhorados
+     * @param tipoAvaliacao String - tipo de avaliação utilizado para qualificar indivíduos
+     * @return Pattern[] - conjunto final de individuos
      */
-    public static Pattern[] runP(int quantidadeTorneio, int tentativasMelhoria, int maxIndividuosGerados, String tipoAvaliacao, int k) {
+    public static Pattern[] run(int quantidadeTorneio, int tentativasMelhoria, int maxIndividuosGerados, String tipoAvaliacao, int k) {
 
         Pattern[] P = INICIALIZAR.D1(tipoAvaliacao);
         Arrays.sort(P, (p1, p2) -> Double.compare(p2.getQualidade(), p1.getQualidade()));
@@ -153,9 +29,9 @@ public class TPSD {
         int gerou = 0;
         int tamanhoP = P.length;
         int particao = tamanhoP;
-
+        float pFinal = 1;
         //criterio parada: individuos gerados
-        while (gerou < maxIndividuosGerados) {
+        while (gerou < maxIndividuosGerados && particao > k) {
             float p = (float) particao/tamanhoP;
             System.out.println("Probabilidade acima da partição: " + p);
 
@@ -186,8 +62,8 @@ public class TPSD {
 
                 System.out.println("\nTentando substituir por individuo: " + P[particao-1].getItens());
                 System.out.println("Qualidade individuo: " + P[particao-1].getQualidade());
-                if (paux.getQualidade() > P[particao-1].getQualidade()){
-                //if (SELECAO.ehRelevante(paux, P)) {
+                //if (paux.getQualidade() > P[particao-1].getQualidade()){
+                if (SELECAO.ehRelevante(paux, P)) {
                     particao--;
                     P[particao] = paux;
                     System.out.println("\nSubstituiu! Partição: " + particao);
@@ -199,9 +75,13 @@ public class TPSD {
                 System.out.println("Individuos gerados: " + gerou);
             }
             System.out.println("Tentativas de melhoria encerradas\n");
+            pFinal = p;
         }
-
         Arrays.sort(P, (p1, p2) -> Double.compare(p2.getQualidade(), p1.getQualidade()));
+
+        System.out.println("\nAlgoritmo Finalizado\n");
+        System.out.println("Individuos gerados: " + gerou);
+        System.out.println("Probabilidade final: " + pFinal);
 
         return P;
     }
@@ -210,20 +90,21 @@ public class TPSD {
         Logger logger = Logger.getLogger(TPSD.class.getName());
 
         String diretorioBases = Const.CAMINHO_BASES;
+
         String[] bases = {diretorioBases+"/alon-clean50-pn-width-2.csv",
                 diretorioBases+"/ENEM2014.csv",
                 diretorioBases+"/matrixBinaria-Global-100-p.csv"};
 
-        String base = bases[2];
-
+        String base = bases[1];
+        D.SEPARADOR = ","; //separator database
         try {
             D.CarregarArquivo(base, D.TIPO_CSV);
         } catch (FileNotFoundException e) {
             logger.log(Level.WARNING, e.getMessage());
             return;
         }
-        D.SEPARADOR = ","; //separator database
-        Const.random = new Random(Const.SEEDS[5]); //Seed
+
+        Const.random = new Random(Const.SEEDS[0]); //Seed
         D.GerarDpDn("p");
 
         //Parameters of the algorithm
@@ -233,7 +114,9 @@ public class TPSD {
         int maxIndividuosGerados = 100000;
         int quantidadeTorneio = 10;
         System.out.println("Algoritmo com Torneio: " + quantidadeTorneio);
-        Pattern[] p = runP(quantidadeTorneio, tentativasMelhoria, maxIndividuosGerados, metricaAvaliacao, k);
+        Pattern[] p = run(quantidadeTorneio, tentativasMelhoria, maxIndividuosGerados, metricaAvaliacao, k);
+
+        //String[] metricas = {metricaAvaliacao};
         Avaliador.imprimirRegras(p, k);
     }
 }
