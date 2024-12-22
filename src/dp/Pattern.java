@@ -58,7 +58,7 @@ public class Pattern implements Comparable<Pattern>, Serializable{
         this.qualidade = Avaliador.avaliar(this.TP, this.FP, this.tipoAvaliacao);
         
         if(tipoAvaliacao.equals(Avaliador.METRICA_AVALIACAO_WRACC_OVER_SIZE)){
-            if(itens.size() == 0){
+            if(itens.isEmpty()){
                 this.qualidade = 0;
             }else{
                 this.qualidade = this.qualidade/(double)itens.size();

@@ -16,16 +16,14 @@ import evolucionario.*;
 import exatos.GulosoD;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Random;
 import java.util.Scanner;
 import sd.SD;
-import sd.TPSD;
+import newSD.Partition;
 
 /**
  *
@@ -169,15 +167,13 @@ public class SimulacaoGeral {
                         long t0 = System.currentTimeMillis();
                         switch(algoritmo){
                             case Const.ALGORITMO_TPSDt5:
-                                p = TPSD.run(5,5,tipoAvaliacao, 2);
+                                p = Partition.run(5,5,100000, tipoAvaliacao, 10);
                                 break;
                             case Const.ALGORITMO_TPSDt10:
-                                p = TPSD.run(10,5,tipoAvaliacao, 2);
+                                p = Partition.run(10,5, 100000, tipoAvaliacao, 10);
                                 break;
                             case Const.ALGORITMO_TPSDt50:
-                                p = TPSD.run(50, 5, tipoAvaliacao, 2);
-                            case Const.ALGORITMO_PDSA:
-                                p = PDSA.run(k, tipoAvaliacao, tempoMaximoSegundosAlgoritmos);
+                                p = Partition.run(50, 5, 100000, tipoAvaliacao, 10);
                                 break;
                             case Const.ALGORITMO_SSDP:
                                 p = SSDP.run(k, tipoAvaliacao, tempoMaximoSegundosAlgoritmos);
@@ -274,8 +270,7 @@ public class SimulacaoGeral {
         String[] algoritmos = {
             Const.ALGORITMO_TPSDt5,
                 Const.ALGORITMO_TPSDt10,
-                Const.ALGORITMO_TPSDt50,
-                Const.ALGORITMO_SSDP
+                Const.ALGORITMO_TPSDt50
         };
 
         SimulacaoGeral sg = new SimulacaoGeral(new File(Const.CAMINHO_INDICE));
@@ -285,7 +280,6 @@ public class SimulacaoGeral {
 
         //Tabelão
         String[] metricas = {
-                Const.METRICA_WRACC,
                 Const.METRICA_Qg,
         };
         String separadorBase = ",";

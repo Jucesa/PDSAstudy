@@ -10,7 +10,7 @@ import dp.Const;
 import dp.D;
 import dp.Pattern;
 import evolucionario.INICIALIZAR;
-import evolucionario.PDSA;
+
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
@@ -162,7 +162,6 @@ public class RelatorioDiscriminante {
                 }
 
                 //Minerando grupos
-                pk = PDSA.run(k, tipoAvaliacao, -1); //run PDSA
 //                SD sd = new SD();
 //                pk = sd.run(0, 2*k, tipoAvaliacao, k); //run PDSA
 

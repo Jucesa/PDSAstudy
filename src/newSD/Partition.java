@@ -1,4 +1,4 @@
-package sd;
+package newSD;
 
 import dp.Avaliador;
 import dp.Const;
@@ -6,13 +6,14 @@ import dp.D;
 import dp.Pattern;
 import evolucionario.INICIALIZAR;
 import evolucionario.SELECAO;
+import evolucionario.SSDP;
 
 import java.io.FileNotFoundException;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class TPSD {
+public class Partition {
     /**
      *@author Jucesa
      * @param quantidadeTorneio int - quantidade de individos selecionados no torneio
@@ -24,6 +25,7 @@ public class TPSD {
     public static Pattern[] run(int quantidadeTorneio, int tentativasMelhoria, int maxIndividuosGerados, String tipoAvaliacao, int k) {
 
         Pattern[] P = INICIALIZAR.D1(tipoAvaliacao);
+
         Arrays.sort(P, (p1, p2) -> Double.compare(p2.getQualidade(), p1.getQualidade()));
 
         int gerou = 0;
@@ -36,7 +38,7 @@ public class TPSD {
             System.out.println("Probabilidade acima da partição: " + p);
 
             System.out.println("Partição: " + particao);
-            // Seleciona um indice acima da particao
+            //Seleciona um indice acima da particao
             int index = SELECAO.torneioN(P, quantidadeTorneio);
 
             Pattern individuo = P[index];
@@ -87,7 +89,7 @@ public class TPSD {
     }
 
     public static void main(String[] args) throws FileNotFoundException {
-        Logger logger = Logger.getLogger(TPSD.class.getName());
+        Logger logger = Logger.getLogger(Partition.class.getName());
 
         String diretorioBases = Const.CAMINHO_BASES;
 
@@ -118,6 +120,10 @@ public class TPSD {
 
         //String[] metricas = {metricaAvaliacao};
         Avaliador.imprimirRegras(p, k);
+        System.out.println("-------------------------");
+
+        Pattern[] pS = SSDP.run(k, metricaAvaliacao, 3600);
+        Avaliador.imprimirRegras(pS, k);
     }
 }
 
