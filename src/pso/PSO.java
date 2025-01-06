@@ -56,7 +56,7 @@ public class PSO {
                 // Imprimir ID, itens e qualidade da partícula
                 System.out.println("\nPartícula da vez: ");
                 System.out.println("  - ID: " + particula.getId());
-                //System.out.println("  - Itens: " + particula.getPattern().getItens());
+                System.out.println("  - Itens: " + particula.getPattern().getItens());
                 System.out.println("  - Qualidade: " + particula.getQualidade());
             }
 

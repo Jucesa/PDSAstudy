@@ -36,29 +36,26 @@ public class Particle {
         double w = W_INITIAL - ((W_INITIAL - W_FINAL) * iteracao) / maxIteracoes;
 
         HashSet<Integer> novosItens = new HashSet<>(pattern.getItens());
-        //Esse for abaixo foi comentado para que a atualização da velocidade seja feita em apenas um item aleatório
-        for (int d = 0; d < velocity.length; d++) {
-        // Abaixo usar se quiser atualizar apenas um item aleatório
-        //    int d = random.nextInt(velocity.length); // Selecionar um item aleatório para mudar
+        int d = random.nextInt(velocity.length); // Selecionar um item aleatório para mudar
 
-            velocity[d] = w * velocity[d]
-                        + C1 * random.nextDouble() * (best.getItens().contains(d) ? 1 : 0)
-                        + C2 * random.nextDouble() * (globalBest.getItens().contains(d) ? 1 : 0);
-            
-            // Aplicar limitação de velocidade
-            if (velocity[d] > VEL_MAX) {
-                velocity[d] = VEL_MAX;
-            } else if (velocity[d] < VEL_MIN) {
-                velocity[d] = VEL_MIN;
-            }
+        // Atualizar a velocidade com o peso de inércia adaptado
+        velocity[d] = w * velocity[d]
+                    + C1 * random.nextDouble() * (best.getItens().contains(d) ? 1 : 0)
+                    + C2 * random.nextDouble() * (globalBest.getItens().contains(d) ? 1 : 0);
 
-            // Determinar se adiciona ou remove o item com base na função sigmoid
-            if (sigmoid(velocity[d]) > random.nextDouble()) {
-                if (novosItens.contains(d)) {
-                    novosItens.remove(d);
-                } else {
-                    novosItens.add(d);
-                }
+        // Aplicar limitação de velocidade
+        if (velocity[d] > VEL_MAX) {
+            velocity[d] = VEL_MAX;
+        } else if (velocity[d] < VEL_MIN) {
+            velocity[d] = VEL_MIN;
+        }
+
+        // Determinar se adiciona ou remove o item com base na função sigmoid
+        if (sigmoid(velocity[d]) > random.nextDouble()) {
+            if (novosItens.contains(d)) {
+                novosItens.remove(d);
+            } else {
+                novosItens.add(d);
             }
         }
 
