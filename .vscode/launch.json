@@ -1,0 +1,147 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "PSO",
+            "request": "launch",
+            "mainClass": "pso.PSO",
+            "projectName": "PDSAstudy_6326c9bf"
+        },
+        {
+            "type": "java",
+            "name": "Current File",
+            "request": "launch",
+            "mainClass": "${file}"
+        },
+        {
+            "type": "java",
+            "name": "D",
+            "request": "launch",
+            "mainClass": "dp.D",
+            "projectName": "PDSAstudy_6326c9bf"
+        },
+        {
+            "type": "java",
+            "name": "PDSA",
+            "request": "launch",
+            "mainClass": "evolucionario.PDSA",
+            "projectName": "PDSAstudy_6326c9bf"
+        },
+        {
+            "type": "java",
+            "name": "PSO",
+            "request": "launch",
+            "mainClass": "evolucionario.PSO",
+            "projectName": "PDSAstudy_6326c9bf"
+        },
+        {
+            "type": "java",
+            "name": "SSDP",
+            "request": "launch",
+            "mainClass": "evolucionario.SSDP",
+            "projectName": "PDSAstudy_6326c9bf"
+        },
+        {
+            "type": "java",
+            "name": "SSDPmais",
+            "request": "launch",
+            "mainClass": "evolucionario.SSDPmais",
+            "projectName": "PDSAstudy_6326c9bf"
+        },
+        {
+            "type": "java",
+            "name": "TPSD",
+            "request": "launch",
+            "mainClass": "evolucionario.TPSD",
+            "projectName": "PDSAstudy_6326c9bf"
+        },
+        {
+            "type": "java",
+            "name": "GulosoD",
+            "request": "launch",
+            "mainClass": "exatos.GulosoD",
+            "projectName": "PDSAstudy_6326c9bf"
+        },
+        {
+            "type": "java",
+            "name": "Home",
+            "request": "launch",
+            "mainClass": "gui.Home",
+            "projectName": "PDSAstudy_6326c9bf"
+        },
+        {
+            "type": "java",
+            "name": "JARrelatorioDiscriminante",
+            "request": "launch",
+            "mainClass": "relatorios_discriminantes.JARrelatorioDiscriminante",
+            "projectName": "PDSAstudy_6326c9bf"
+        },
+        {
+            "type": "java",
+            "name": "RelatorioDiscriminante",
+            "request": "launch",
+            "mainClass": "relatorios_discriminantes.RelatorioDiscriminante",
+            "projectName": "PDSAstudy_6326c9bf"
+        },
+        {
+            "type": "java",
+            "name": "Exaustivo",
+            "request": "launch",
+            "mainClass": "sd.Exaustivo",
+            "projectName": "PDSAstudy_6326c9bf"
+        },
+        {
+            "type": "java",
+            "name": "SD",
+            "request": "launch",
+            "mainClass": "sd.SD",
+            "projectName": "PDSAstudy_6326c9bf"
+        },
+        {
+            "type": "java",
+            "name": "Arquivo",
+            "request": "launch",
+            "mainClass": "simulacoes.Arquivo",
+            "projectName": "PDSAstudy_6326c9bf"
+        },
+        {
+            "type": "java",
+            "name": "Base",
+            "request": "launch",
+            "mainClass": "simulacoes.Base",
+            "projectName": "PDSAstudy_6326c9bf"
+        },
+        {
+            "type": "java",
+            "name": "Relatorio",
+            "request": "launch",
+            "mainClass": "simulacoes.Relatorio",
+            "projectName": "PDSAstudy_6326c9bf"
+        },
+        {
+            "type": "java",
+            "name": "SimulacaoGeral",
+            "request": "launch",
+            "mainClass": "simulacoes.SimulacaoGeral",
+            "projectName": "PDSAstudy_6326c9bf"
+        },
+        {
+            "type": "java",
+            "name": "SimulacaoGeralJAR",
+            "request": "launch",
+            "mainClass": "simulacoes.SimulacaoGeralJAR",
+            "projectName": "PDSAstudy_6326c9bf"
+        },
+        {
+            "type": "java",
+            "name": "SimulacoesCollection",
+            "request": "launch",
+            "mainClass": "simulacoes.SimulacoesCollection",
+            "projectName": "PDSAstudy_6326c9bf"
+        }
+    ]
+}

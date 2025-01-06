@@ -625,4 +625,19 @@ public class Pattern implements Comparable<Pattern>, Serializable{
         }
         return str.toString(); 
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null || getClass() != obj.getClass())
+            return false;
+        Pattern other = (Pattern) obj;
+        return itens.equals(other.itens);
+    }
+
+    @Override
+    public int hashCode() {
+        return itens.hashCode();
+    }
 }

@@ -152,13 +152,13 @@ public class SSDP {
         //== CONFIGURATION ===================================================
         //====================================================================
         //CSV database path 
-       String caminho = "C:\\Users\\Tarcisio  Lucas\\Documents\\NetBeansProjects\\DP4\\pastas\\bases\\"; 
+       String caminho = "pastas\\bases\\"; 
        //String nomeBase = "pns-pessoa-Diabetes-P.CSV";
        
        
        //String nomeBase = "evasao.CSV";
        //String nomeBase = "ENEM2014_81_NOTA_10k.csv";
-       String nomeBase = "pns-pessoa-uf-melhor.csv";
+       String nomeBase = "matrixBinaria-Global-100-p.csv";
         //String nomeBase = "chiaretti-clean50-pn-width-2.CSV";
        //String nomeBase = "matrixBinaria-Global-1000-p.csv";
        //String nomeBase = "burczynski-pn-freq-2.CSV";//"chiaretti-pn-freq-2.CSV";
