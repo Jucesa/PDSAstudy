@@ -1,6 +1,5 @@
 package pso;
 
-import dp.Avaliador;
 import dp.Const;
 import dp.D;
 import dp.Pattern;
@@ -10,7 +9,8 @@ import java.util.HashSet;
 import java.util.Random;
 
 public class PSO {
-    private static final int NUM_PARTICULAS = 30;
+    // Caso vá usar um número fixo de partículas, pode descomentar a linha abaixo
+    // private static final int NUM_PARTICULAS = 30;
     private static final int ITERACOES_MAX = 100;
 
     private static Random random = new Random();
@@ -20,13 +20,10 @@ public class PSO {
         ArrayList<Particle> particulas = new ArrayList<>();
         Particle globalBest = null; // Alterar o tipo para Particle
 
-        // Inicialização: Cada partícula começa com uma combinação aleatória de itens
-        for (int i = 0; i < NUM_PARTICULAS; i++) {
+        // Inicialização: Cada partícula começa com um único item
+        for (int i = 0; i < dimensao; i++) {
             HashSet<Integer> itens = new HashSet<>();
-            int numeroItensInicial = random.nextInt(dimensao / 2) + 1; // Inicia com 1 a metade dos itens
-            while (itens.size() < numeroItensInicial) {
-                itens.add(random.nextInt(dimensao));
-            }
+            itens.add(i); // Cada partícula começa com um item único
             Particle particula = new Particle(idCounter++, itens, tipoAvaliacao, dimensao, ITERACOES_MAX);
             particulas.add(particula);
             if (globalBest == null || particula.getQualidade() > globalBest.getQualidade()) {
@@ -39,6 +36,7 @@ public class PSO {
             System.out.println("\n=== Iteração: " + iteracao + " ===");
 
             double somaQualidade = 0.0;
+            HashSet<Pattern> subgruposDistintos = new HashSet<>();
 
             for (Particle particula : particulas) {
                 // Atualiza a velocidade e a posição da partícula
@@ -52,13 +50,22 @@ public class PSO {
                 // Acumular para a qualidade média
                 somaQualidade += particula.getQualidade();
 
+                // Adicionar subgrupo distinto
+                subgruposDistintos.add(particula.getPattern());
+
                 // Imprimir ID, itens e qualidade da partícula
-                System.out.println("  Partícula ID " + particula.getId() + ": " + particula.getPattern().getItens() + " | Qualidade: " + particula.getQualidade());
+                System.out.println("\nPartícula da vez: ");
+                System.out.println("  - ID: " + particula.getId());
+                //System.out.println("  - Itens: " + particula.getPattern().getItens());
+                System.out.println("  - Qualidade: " + particula.getQualidade());
             }
 
             // Calcular e imprimir qualidade média
             double qualidadeMedia = somaQualidade / particulas.size();
             System.out.println("Qualidade Média das Partículas: " + qualidadeMedia);
+
+            // Imprimir número de subgrupos distintos
+            System.out.println("Número de Subgrupos Distintos: " + subgruposDistintos.size());
 
             // Log do melhor global após atualizar todas as partículas
             System.out.println("\nGlobalBest após a iteração " + iteracao + ":");
@@ -66,16 +73,17 @@ public class PSO {
             System.out.println("  - Itens: " + globalBest.getPattern().getItens());
             System.out.println("  - Qualidade: " + globalBest.getQualidade());
 
-            // Implementar Diversificação Periódica (opcional)
+/*             // Implementar Diversificação Periódica (opcional), talvez seja útil tirar, mas ajuda bastante na exploração isso aqui
             if (iteracao % 20 == 0 && iteracao != 0) { // A cada 20 iterações
                 diversificar(particulas, dimensao, tipoAvaliacao);
                 System.out.println("Diversificação aplicada nas partículas.");
-            }
+            } */
         }
 
         return globalBest.getPattern(); // Retornar o Pattern da melhor partícula
     }
 
+    // Método para diversificar as partículas
     private static void diversificar(ArrayList<Particle> particulas, int dimensao, String tipoAvaliacao) {
         for (int i = 0; i < particulas.size(); i++) {
             if (random.nextDouble() < 0.1) { // 10% das partículas recebem diversificação
@@ -108,7 +116,7 @@ public class PSO {
         }
 
         int dimensao = D.numeroItens;
-        String tipoAvaliacao = Const.METRICA_Qg;
+        String tipoAvaliacao = Const.METRICA_WRACC;
 
         Pattern melhorSubgrupo = run(dimensao, tipoAvaliacao);
         System.out.println("Melhor Subgrupo: " + melhorSubgrupo.toString2());
