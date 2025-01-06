@@ -13,12 +13,12 @@ public class PSO {
     // private static final int NUM_PARTICULAS = 30;
     private static final int ITERACOES_MAX = 100;
 
-    private static Random random = new Random();
     private static int idCounter = 1; // Novo campo para gerenciar IDs únicos
 
     public static Pattern run(int dimensao, String tipoAvaliacao) {
         ArrayList<Particle> particulas = new ArrayList<>();
         Particle globalBest = null; // Alterar o tipo para Particle
+        HashSet<HashSet<Integer>> combinacoesDistintas = new HashSet<>(); // Para rastrear combinações distintas
 
         // Inicialização: Cada partícula começa com um único item
         for (int i = 0; i < dimensao; i++) {
@@ -26,6 +26,7 @@ public class PSO {
             itens.add(i); // Cada partícula começa com um item único
             Particle particula = new Particle(idCounter++, itens, tipoAvaliacao, dimensao, ITERACOES_MAX);
             particulas.add(particula);
+            combinacoesDistintas.add(itens); // Adicionar combinação inicial
             if (globalBest == null || particula.getQualidade() > globalBest.getQualidade()) {
                 globalBest = particula; // Atribuir a partícula, não o pattern
             }
@@ -36,7 +37,6 @@ public class PSO {
             System.out.println("\n=== Iteração: " + iteracao + " ===");
 
             double somaQualidade = 0.0;
-            HashSet<Pattern> subgruposDistintos = new HashSet<>();
 
             for (Particle particula : particulas) {
                 // Atualiza a velocidade e a posição da partícula
@@ -50,54 +50,34 @@ public class PSO {
                 // Acumular para a qualidade média
                 somaQualidade += particula.getQualidade();
 
-                // Adicionar subgrupo distinto
-                subgruposDistintos.add(particula.getPattern());
+                // Adicionar nova combinação distinta se ainda não apareceu
+                combinacoesDistintas.add(new HashSet<>(particula.getPattern().getItens()));
 
+                //Descomentar se quiser ver o ID, itens e qualidade de cada partícula separadamente
                 // Imprimir ID, itens e qualidade da partícula
-                System.out.println("\nPartícula da vez: ");
+/*                 System.out.println("\nPartícula da vez: ");
                 System.out.println("  - ID: " + particula.getId());
                 System.out.println("  - Itens: " + particula.getPattern().getItens());
-                System.out.println("  - Qualidade: " + particula.getQualidade());
+                System.out.println("  - Qualidade: " + particula.getQualidade()); */
             }
 
             // Calcular e imprimir qualidade média
             double qualidadeMedia = somaQualidade / particulas.size();
+            System.out.println("Quantidade de Partículas: " + particulas.size());
             System.out.println("Qualidade Média das Partículas: " + qualidadeMedia);
 
             // Imprimir número de subgrupos distintos
-            System.out.println("Número de Subgrupos Distintos: " + subgruposDistintos.size());
+            System.out.println("Número de Subgrupos Distintos ao Final Desta Iteração: " + combinacoesDistintas.size());
 
             // Log do melhor global após atualizar todas as partículas
-            System.out.println("\nGlobalBest após a iteração " + iteracao + ":");
+            System.out.println("\nGlobalBest após a iteração: ");
             System.out.println("  - ID: " + globalBest.getId());
             System.out.println("  - Itens: " + globalBest.getPattern().getItens());
             System.out.println("  - Qualidade: " + globalBest.getQualidade());
 
-/*             // Implementar Diversificação Periódica (opcional), talvez seja útil tirar, mas ajuda bastante na exploração isso aqui
-            if (iteracao % 20 == 0 && iteracao != 0) { // A cada 20 iterações
-                diversificar(particulas, dimensao, tipoAvaliacao);
-                System.out.println("Diversificação aplicada nas partículas.");
-            } */
         }
 
         return globalBest.getPattern(); // Retornar o Pattern da melhor partícula
-    }
-
-    // Método para diversificar as partículas
-    private static void diversificar(ArrayList<Particle> particulas, int dimensao, String tipoAvaliacao) {
-        for (int i = 0; i < particulas.size(); i++) {
-            if (random.nextDouble() < 0.1) { // 10% das partículas recebem diversificação
-                HashSet<Integer> novosItens = new HashSet<>();
-                int numeroItensInicial = random.nextInt(dimensao / 2) + 1;
-                while (novosItens.size() < numeroItensInicial) {
-                    novosItens.add(random.nextInt(dimensao));
-                }
-                // Reutilizar o ID da partícula sendo substituída
-                int idAtual = particulas.get(i).getId();
-                Particle novaParticula = new Particle(idAtual, novosItens, tipoAvaliacao, dimensao, ITERACOES_MAX);
-                particulas.set(i, novaParticula);
-            }
-        }
     }
 
     public static void main(String[] args) {
