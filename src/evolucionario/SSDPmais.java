@@ -142,10 +142,10 @@ public class SSDPmais {
         //====================================================================
         //CSV database path
 
-        String caminho = "C:\\Users\\CoffeeLake_01\\Documents\\NetBeansProjects\\DP4_2019-09-06\\pastas\\bases\\";
+        String caminho = "pastas\\bases\\";
         //String nomeBase = "pns-pessoa-Diabetes-P.CSV";
         //String nomeBase = "evasao.CSV";
-        String nomeBase = "fibrose_10snips - F0F1HCC.csv";
+        String nomeBase = "alon-clean50-pn-width-2.csv";
         //String nomeBase = "ENEM2014_81_NOTA_10k.csv";
         //String nomeBase = "pns_pessoa_AVC_P.csv";
         //String nomeBase = "pns_pessoa_Cancer_P.csv";
@@ -159,7 +159,7 @@ public class SSDPmais {
         //String nomeBase = "evasao.csv";
         String caminhoBase = caminho + nomeBase;
 
-        D.SEPARADOR = ";"; //separator database
+        D.SEPARADOR = ","; //separator database
         Const.random = new Random(Const.SEEDS[0]); //Seed
 
         //Parameters of the algorithm
@@ -182,7 +182,7 @@ public class SSDPmais {
 
         System.out.println("Carregando base de dados...");
         D.CarregarArquivo(caminhoBase, D.TIPO_CSV); //Loading database         
-        D.GerarDpDn("HCC");
+        D.GerarDpDn("p");
         //"6,80,104,116,134,145,151,153,156,256"; //target value
         //D.valorAlvo = "I-III";
         //D.valorAlvo = "IV-VII";

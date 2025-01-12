@@ -34,31 +34,37 @@ public class Particle {
     public void updateVelocityAndPosition(Pattern globalBest) {
         // Adaptar o peso de inércia
         double w = W_INITIAL - ((W_INITIAL - W_FINAL) * iteracao) / maxIteracoes;
-
+    
+        // Copiar os itens atuais
         HashSet<Integer> novosItens = new HashSet<>(pattern.getItens());
-        int d = random.nextInt(velocity.length); // Selecionar um item aleatório para mudar
-
-        // Atualizar a velocidade com o peso de inércia adaptado
+    
+        // Selecionar aleatoriamente um índice para atualização
+        int d = random.nextInt(velocity.length);
+    
+        // Atualizar a velocidade do índice escolhido
         velocity[d] = w * velocity[d]
-                    + C1 * random.nextDouble() * (best.getItens().contains(d) ? 1 : 0)
-                    + C2 * random.nextDouble() * (globalBest.getItens().contains(d) ? 1 : 0);
-
+                + C1 * random.nextDouble() * ((best.getItens().contains(d) ? 1 : 0) - (pattern.getItens().contains(d) ? 1 : 0))
+                + C2 * random.nextDouble() * ((globalBest.getItens().contains(d) ? 1 : 0) - (pattern.getItens().contains(d) ? 1 : 0));
+    
         // Aplicar limitação de velocidade
         if (velocity[d] > VEL_MAX) {
             velocity[d] = VEL_MAX;
         } else if (velocity[d] < VEL_MIN) {
             velocity[d] = VEL_MIN;
         }
-
-        // Determinar se adiciona ou remove o item com base na função sigmoid
-        if (sigmoid(velocity[d]) > random.nextDouble()) {
+    
+        // Determinar a probabilidade de mudar o estado com base na função sigmoid
+        double prob = sigmoid(velocity[d]);
+        if (random.nextDouble() < prob) {
+            // Inverter o estado binário do índice selecionado
             if (novosItens.contains(d)) {
                 novosItens.remove(d);
             } else {
                 novosItens.add(d);
             }
         }
-
+    
+        // Atualizar o padrão (pattern) com base nos novos itens
         Pattern novoPattern = new Pattern(novosItens, pattern.getTipoAvaliacao());
         if (novoPattern.getQualidade() > pattern.getQualidade()) {
             pattern = novoPattern;
@@ -66,9 +72,12 @@ public class Particle {
                 best = pattern;
             }
         }
-
+    
+        // Incrementar a iteração
         iteracao++;
     }
+    
+    
 
     public double sigmoid(double x) {
         return 1.0 / (1.0 + Math.exp(-x));

@@ -37,6 +37,11 @@ public class PSO {
             System.out.println("\n=== Iteração: " + iteracao + " ===");
 
             double somaQualidade = 0.0;
+            double somaTamanho = 0.0;
+            double maiorQualidade = Double.NEGATIVE_INFINITY;
+            double menorQualidadeNaoZero = Double.POSITIVE_INFINITY;
+            Pattern melhorIndividuo = null;
+            Pattern piorIndividuo = null;
 
             for (Particle particula : particulas) {
                 // Atualiza a velocidade e a posição da partícula
@@ -48,32 +53,48 @@ public class PSO {
                 }
 
                 // Acumular para a qualidade média
-                somaQualidade += particula.getQualidade();
+                double qualidade = particula.getPattern().getQualidade();
+                int tamanho = particula.getPattern().getItens().size();
+
+                somaQualidade += qualidade;
+                somaTamanho += tamanho;
+
+                if (qualidade > maiorQualidade) {
+                    maiorQualidade = qualidade;
+                    melhorIndividuo = particula.getPattern();
+                }
+
+                if (qualidade > 0 && qualidade < menorQualidadeNaoZero) {
+                    menorQualidadeNaoZero = qualidade;
+                    piorIndividuo = particula.getPattern();
+                }
 
                 // Adicionar nova combinação distinta se ainda não apareceu
                 combinacoesDistintas.add(new HashSet<>(particula.getPattern().getItens()));
-
-                //Descomentar se quiser ver o ID, itens e qualidade de cada partícula separadamente
-                // Imprimir ID, itens e qualidade da partícula
-/*                 System.out.println("\nPartícula da vez: ");
-                System.out.println("  - ID: " + particula.getId());
-                System.out.println("  - Itens: " + particula.getPattern().getItens());
-                System.out.println("  - Qualidade: " + particula.getQualidade()); */
             }
 
-            // Calcular e imprimir qualidade média
             double qualidadeMedia = somaQualidade / particulas.size();
-            System.out.println("Quantidade de Partículas: " + particulas.size());
-            System.out.println("Qualidade Média das Partículas: " + qualidadeMedia);
+            double tamanhoMedio = somaTamanho / particulas.size();
+
+            // Imprimir estatísticas dos indivíduos
+            System.out.println("\n=== Estatísticas dos Indivíduos após a iteração " + iteracao + " ===");
+            System.out.println("  - Qualidade Média: " + qualidadeMedia);
+            System.out.println("  - Tamanho Médio: " + tamanhoMedio);
+            System.out.println("  - Maior Qualidade: " + maiorQualidade);
+            System.out.println("  - Menor Qualidade (não zero): " + (menorQualidadeNaoZero == Double.POSITIVE_INFINITY ? "N/A" : menorQualidadeNaoZero));
+            System.out.println("  - Melhor Indivíduo: " + melhorIndividuo.getItens());
+            System.out.println("  - Pior Indivíduo: " + piorIndividuo.getItens());
+            System.out.println("===================================");
 
             // Imprimir número de subgrupos distintos
             System.out.println("Número de Subgrupos Distintos ao Final Desta Iteração: " + combinacoesDistintas.size());
 
             // Log do melhor global após atualizar todas as partículas
-            System.out.println("\nGlobalBest após a iteração: ");
+            System.out.println("\n=== GlobalBest após a iteração " + iteracao + " ===");
             System.out.println("  - ID: " + globalBest.getId());
             System.out.println("  - Itens: " + globalBest.getPattern().getItens());
             System.out.println("  - Qualidade: " + globalBest.getQualidade());
+            System.out.println("===================================");
 
         }
 
@@ -82,7 +103,7 @@ public class PSO {
 
     public static void main(String[] args) {
         String caminho = "pastas/bases/";
-        String nomebase = "matrixBinaria-Global-100-p.csv";
+        String nomebase = "alon-clean50-pn-width-2.csv";
         String caminhoBase = caminho + nomebase;
         D.SEPARADOR = ",";
         Const.random = new Random(Const.SEEDS[0]);
@@ -101,4 +122,5 @@ public class PSO {
         Pattern melhorSubgrupo = run(dimensao, tipoAvaliacao);
         System.out.println("Melhor Subgrupo: " + melhorSubgrupo.toString2());
     }
+
 }
