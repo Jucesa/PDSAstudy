@@ -14,6 +14,55 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Partition {
+
+    public static Pattern[] run(int quantidadeTorneio, int tentativasMelhoria, int maxIndividuosGerados, String tipoAvaliacao, int k) {
+        Pattern[] P = INICIALIZAR.D1(tipoAvaliacao);
+
+        Arrays.sort(P, (p1, p2) -> Double.compare(p2.getQualidade(), p1.getQualidade()));
+
+        int gerou = 0;
+        int tamanhoP = P.length;
+        int particao = tamanhoP;
+        float pFinal = 1;
+        //criterio parada: individuos gerados
+        while (gerou < maxIndividuosGerados && particao > quantidadeTorneio) {
+            float p = (float) particao/tamanhoP;
+            //Seleciona um indice acima da particao
+            int index = SELECAO.torneioN(P, quantidadeTorneio);
+
+            Pattern individuo = P[index];
+
+
+            // Tenta melhorar o indivíduo selecionado
+            for (int i = 0; i < tentativasMelhoria; i++) {
+                HashSet<Integer> itemNovo = new HashSet<>(individuo.getItens()); // Adiciona itens existentes de p a ser melhorado
+
+                double aDouble = Const.random.nextDouble(0, 1);
+                if(aDouble < p) {
+                    itemNovo.add(SELECAO.torneioNparticao(P, quantidadeTorneio, 0, particao-1));
+                } else {
+                    itemNovo.add(SELECAO.torneioNparticao(P, quantidadeTorneio, particao, tamanhoP-1));
+                }
+
+                Pattern paux = new Pattern(itemNovo, tipoAvaliacao);
+                //if (paux.getQualidade() > P[particao-1].getQualidade()){
+                if (SELECAO.ehRelevante(paux, P)) {
+                    particao--;
+                    P[particao] = paux;
+                    break;
+                }
+                gerou++;
+            }
+            pFinal = p;
+        }
+        Arrays.sort(P, (p1, p2) -> Double.compare(p2.getQualidade(), p1.getQualidade()));
+
+        System.out.println("\nAlgoritmo Finalizado\n");
+        System.out.println("Individuos gerados: " + gerou);
+        System.out.println("Probabilidade final: " + pFinal);
+
+        return P;
+    }
     /**
      *@author Jucesa
      * @param quantidadeTorneio int - quantidade de individos selecionados no torneio
@@ -22,7 +71,7 @@ public class Partition {
      * @param tipoAvaliacao String - tipo de avaliação utilizado para qualificar indivíduos
      * @return Pattern[] - conjunto final de individuos
      */
-    public static Pattern[] run(int quantidadeTorneio, int tentativasMelhoria, int maxIndividuosGerados, String tipoAvaliacao, int k) {
+    public static Pattern[] runDebug(int quantidadeTorneio, int tentativasMelhoria, int maxIndividuosGerados, String tipoAvaliacao, int k) {
 
         Pattern[] P = INICIALIZAR.D1(tipoAvaliacao);
 
@@ -33,7 +82,7 @@ public class Partition {
         int particao = tamanhoP;
         float pFinal = 1;
         //criterio parada: individuos gerados
-        while (gerou < maxIndividuosGerados && particao > k) {
+        while (gerou < maxIndividuosGerados && particao > quantidadeTorneio) {
             float p = (float) particao/tamanhoP;
             System.out.println("Probabilidade acima da partição: " + p);
 
@@ -92,10 +141,16 @@ public class Partition {
         Logger logger = Logger.getLogger(Partition.class.getName());
 
         String diretorioBases = Const.CAMINHO_BASES;
+        String social = "/Humanitie and ssocial sciences";
+        String bio140 = "/Bases BIO 140";
+        String bioinformatica = "/Bioinformatic";
+        String texto = "/Text mining";
 
-        String[] bases = {diretorioBases+"/alon-clean50-pn-width-2.csv",
-                diretorioBases+"/ENEM2014.csv",
-                diretorioBases+"/matrixBinaria-Global-100-p.csv"};
+        String[] bases = {diretorioBases+bioinformatica+"/alon-clean50-pn-width-2.csv",
+                diretorioBases+social+"/ENEM2014-NOTA-100K.csv",
+                diretorioBases+"/matrixBinaria-Global-100-p.csv",
+                diretorioBases+texto+"/matrixBinaria-ALL-TERMS-59730-p.csv"
+        };
 
         String base = bases[1];
         D.SEPARADOR = ","; //separator database
@@ -112,16 +167,19 @@ public class Partition {
         //Parameters of the algorithm
         int k = 10;
         String metricaAvaliacao = Const.METRICA_Qg;
-        int tentativasMelhoria = 10;
+        int tentativasMelhoria = 20;
         int maxIndividuosGerados = 100000;
-        int quantidadeTorneio = 10;
-        System.out.println("Algoritmo com Torneio: " + quantidadeTorneio);
-        Pattern[] p = run(quantidadeTorneio, tentativasMelhoria, maxIndividuosGerados, metricaAvaliacao, k);
+        int quantidadeTorneio = 5;
 
-        //String[] metricas = {metricaAvaliacao};
+        System.out.println("Algoritmo com Torneio: " + quantidadeTorneio);
+        Pattern[] p = runDebug(quantidadeTorneio, tentativasMelhoria, maxIndividuosGerados, metricaAvaliacao, k);
+
+        System.out.println("Partition");
         Avaliador.imprimirRegras(p, k);
+
         System.out.println("-------------------------");
 
+        System.out.println("SSDP");
         Pattern[] pS = SSDP.run(k, metricaAvaliacao, 3600);
         Avaliador.imprimirRegras(pS, k);
     }
@@ -149,7 +207,7 @@ public class Partition {
 //                gerou++;
 //            }
 //        }
-
+//
 //        for (Pattern p : P) {
 //            if (p.getItens().size() > 1) {
 //                int temp = Arrays.stream(P).toList().indexOf(p) - 1;
