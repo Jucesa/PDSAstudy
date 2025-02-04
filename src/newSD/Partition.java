@@ -16,133 +16,71 @@ import java.util.logging.Logger;
 
 public class Partition {
 
-    public static Pattern[] run(int quantidadeTorneio, int tentativasMelhoria, int maxIndividuosGerados, String tipoAvaliacao, int k) {
-        Pattern[] P = INICIALIZAR.D1(tipoAvaliacao);
+    public static Pattern[] run(int quantidadeTorneio, int tentativasMelhoria, int maxIndividuosGerados, String tipoAvaliacao, int k, Pattern[] P0, int recursionDepth) {
+        int maxRecursionDepth = 100;
+        if (recursionDepth >= maxRecursionDepth) {
+            System.out.println("Max recursion depth reached. Returning current population.");
+            return P0;
+        }
 
+        Pattern[] P = inicializarPopulacao(tipoAvaliacao, P0, recursionDepth);
         Arrays.sort(P, (p1, p2) -> Double.compare(p2.getQualidade(), p1.getQualidade()));
 
         int gerou = 0;
         int tamanhoP = P.length;
         int particao = tamanhoP;
-        float pFinal = 1;
-        //criterio parada: individuos gerados
-        while (gerou < maxIndividuosGerados && particao > quantidadeTorneio) {
-            float p = (float) particao/tamanhoP;
-            //Seleciona um indice acima da particao
-            int index = SELECAO.torneioN(P, quantidadeTorneio);
 
+        while (gerou < maxIndividuosGerados && particao > quantidadeTorneio) {
+            int index = SELECAO.torneioN(P, quantidadeTorneio);
             Pattern individuo = P[index];
 
-
-            // Tenta melhorar o indivíduo selecionado
             for (int i = 0; i < tentativasMelhoria; i++) {
-                HashSet<Integer> itemNovo = new HashSet<>(individuo.getItens()); // Adiciona itens existentes de p a ser melhorado
-
-                double aDouble = Const.random.nextDouble(0, 1);
-                if(aDouble < p) {
-                    itemNovo.add(SELECAO.torneioNparticao(P, quantidadeTorneio, 0, particao-1));
-                } else {
-                    itemNovo.add(SELECAO.torneioNparticao(P, quantidadeTorneio, particao, tamanhoP-1));
-                }
-
-                Pattern paux = new Pattern(itemNovo, tipoAvaliacao);
-                //if (paux.getQualidade() > P[particao-1].getQualidade()){
-                if (SELECAO.ehRelevante(paux, P)) {
+                Pattern paux = melhorarIndividuo(individuo, P, quantidadeTorneio, particao, tamanhoP, tipoAvaliacao);
+                if (substituirIndividuo(P, paux, particao)) {
                     particao--;
-                    P[particao] = paux;
                     break;
                 }
                 gerou++;
             }
-            pFinal = p;
         }
-        Arrays.sort(P, (p1, p2) -> Double.compare(p2.getQualidade(), p1.getQualidade()));
-
-        System.out.println("\nAlgoritmo Finalizado\n");
-        System.out.println("Individuos gerados: " + gerou);
-        System.out.println("Probabilidade final: " + pFinal);
-
-        return P;
-    }
-
-    /**
-     *@author Jucesa
-     * @param quantidadeTorneio int - quantidade de individos selecionados no torneio
-     * @param tentativasMelhoria int - quantidade de vezes que o algoritmo tenta melhorar um individuo
-     * @param maxIndividuosGerados int -criterio de parada
-     * @param tipoAvaliacao String - tipo de avaliação utilizado para qualificar indivíduos
-     * @return Pattern[] - conjunto final de individuos
-     */
-    public static Pattern[] runDebug(int quantidadeTorneio, int tentativasMelhoria, int maxIndividuosGerados, String tipoAvaliacao, int k) {
-        double confThreshold = 0.5;
-        Pattern[] P = INICIALIZAR.D1(tipoAvaliacao);
 
         Arrays.sort(P, (p1, p2) -> Double.compare(p2.getQualidade(), p1.getQualidade()));
-
-        int gerou = 0;
-        int tamanhoP = P.length;
-        int particao = tamanhoP;
-        float pFinal = 1;
-        //criterio parada: individuos gerados
-        while (gerou < maxIndividuosGerados && particao > quantidadeTorneio) {
-            float p = (float) particao/tamanhoP;
-            System.out.println("Probabilidade acima da partição: " + p);
-
-            System.out.println("Partição: " + particao);
-            //Seleciona um indice acima da particao
-            int index = SELECAO.torneioN(P, quantidadeTorneio);
-
-            Pattern individuo = P[index];
-            System.out.println("Individuo para melhorar: " + individuo.getItens());
-            System.out.println("Qualidade individuo: " + individuo.getQualidade());
-
-            // Tenta melhorar o indivíduo selecionado
-            for (int i = 0; i < tentativasMelhoria; i++) {
-                HashSet<Integer> itemNovo = new HashSet<>(individuo.getItens()); // Adiciona itens existentes de p a ser melhorado
-
-                double aDouble = Const.random.nextDouble(0, 1);
-                if(aDouble < p) {
-                    System.out.println("Melhorando acima da partição");
-                    itemNovo.add(SELECAO.torneioNparticao(P, quantidadeTorneio, 0, particao-1));
-                } else {
-                    System.out.println("Melhorando abaixo da partição");
-                    itemNovo.add(SELECAO.torneioNparticao(P, quantidadeTorneio, particao, tamanhoP-1));
-                }
-
-                Pattern paux = new Pattern(itemNovo, tipoAvaliacao);
-                System.out.println("\nNovo individuo gerado: " + paux.getItens());
-                System.out.println("Qualidade individuo: " + paux.getQualidade());
-
-                System.out.println("\nTentando substituir por individuo: " + P[particao-1].getItens());
-                System.out.println("Qualidade individuo: " + P[particao-1].getQualidade());
-                //if (paux.getQualidade() > P[particao-1].getQualidade()){
-                if (SELECAO.ehRelevante(paux, P)) {
-                    particao--;
-                    P[particao] = paux;
-                    System.out.println("\nSubstituiu! Partição: " + particao);
-                    break;
-                } else {
-                    System.out.println("\nNão substituiu. Partição: " + particao);
-                }
-                gerou++;
-                System.out.println("Individuos gerados: " + gerou);
-            }
-            System.out.println("Tentativas de melhoria encerradas\n");
-            pFinal = p;
-        }
-        Arrays.sort(P, (p1, p2) -> Double.compare(p2.getQualidade(), p1.getQualidade()));
-
-        System.out.println("\nAlgoritmo Finalizado\n");
-        System.out.println("Individuos gerados: " + gerou);
-        System.out.println("Probabilidade final: " + pFinal);
 
         double overallConfidence = calculateOverallConfidence(P, k);
-        if (overallConfidence < confThreshold) {
+        if (overallConfidence < 0.8) {
             System.out.println("Warning: Overall confidence in top-k is below threshold! " + overallConfidence);
+            return run(quantidadeTorneio, tentativasMelhoria, maxIndividuosGerados, tipoAvaliacao, k, P, recursionDepth + 1);
         }
-
+        System.out.println("Recursion Depth: " + recursionDepth);
+        System.out.println("Overall Confidence: " + overallConfidence);
+        System.out.println("Population Size: " + P.length);
         return P;
     }
+
+    private static Pattern[] inicializarPopulacao(String tipoAvaliacao, Pattern[] P0, int recursionDepth) {
+        return (recursionDepth == 0) ? INICIALIZAR.D1(tipoAvaliacao) : P0;
+    }
+
+    private static Pattern melhorarIndividuo(Pattern individuo, Pattern[] P, int quantidadeTorneio, int particao, int tamanhoP, String tipoAvaliacao) {
+        HashSet<Integer> itemNovo = new HashSet<>(individuo.getItens());
+        double aDouble = Const.random.nextDouble(0, 1);
+        if (aDouble < (float) particao / tamanhoP) {
+            itemNovo.add(SELECAO.torneioNparticao(P, quantidadeTorneio, 0, particao - 1));
+        } else {
+            itemNovo.add(SELECAO.torneioNparticao(P, quantidadeTorneio, particao, tamanhoP - 1));
+        }
+        return new Pattern(itemNovo, tipoAvaliacao);
+    }
+
+    private static boolean substituirIndividuo(Pattern[] P, Pattern paux, int particao) {
+        if(paux.getQualidade() >= P[particao - 1].getQualidade()){
+        //if (SELECAO.ehRelevante(paux, P)) {
+            P[particao - 1] = paux;
+            return true;
+        }
+        return false;
+    }
+
     private static double calculateOverallConfidence(Pattern[] P, int k) {
         double totalConfidence = 0;
         for (int i = 0; i < k && i < P.length; i++) {
@@ -175,18 +113,19 @@ public class Partition {
             return;
         }
 
-        Const.random = new Random(Const.SEEDS[0]); //Seed
+        Const.random = new Random(Const.SEEDS[3]); //Seed
         D.GerarDpDn("p");
 
         //Parameters of the algorithm
         int k = 10;
-        String metricaAvaliacao = Const.METRICA_Qg;
+        String metricaAvaliacao = Const.METRICA_WRACC;
         int tentativasMelhoria = 20;
         int maxIndividuosGerados = 100000;
         int quantidadeTorneio = 5;
 
         System.out.println("Algoritmo com Torneio: " + quantidadeTorneio);
-        Pattern[] p = runDebug(quantidadeTorneio, tentativasMelhoria, maxIndividuosGerados, metricaAvaliacao, k);
+        Pattern[] P = new Pattern[0];
+        Pattern[] p = run(quantidadeTorneio, tentativasMelhoria, maxIndividuosGerados, metricaAvaliacao, k, P, 0);
 
         System.out.println("Partition");
         Avaliador.imprimirRegras(p, k);
@@ -198,35 +137,3 @@ public class Partition {
         Avaliador.imprimirRegras(pS, k);
     }
 }
-
-//tenta melhorar todos individuos de P0 - Italan
-//        int piorIndividuo = P.length-1;
-//        for(int i = 0; i < P.length; i++){
-//            System.out.println(P[i].getItens());
-//            System.out.println(P[i].getQualidade());
-//            System.out.println(piorIndividuo);
-//            Pattern p = P0[i];
-//
-//            for(int j = 0; j < tentativasMelhoria; j++){
-//
-//                HashSet<Integer> itemNovo = new HashSet<>(p.getItens());
-//                itemNovo.add(SELECAO.torneioN(P0, quantidadeTorneio));
-//
-//                Pattern paux = new Pattern(itemNovo, tipoAvaliacao);
-//
-//                if (paux.getQualidade() > P[piorIndividuo].getQualidade()) {
-//                    P[piorIndividuo] = paux;
-//                    piorIndividuo--;
-//                }
-//                gerou++;
-//            }
-//        }
-//
-//        for (Pattern p : P) {
-//            if (p.getItens().size() > 1) {
-//                int temp = Arrays.stream(P).toList().indexOf(p) - 1;
-//                if (temp >= 0) {
-//                    particao = temp;
-//                }
-//            }
-//        }

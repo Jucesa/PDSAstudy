@@ -166,15 +166,6 @@ public class SimulacaoGeral {
                         Const.random = new Random(Const.SEEDS[n]);
                         long t0 = System.currentTimeMillis();
                         switch(algoritmo){
-                            case Const.ALGORITMO_TPSDt5:
-                                p = Partition.run(5,5,100000, tipoAvaliacao, 10);
-                                break;
-                            case Const.ALGORITMO_TPSDt10:
-                                p = Partition.run(10,5, 100000, tipoAvaliacao, 10);
-                                break;
-                            case Const.ALGORITMO_TPSDt50:
-                                p = Partition.run(50, 5, 100000, tipoAvaliacao, 10);
-                                break;
                             case Const.ALGORITMO_SSDP:
                                 p = SSDP.run(k, tipoAvaliacao, tempoMaximoSegundosAlgoritmos);
                                 break;
