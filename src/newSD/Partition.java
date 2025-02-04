@@ -7,6 +7,7 @@ import dp.Pattern;
 import evolucionario.INICIALIZAR;
 import evolucionario.SELECAO;
 import evolucionario.SSDP;
+import simulacoes.DPinfo;
 
 import java.io.FileNotFoundException;
 import java.util.*;
@@ -63,6 +64,7 @@ public class Partition {
 
         return P;
     }
+
     /**
      *@author Jucesa
      * @param quantidadeTorneio int - quantidade de individos selecionados no torneio
@@ -72,7 +74,7 @@ public class Partition {
      * @return Pattern[] - conjunto final de individuos
      */
     public static Pattern[] runDebug(int quantidadeTorneio, int tentativasMelhoria, int maxIndividuosGerados, String tipoAvaliacao, int k) {
-
+        double confThreshold = 0.5;
         Pattern[] P = INICIALIZAR.D1(tipoAvaliacao);
 
         Arrays.sort(P, (p1, p2) -> Double.compare(p2.getQualidade(), p1.getQualidade()));
@@ -134,7 +136,19 @@ public class Partition {
         System.out.println("Individuos gerados: " + gerou);
         System.out.println("Probabilidade final: " + pFinal);
 
+        double overallConfidence = calculateOverallConfidence(P, k);
+        if (overallConfidence < confThreshold) {
+            System.out.println("Warning: Overall confidence in top-k is below threshold! " + overallConfidence);
+        }
+
         return P;
+    }
+    private static double calculateOverallConfidence(Pattern[] P, int k) {
+        double totalConfidence = 0;
+        for (int i = 0; i < k && i < P.length; i++) {
+            totalConfidence += DPinfo.conf(P[i]);
+        }
+        return totalConfidence / k;
     }
 
     public static void main(String[] args) throws FileNotFoundException {
@@ -152,7 +166,7 @@ public class Partition {
                 diretorioBases+texto+"/matrixBinaria-ALL-TERMS-59730-p.csv"
         };
 
-        String base = bases[1];
+        String base = "pastas/bases/Text mining/matrixBinaria-Global-100-p.csv";
         D.SEPARADOR = ","; //separator database
         try {
             D.CarregarArquivo(base, D.TIPO_CSV);
