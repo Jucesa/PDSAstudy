@@ -4,6 +4,7 @@ import dp.Avaliador;
 import dp.Const;
 import dp.D;
 import dp.Pattern;
+import evolucionario.CRUZAMENTO;
 import evolucionario.INICIALIZAR;
 import evolucionario.SELECAO;
 import evolucionario.SSDP;
@@ -16,14 +17,19 @@ import java.util.logging.Logger;
 
 public class Partition {
 
-    public static Pattern[] run(int quantidadeTorneio, int tentativasMelhoria, int maxIndividuosGerados, String tipoAvaliacao, int k, Pattern[] P0, int recursionDepth) {
-        int maxRecursionDepth = 100;
-        if (recursionDepth >= maxRecursionDepth) {
-            System.out.println("Max recursion depth reached. Returning current population.");
-            return P0;
-        }
+    /**Algoritmo baseado em torneio e partição da população com metodo AND combinando os individuos
+     *@author Júlio Limeira
+     * @param quantidadeTorneio
+     * @param tentativasMelhoria
+     * @param maxIndividuosGerados
+     * @param tipoAvaliacao
+     * @param k
+     * @return Pattern[] - a população final
+     */
+    public static Pattern[] run(int quantidadeTorneio, int tentativasMelhoria, int maxIndividuosGerados, String tipoAvaliacao, int k) {
 
-        Pattern[] P = inicializarPopulacao(tipoAvaliacao, P0, recursionDepth);
+        Pattern[] P = INICIALIZAR.D1(tipoAvaliacao);
+
         Arrays.sort(P, (p1, p2) -> Double.compare(p2.getQualidade(), p1.getQualidade()));
 
         int gerou = 0;
@@ -36,11 +42,15 @@ public class Partition {
 
             for (int i = 0; i < tentativasMelhoria; i++) {
                 Pattern paux = melhorarIndividuo(individuo, P, quantidadeTorneio, particao, tamanhoP, tipoAvaliacao);
+                gerou++;
                 if (substituirIndividuo(P, paux, particao)) {
                     particao--;
                     break;
                 }
-                gerou++;
+                if(gerou % tamanhoP == 0){
+                    System.out.println("Partição: "+particao);
+                    avaliarPopulacao(P);
+                }
             }
         }
 
@@ -49,32 +59,27 @@ public class Partition {
         double overallConfidence = calculateOverallConfidence(P, k);
         if (overallConfidence < 0.8) {
             System.out.println("Warning: Overall confidence in top-k is below threshold! " + overallConfidence);
-            return run(quantidadeTorneio, tentativasMelhoria, maxIndividuosGerados, tipoAvaliacao, k, P, recursionDepth + 1);
         }
-        System.out.println("Recursion Depth: " + recursionDepth);
         System.out.println("Overall Confidence: " + overallConfidence);
-        System.out.println("Population Size: " + P.length);
+        System.out.println("Population Size: " + tamanhoP);
+        System.out.println("Gerou: " + gerou);
         return P;
     }
 
-    private static Pattern[] inicializarPopulacao(String tipoAvaliacao, Pattern[] P0, int recursionDepth) {
-        return (recursionDepth == 0) ? INICIALIZAR.D1(tipoAvaliacao) : P0;
-    }
-
     private static Pattern melhorarIndividuo(Pattern individuo, Pattern[] P, int quantidadeTorneio, int particao, int tamanhoP, String tipoAvaliacao) {
-        HashSet<Integer> itemNovo = new HashSet<>(individuo.getItens());
+        Pattern novoIndividuo;
         double aDouble = Const.random.nextDouble(0, 1);
         if (aDouble < (float) particao / tamanhoP) {
-            itemNovo.add(SELECAO.torneioNparticao(P, quantidadeTorneio, 0, particao - 1));
+            novoIndividuo = CRUZAMENTO.AND(individuo, P[SELECAO.torneioNparticao(P, quantidadeTorneio, 0, particao - 1)], tipoAvaliacao);
         } else {
-            itemNovo.add(SELECAO.torneioNparticao(P, quantidadeTorneio, particao, tamanhoP - 1));
+            novoIndividuo = CRUZAMENTO.AND(individuo, P[SELECAO.torneioNparticao(P, quantidadeTorneio, particao, tamanhoP - 1)], tipoAvaliacao);
         }
-        return new Pattern(itemNovo, tipoAvaliacao);
+        return novoIndividuo;
     }
 
     private static boolean substituirIndividuo(Pattern[] P, Pattern paux, int particao) {
-        if(paux.getQualidade() >= P[particao - 1].getQualidade()){
-        //if (SELECAO.ehRelevante(paux, P)) {
+        //if(paux.getQualidade() >= P[particao - 1].getQualidade()){
+        if (SELECAO.ehRelevante(paux, P)) {
             P[particao - 1] = paux;
             return true;
         }
@@ -87,6 +92,26 @@ public class Partition {
             totalConfidence += DPinfo.conf(P[i]);
         }
         return totalConfidence / k;
+    }
+
+    private static void avaliarPopulacao(Pattern[] P) {
+        double melhorQualidade = Arrays.stream(P).mapToDouble(Pattern::getQualidade).max().getAsDouble();
+
+        double mediaQualidade = Arrays.stream(P)
+                .mapToDouble(Pattern::getQualidade)
+                .average()
+                .orElse(0.0);
+
+        double mediaTamanho =  Arrays.stream(P)
+                .mapToDouble(pattern -> pattern.getItens().size()).average().getAsDouble();
+
+        HashSet<Pattern> distintos = new HashSet<>(Arrays.asList(P));
+
+        System.out.println("------ Avaliação da População ------");
+        System.out.println("Melhor qualidade: " + melhorQualidade);
+        System.out.println("Qualidade média: " + mediaQualidade);
+        System.out.println("Tamanho médio dos indivíduos: " + mediaTamanho);
+        System.out.println("Quantidade de individuos distintos: " + distintos.size());
     }
 
     public static void main(String[] args) throws FileNotFoundException {
@@ -104,8 +129,9 @@ public class Partition {
                 diretorioBases+texto+"/matrixBinaria-ALL-TERMS-59730-p.csv"
         };
 
-        String base = "pastas/bases/Text mining/matrixBinaria-Global-100-p.csv";
-        D.SEPARADOR = ","; //separator database
+        String base = bases[2];
+        D.SEPARADOR = ",";
+
         try {
             D.CarregarArquivo(base, D.TIPO_CSV);
         } catch (FileNotFoundException e) {
@@ -118,14 +144,13 @@ public class Partition {
 
         //Parameters of the algorithm
         int k = 10;
-        String metricaAvaliacao = Const.METRICA_WRACC;
+        String metricaAvaliacao = Const.METRICA_WRACC_NORMALIZED;
         int tentativasMelhoria = 20;
-        int maxIndividuosGerados = 100000;
+        int maxIndividuosGerados = 100000000;
         int quantidadeTorneio = 5;
 
         System.out.println("Algoritmo com Torneio: " + quantidadeTorneio);
-        Pattern[] P = new Pattern[0];
-        Pattern[] p = run(quantidadeTorneio, tentativasMelhoria, maxIndividuosGerados, metricaAvaliacao, k, P, 0);
+        Pattern[] p = run(quantidadeTorneio, tentativasMelhoria, maxIndividuosGerados, metricaAvaliacao, k);
 
         System.out.println("Partition");
         Avaliador.imprimirRegras(p, k);
