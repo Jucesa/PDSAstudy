@@ -484,6 +484,8 @@ public class Avaliador {
         System.out.println(vazio.toString2()+" Avaliação-> "+vazio.getTipoAvaliacao());
         for(int i = 0; i < kPrimeiros; i++){
             System.out.println(p[i].toString2());
+            System.out.println(p[i].getItens());
+            System.out.println("Qualidade:"+p[i].getQualidade());
         }        
     }
     

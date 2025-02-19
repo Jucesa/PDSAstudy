@@ -33,22 +33,21 @@ public class Partition {
         Arrays.sort(P, (p1, p2) -> Double.compare(p2.getQualidade(), p1.getQualidade()));
 
         int gerou = 0;
-        int tamanhoP = P.length;
-        int particao = tamanhoP;
+        int particao = P.length;
 
         while (gerou < maxIndividuosGerados && particao > quantidadeTorneio) {
             int index = SELECAO.torneioN(P, quantidadeTorneio);
             Pattern individuo = P[index];
 
             for (int i = 0; i < tentativasMelhoria; i++) {
-                Pattern paux = melhorarIndividuo(individuo, P, quantidadeTorneio, particao, tamanhoP, tipoAvaliacao);
+                Pattern paux = melhorarIndividuo(individuo, P, quantidadeTorneio, particao);
                 gerou++;
                 if (substituirIndividuo(P, paux, particao)) {
                     particao--;
                     break;
                 }
-                if(gerou % tamanhoP == 0){
-                    System.out.println("Partição: "+particao);
+                if(gerou % P.length == 0){
+                    System.out.println("Partição: "+ particao);
                     avaliarPopulacao(P);
                 }
             }
@@ -61,18 +60,18 @@ public class Partition {
             System.out.println("Warning: Overall confidence in top-k is below threshold! " + overallConfidence);
         }
         System.out.println("Overall Confidence: " + overallConfidence);
-        System.out.println("Population Size: " + tamanhoP);
+        System.out.println("Population Size: " + P.length);
         System.out.println("Gerou: " + gerou);
         return P;
     }
 
-    private static Pattern melhorarIndividuo(Pattern individuo, Pattern[] P, int quantidadeTorneio, int particao, int tamanhoP, String tipoAvaliacao) {
+    private static Pattern melhorarIndividuo(Pattern individuo, Pattern[] P, int quantidadeTorneio, int particao) {
         Pattern novoIndividuo;
         double aDouble = Const.random.nextDouble(0, 1);
-        if (aDouble < (float) particao / tamanhoP) {
-            novoIndividuo = CRUZAMENTO.AND(individuo, P[SELECAO.torneioNparticao(P, quantidadeTorneio, 0, particao - 1)], tipoAvaliacao);
+        if (aDouble < (float) particao / P.length) {
+            novoIndividuo = CRUZAMENTO.AND(individuo, P[SELECAO.torneioN(P, quantidadeTorneio, 0, particao - 1)], individuo.getTipoAvaliacao());
         } else {
-            novoIndividuo = CRUZAMENTO.AND(individuo, P[SELECAO.torneioNparticao(P, quantidadeTorneio, particao, tamanhoP - 1)], tipoAvaliacao);
+            novoIndividuo = CRUZAMENTO.AND(individuo, P[SELECAO.torneioN(P, quantidadeTorneio, particao, P.length - 1)], individuo.getTipoAvaliacao());
         }
         return novoIndividuo;
     }
@@ -129,7 +128,7 @@ public class Partition {
                 diretorioBases+texto+"/matrixBinaria-ALL-TERMS-59730-p.csv"
         };
 
-        String base = bases[2];
+        String base = bases[0];
         D.SEPARADOR = ",";
 
         try {
@@ -144,7 +143,7 @@ public class Partition {
 
         //Parameters of the algorithm
         int k = 10;
-        String metricaAvaliacao = Const.METRICA_WRACC_NORMALIZED;
+        String metricaAvaliacao = Const.METRICA_WRACC;
         int tentativasMelhoria = 20;
         int maxIndividuosGerados = 100000000;
         int quantidadeTorneio = 5;
