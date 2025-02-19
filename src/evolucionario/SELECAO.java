@@ -107,7 +107,7 @@ public class SELECAO {
         return bestIndex;
     }
 
-    public static int torneioNparticao(Pattern[] P, int n, int inf, int sup){
+    public static int torneioN(Pattern[] P, int n, int inf, int sup){
         HashMap<Integer, Double> indices =  HashMap.newHashMap(n);
         while(indices.size() < n){
             int indice = Const.random.nextInt(inf, sup);
