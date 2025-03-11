@@ -16,9 +16,11 @@ import java.util.logging.Logger;
 
 public class Threshold {
 
-//    protected static boolean aceitaFilho(Pattern pai1, Pattern pai2, Pattern filho){
-//
-//    }
+    protected static boolean aceitaFilho(Pattern pai1, Pattern pai2, Pattern filho){
+        if(filho.getQualidade() > pai1.getQualidade()){
+
+        }
+    }
 
     protected static Pattern melhorarIndividuo(Pattern pai1, Pattern[] P, int quantidadeTorneio, int particao) {
         Pattern novoIndividuo;
