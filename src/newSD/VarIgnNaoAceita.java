@@ -8,26 +8,25 @@ import evolucionario.SELECAO;
 
 import java.util.Arrays;
 
-public class TorneioNpp extends TorneioN{
-
+public class VarIgnNaoAceita extends Threshold {
     public static Pattern[] run(int tentativasMelhoria, int maxIndividuosGerados, String tipoAvaliacao, int k) {
+
         int quantidadeTorneio = 1;
 
         Pattern[] P = INICIALIZAR.D1(tipoAvaliacao);
-
         Arrays.sort(P, (p1, p2) -> Double.compare(p2.getQualidade(), p1.getQualidade()));
 
         int gerou = 0;
         int particao = P.length;
 
-        while (gerou < maxIndividuosGerados && particao > quantidadeTorneio) {
+        while (gerou < maxIndividuosGerados) {
 
             int index = SELECAO.torneioN(P, quantidadeTorneio);
 
             Pattern individuo = P[index];
 
             for (int i = 0; i < tentativasMelhoria; i++) {
-                Pattern paux = melhorarIndividuo(individuo, P, quantidadeTorneio, particao);
+                Pattern paux = melhorarIndividuo(individuo, P, quantidadeTorneio);
                 gerou++;
                 if (substituirIndividuo(P, paux, particao)) {
                     particao--;
@@ -55,14 +54,4 @@ public class TorneioNpp extends TorneioN{
         return P;
     }
 
-    protected static Pattern melhorarIndividuo(Pattern individuo, Pattern[] P, int quantidadeTorneio, int particao) {
-        Pattern novoIndividuo;
-        double aDouble = Const.random.nextDouble(0, 1);
-        if (aDouble < (float) particao / P.length) {
-            novoIndividuo = CRUZAMENTO.AND(individuo, P[SELECAO.torneioN(P, quantidadeTorneio, 0, particao - 1)], individuo.getTipoAvaliacao());
-        } else {
-            novoIndividuo = CRUZAMENTO.AND(individuo, P[SELECAO.torneioN(P, quantidadeTorneio, particao, P.length - 1)], individuo.getTipoAvaliacao());
-        }
-        return novoIndividuo;
-    }
 }

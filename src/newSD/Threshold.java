@@ -5,7 +5,6 @@ import dp.Const;
 import dp.D;
 import dp.Pattern;
 import evolucionario.CRUZAMENTO;
-import evolucionario.INICIALIZAR;
 import evolucionario.SELECAO;
 import evolucionario.SSDP;
 import simulacoes.DPinfo;
@@ -15,56 +14,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class TorneioN {
-
-    /**Algoritmo baseado em torneio e partição da população com metodo AND combinando os individuos
-     *@author Júlio Limeira
-     * @param quantidadeTorneio
-     * @param tentativasMelhoria
-     * @param maxIndividuosGerados
-     * @param tipoAvaliacao
-     * @param k
-     * @return Pattern[] - a população final
-     */
-    public static Pattern[] run(int quantidadeTorneio, int tentativasMelhoria, int maxIndividuosGerados, String tipoAvaliacao, int k) {
-
-        Pattern[] P = INICIALIZAR.D1(tipoAvaliacao);
-
-        Arrays.sort(P, (p1, p2) -> Double.compare(p2.getQualidade(), p1.getQualidade()));
-
-        int gerou = 0;
-        int particao = P.length;
-
-        while (gerou < maxIndividuosGerados && particao > quantidadeTorneio) {
-            int index = SELECAO.torneioN(P, quantidadeTorneio);
-            Pattern individuo = P[index];
-
-            for (int i = 0; i < tentativasMelhoria; i++) {
-                Pattern paux = melhorarIndividuo(individuo, P, quantidadeTorneio, particao);
-                gerou++;
-                if (substituirIndividuo(P, paux, particao)) {
-                    particao--;
-                    break;
-                }
-                if(gerou % P.length == 0){
-                    System.out.println("Partição: "+ particao);
-                    avaliarPopulacao(P);
-                }
-            }
-        }
-
-        Arrays.sort(P, (p1, p2) -> Double.compare(p2.getQualidade(), p1.getQualidade()));
-
-        double overallConfidence = calculateOverallConfidence(P, k);
-        if (overallConfidence < 0.8) {
-            System.out.println("Warning: Overall confidence in top-k is below threshold! " + overallConfidence);
-        }
-        System.out.println("Overall Confidence: " + overallConfidence);
-        System.out.println("Threshold: " +particao);
-        System.out.println("Population Size: " + P.length);
-        System.out.println("Gerou: " + gerou);
-        return P;
-    }
+public class Threshold {
 
     protected static Pattern melhorarIndividuo(Pattern individuo, Pattern[] P, int quantidadeTorneio, int particao) {
         Pattern novoIndividuo;
@@ -75,6 +25,9 @@ public class TorneioN {
             novoIndividuo = CRUZAMENTO.AND(individuo, P[SELECAO.torneioN(P, quantidadeTorneio, particao, P.length - 1)], individuo.getTipoAvaliacao());
         }
         return novoIndividuo;
+    }
+    protected static Pattern melhorarIndividuo(Pattern individuo, Pattern[] P, int quantidadeTorneio) {
+        return CRUZAMENTO.AND(individuo, P[SELECAO.torneioN(P, quantidadeTorneio)], individuo.getTipoAvaliacao());
     }
 
     protected static boolean substituirIndividuo(Pattern[] P, Pattern paux, int particao) {
@@ -112,7 +65,7 @@ public class TorneioN {
     }
 
     public static void main(String[] args) throws FileNotFoundException {
-        Logger logger = Logger.getLogger(TorneioN.class.getName());
+        Logger logger = Logger.getLogger(Threshold.class.getName());
 
         String diretorioBases = Const.CAMINHO_BASES;
         String social = "/Humanitie and ssocial sciences";
@@ -146,11 +99,35 @@ public class TorneioN {
         int maxIndividuosGerados = 1000000;
         int quantidadeTorneio = 5;
 
-        System.out.println("Algoritmo com Torneio: " + quantidadeTorneio);
-        Pattern[] p = TorneioNpp.run(tentativasMelhoria, maxIndividuosGerados, metricaAvaliacao, k);
+
+        Pattern[] p = FixIgnNaoAceita.run(quantidadeTorneio, tentativasMelhoria, maxIndividuosGerados, metricaAvaliacao, k);
 
         System.out.println("Partition");
         Avaliador.imprimirRegras(p, k);
+
+        System.out.println("-------------------------");
+        p = FixSortNaoAceita.run(quantidadeTorneio, tentativasMelhoria, maxIndividuosGerados, metricaAvaliacao, k);
+
+        System.out.println("Partition");
+        Avaliador.imprimirRegras(p, k);
+
+        System.out.println("-------------------------");
+
+        p = VarSortNaoAceita.run(tentativasMelhoria, maxIndividuosGerados, metricaAvaliacao, k);
+
+        System.out.println("Partition");
+        Avaliador.imprimirRegras(p, k);
+
+        System.out.println("-------------------------");
+        p = VarIgnNaoAceita.run(tentativasMelhoria, maxIndividuosGerados, metricaAvaliacao, k);
+
+        System.out.println("Partition");
+        Avaliador.imprimirRegras(p, k);
+
+
+
+
+
 
         System.out.println("-------------------------");
 

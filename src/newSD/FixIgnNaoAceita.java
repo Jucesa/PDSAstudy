@@ -6,7 +6,7 @@ import evolucionario.SELECAO;
 
 import java.util.Arrays;
 
-public class Torneio1D extends TorneioN {
+public class FixIgnNaoAceita extends Threshold {
     public static Pattern[] run(int quantidadeTorneio, int tentativasMelhoria, int maxIndividuosGerados, String tipoAvaliacao, int k) {
         Pattern[] P = INICIALIZAR.D1(tipoAvaliacao);
 
@@ -19,7 +19,7 @@ public class Torneio1D extends TorneioN {
             Pattern individuo = P[index];
 
             for (int i = 0; i < tentativasMelhoria; i++) {
-                Pattern paux = melhorarIndividuo(individuo, P, quantidadeTorneio, particao);
+                Pattern paux = melhorarIndividuo(individuo, P, quantidadeTorneio);
                 gerou++;
                 if (substituirIndividuo(P, paux, particao)) {
                     particao--;
