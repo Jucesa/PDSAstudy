@@ -16,20 +16,28 @@ import java.util.logging.Logger;
 
 public class Threshold {
 
-    protected static Pattern melhorarIndividuo(Pattern individuo, Pattern[] P, int quantidadeTorneio, int particao) {
-        Pattern novoIndividuo;
-        double aDouble = Const.random.nextDouble(0, 1);
+//    protected static boolean aceitaFilho(Pattern pai1, Pattern pai2, Pattern filho){
+//
+//    }
 
+    protected static Pattern melhorarIndividuo(Pattern pai1, Pattern[] P, int quantidadeTorneio, int particao) {
+        Pattern novoIndividuo;
+        Pattern pai2;
+
+        double aDouble = Const.random.nextDouble(0, 1);
 
         if (aDouble < (float) particao / P.length) {
             if(particao > quantidadeTorneio){
-                novoIndividuo = CRUZAMENTO.AND(individuo, P[SELECAO.torneioN(P, quantidadeTorneio, 0, particao - 1)], individuo.getTipoAvaliacao());
+                pai2 = P[SELECAO.torneioN(P, quantidadeTorneio, 0, particao - 1)];
             } else {
-                novoIndividuo = CRUZAMENTO.AND(individuo, P[SELECAO.torneioN(P, particao-1, 0, particao - 1)], individuo.getTipoAvaliacao());
+                pai2 = P[SELECAO.torneioN(P, particao-1, 0, particao - 1)];
             }
         } else {
-            novoIndividuo = CRUZAMENTO.AND(individuo, P[SELECAO.torneioN(P, quantidadeTorneio, particao, P.length - 1)], individuo.getTipoAvaliacao());
+            pai2 = P[SELECAO.torneioN(P, quantidadeTorneio, particao, P.length - 1)];
         }
+
+        novoIndividuo = CRUZAMENTO.AND(pai1, pai2, pai1.getTipoAvaliacao());
+
         return novoIndividuo;
     }
 
