@@ -15,7 +15,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Partition {
+public class TorneioN {
 
     /**Algoritmo baseado em torneio e partição da população com metodo AND combinando os individuos
      *@author Júlio Limeira
@@ -60,12 +60,13 @@ public class Partition {
             System.out.println("Warning: Overall confidence in top-k is below threshold! " + overallConfidence);
         }
         System.out.println("Overall Confidence: " + overallConfidence);
+        System.out.println("Threshold: " +particao);
         System.out.println("Population Size: " + P.length);
         System.out.println("Gerou: " + gerou);
         return P;
     }
 
-    private static Pattern melhorarIndividuo(Pattern individuo, Pattern[] P, int quantidadeTorneio, int particao) {
+    protected static Pattern melhorarIndividuo(Pattern individuo, Pattern[] P, int quantidadeTorneio, int particao) {
         Pattern novoIndividuo;
         double aDouble = Const.random.nextDouble(0, 1);
         if (aDouble < (float) particao / P.length) {
@@ -76,8 +77,8 @@ public class Partition {
         return novoIndividuo;
     }
 
-    private static boolean substituirIndividuo(Pattern[] P, Pattern paux, int particao) {
-        //if(paux.getQualidade() >= P[particao - 1].getQualidade()){
+    protected static boolean substituirIndividuo(Pattern[] P, Pattern paux, int particao) {
+        //if(paux.getQualidade() > P[particao - 1].getQualidade()){
         if (SELECAO.ehRelevante(paux, P)) {
             P[particao - 1] = paux;
             return true;
@@ -85,7 +86,7 @@ public class Partition {
         return false;
     }
 
-    private static double calculateOverallConfidence(Pattern[] P, int k) {
+    protected static double calculateOverallConfidence(Pattern[] P, int k) {
         double totalConfidence = 0;
         for (int i = 0; i < k && i < P.length; i++) {
             totalConfidence += DPinfo.conf(P[i]);
@@ -93,7 +94,7 @@ public class Partition {
         return totalConfidence / k;
     }
 
-    private static void avaliarPopulacao(Pattern[] P) {
+    protected static void avaliarPopulacao(Pattern[] P) {
         double melhorQualidade = Arrays.stream(P).mapToDouble(Pattern::getQualidade).max().getAsDouble();
 
         double mediaQualidade = Arrays.stream(P)
@@ -104,17 +105,14 @@ public class Partition {
         double mediaTamanho =  Arrays.stream(P)
                 .mapToDouble(pattern -> pattern.getItens().size()).average().getAsDouble();
 
-        HashSet<Pattern> distintos = new HashSet<>(Arrays.asList(P));
-
         System.out.println("------ Avaliação da População ------");
         System.out.println("Melhor qualidade: " + melhorQualidade);
         System.out.println("Qualidade média: " + mediaQualidade);
         System.out.println("Tamanho médio dos indivíduos: " + mediaTamanho);
-        System.out.println("Quantidade de individuos distintos: " + distintos.size());
     }
 
     public static void main(String[] args) throws FileNotFoundException {
-        Logger logger = Logger.getLogger(Partition.class.getName());
+        Logger logger = Logger.getLogger(TorneioN.class.getName());
 
         String diretorioBases = Const.CAMINHO_BASES;
         String social = "/Humanitie and ssocial sciences";
@@ -138,18 +136,18 @@ public class Partition {
             return;
         }
 
-        Const.random = new Random(Const.SEEDS[3]); //Seed
+        Const.random = new Random(Const.SEEDS[9]); //Seed
         D.GerarDpDn("p");
 
         //Parameters of the algorithm
         int k = 10;
         String metricaAvaliacao = Const.METRICA_WRACC;
         int tentativasMelhoria = 20;
-        int maxIndividuosGerados = 100000000;
+        int maxIndividuosGerados = 1000000;
         int quantidadeTorneio = 5;
 
         System.out.println("Algoritmo com Torneio: " + quantidadeTorneio);
-        Pattern[] p = run(quantidadeTorneio, tentativasMelhoria, maxIndividuosGerados, metricaAvaliacao, k);
+        Pattern[] p = TorneioNpp.run(tentativasMelhoria, maxIndividuosGerados, metricaAvaliacao, k);
 
         System.out.println("Partition");
         Avaliador.imprimirRegras(p, k);
