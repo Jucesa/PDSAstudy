@@ -19,13 +19,20 @@ public class Threshold {
     protected static Pattern melhorarIndividuo(Pattern individuo, Pattern[] P, int quantidadeTorneio, int particao) {
         Pattern novoIndividuo;
         double aDouble = Const.random.nextDouble(0, 1);
+
+
         if (aDouble < (float) particao / P.length) {
-            novoIndividuo = CRUZAMENTO.AND(individuo, P[SELECAO.torneioN(P, quantidadeTorneio, 0, particao - 1)], individuo.getTipoAvaliacao());
+            if(particao > quantidadeTorneio){
+                novoIndividuo = CRUZAMENTO.AND(individuo, P[SELECAO.torneioN(P, quantidadeTorneio, 0, particao - 1)], individuo.getTipoAvaliacao());
+            } else {
+                novoIndividuo = CRUZAMENTO.AND(individuo, P[SELECAO.torneioN(P, particao-1, 0, particao - 1)], individuo.getTipoAvaliacao());
+            }
         } else {
             novoIndividuo = CRUZAMENTO.AND(individuo, P[SELECAO.torneioN(P, quantidadeTorneio, particao, P.length - 1)], individuo.getTipoAvaliacao());
         }
         return novoIndividuo;
     }
+
     protected static Pattern melhorarIndividuo(Pattern individuo, Pattern[] P, int quantidadeTorneio) {
         return CRUZAMENTO.AND(individuo, P[SELECAO.torneioN(P, quantidadeTorneio)], individuo.getTipoAvaliacao());
     }
@@ -100,28 +107,27 @@ public class Threshold {
         int quantidadeTorneio = 5;
 
 
+        System.out.println("FixIgnNaoAceita");
         Pattern[] p = FixIgnNaoAceita.run(quantidadeTorneio, tentativasMelhoria, maxIndividuosGerados, metricaAvaliacao, k);
-
-        System.out.println("Partition");
         Avaliador.imprimirRegras(p, k);
 
         System.out.println("-------------------------");
+
+        System.out.println("FixSortNaoAceita");
         p = FixSortNaoAceita.run(quantidadeTorneio, tentativasMelhoria, maxIndividuosGerados, metricaAvaliacao, k);
-
-        System.out.println("Partition");
         Avaliador.imprimirRegras(p, k);
+
 
         System.out.println("-------------------------");
 
+        System.out.println("VarSortNaoAceita");
         p = VarSortNaoAceita.run(tentativasMelhoria, maxIndividuosGerados, metricaAvaliacao, k);
-
-        System.out.println("Partition");
         Avaliador.imprimirRegras(p, k);
 
         System.out.println("-------------------------");
-        p = VarIgnNaoAceita.run(tentativasMelhoria, maxIndividuosGerados, metricaAvaliacao, k);
 
-        System.out.println("Partition");
+        System.out.println("VarIgnNaoAceita");
+        p = VarIgnNaoAceita.run(tentativasMelhoria, maxIndividuosGerados, metricaAvaliacao, k);
         Avaliador.imprimirRegras(p, k);
 
 

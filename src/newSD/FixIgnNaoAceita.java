@@ -27,8 +27,8 @@ public class FixIgnNaoAceita extends Threshold {
                 }
                 //checa se individuos suficientes foram gerados para avaliar P
                 if(gerou % P.length == 0){
-                    System.out.println("Partição: "+ particao);
-                    avaliarPopulacao(P);
+                    //System.out.println("Partição: "+ particao);
+                    //avaliarPopulacao(P);
                 }
             }
         }
