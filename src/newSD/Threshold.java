@@ -16,10 +16,13 @@ import java.util.logging.Logger;
 
 public class Threshold {
 
-    protected static boolean aceitaFilho(Pattern pai1, Pattern pai2, Pattern filho){
-        if(filho.getQualidade() > pai1.getQualidade()){
+    protected static void aceitaFilho(Pattern pai1, Pattern pai2, Pattern filho){
+        //filho é melhor que o pior p acima do threshold
+        //antes de substituir, checa se é melhor que os dois pais
 
-        }
+        // caso 1 - Filho melhor que os dois pais: substitui p
+        // caso 2 - Filho pior que o melhor pai: substitui
+        // caso 3 - Pior que os dois pais: checa alguma coisa
     }
 
     protected static Pattern melhorarIndividuo(Pattern pai1, Pattern[] P, int quantidadeTorneio, int particao) {
@@ -43,8 +46,9 @@ public class Threshold {
         return novoIndividuo;
     }
 
-    protected static Pattern melhorarIndividuo(Pattern individuo, Pattern[] P, int quantidadeTorneio) {
-        return CRUZAMENTO.AND(individuo, P[SELECAO.torneioN(P, quantidadeTorneio)], individuo.getTipoAvaliacao());
+    protected static Pattern melhorarIndividuo(Pattern pai1, Pattern[] P, int quantidadeTorneio) {
+        Pattern pai2 = P[SELECAO.torneioN(P, quantidadeTorneio)];
+        return CRUZAMENTO.AND(pai1, pai2, pai1.getTipoAvaliacao());
     }
 
     protected static boolean substituirIndividuo(Pattern[] P, Pattern paux, int particao) {
@@ -96,7 +100,7 @@ public class Threshold {
                 diretorioBases+texto+"/matrixBinaria-ALL-TERMS-59730-p.csv"
         };
 
-        String base = bases[0];
+        String base = "pastas/bases/alon-clean50-pn-width-2.csv";
         D.SEPARADOR = ",";
 
         try {
@@ -106,7 +110,7 @@ public class Threshold {
             return;
         }
 
-        Const.random = new Random(Const.SEEDS[9]); //Seed
+        Const.random = new Random(Const.SEEDS[0]); //Seed
         D.GerarDpDn("p");
 
         //Parameters of the algorithm
@@ -117,32 +121,32 @@ public class Threshold {
         int quantidadeTorneio = 5;
 
 
-        System.out.println("FixIgnNaoAceita");
-        Pattern[] p = FixIgnNaoAceita.run(quantidadeTorneio, tentativasMelhoria, maxIndividuosGerados, metricaAvaliacao, k);
+//        System.out.println("FixIgnNaoAceita");
+//        Pattern[] p = FixIgnNaoAceita.run(quantidadeTorneio, tentativasMelhoria, maxIndividuosGerados, metricaAvaliacao, k);
+//        Avaliador.imprimirRegras(p, k);
+//
+//        System.out.println("-------------------------");
+//
+//        System.out.println("FixSortNaoAceita");
+//        p = FixSortNaoAceita.run(quantidadeTorneio, tentativasMelhoria, maxIndividuosGerados, metricaAvaliacao, k);
+//        Avaliador.imprimirRegras(p, k);
+//
+//
+//        System.out.println("-------------------------");
+//
+//        System.out.println("VarSortNaoAceita");
+//        p = VarSortNaoAceita.run(tentativasMelhoria, maxIndividuosGerados, metricaAvaliacao, k);
+//        Avaliador.imprimirRegras(p, k);
+//
+//        System.out.println("-------------------------");
+//
+//        System.out.println("VarIgnNaoAceita");
+//        p = VarIgnNaoAceita.run(tentativasMelhoria, maxIndividuosGerados, metricaAvaliacao, k);
+//        Avaliador.imprimirRegras(p, k);
+
+        System.out.println("VarSortAceita");
+        Pattern[] p = VarSortAceita.run(tentativasMelhoria, maxIndividuosGerados, metricaAvaliacao, k);
         Avaliador.imprimirRegras(p, k);
-
-        System.out.println("-------------------------");
-
-        System.out.println("FixSortNaoAceita");
-        p = FixSortNaoAceita.run(quantidadeTorneio, tentativasMelhoria, maxIndividuosGerados, metricaAvaliacao, k);
-        Avaliador.imprimirRegras(p, k);
-
-
-        System.out.println("-------------------------");
-
-        System.out.println("VarSortNaoAceita");
-        p = VarSortNaoAceita.run(tentativasMelhoria, maxIndividuosGerados, metricaAvaliacao, k);
-        Avaliador.imprimirRegras(p, k);
-
-        System.out.println("-------------------------");
-
-        System.out.println("VarIgnNaoAceita");
-        p = VarIgnNaoAceita.run(tentativasMelhoria, maxIndividuosGerados, metricaAvaliacao, k);
-        Avaliador.imprimirRegras(p, k);
-
-
-
-
 
 
         System.out.println("-------------------------");

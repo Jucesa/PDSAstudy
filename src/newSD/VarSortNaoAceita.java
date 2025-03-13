@@ -20,14 +20,14 @@ public class VarSortNaoAceita extends Threshold {
         int gerou = 0;
         int particao = P.length;
 
-        while (gerou < maxIndividuosGerados) {
+        while (gerou < maxIndividuosGerados && particao > 0) {
 
             int index = SELECAO.torneioN(P, quantidadeTorneio);
 
             Pattern individuo = P[index];
 
             for (int i = 0; i < tentativasMelhoria; i++) {
-                Pattern paux = melhorarIndividuo2(individuo, P, quantidadeTorneio, particao);
+                Pattern paux = melhorarIndividuo(individuo, P, quantidadeTorneio, particao);
                 gerou++;
                 if (substituirIndividuo(P, paux, particao)) {
                     particao--;
@@ -35,10 +35,10 @@ public class VarSortNaoAceita extends Threshold {
                 }
                 if(gerou % P.length == 0){
                     quantidadeTorneio++;
-                    System.out.println("Torneio de: "+quantidadeTorneio);
-                    System.out.println("Partição: "+ particao);
                     //avaliarPopulacao(P);
                 }
+                System.out.println("Torneio de: "+quantidadeTorneio);
+                System.out.println("Partição: "+ particao);
             }
         }
 
@@ -55,24 +55,5 @@ public class VarSortNaoAceita extends Threshold {
         return P;
     }
 
-    private static Pattern melhorarIndividuo2(Pattern pai1, Pattern[] P, int quantidadeTorneio, int particao) {
-        Pattern novoIndividuo;
-        Pattern pai2;
 
-        double aDouble = Const.random.nextDouble(0, 1);
-
-        if (aDouble < (float) particao / P.length) {
-            if(particao > quantidadeTorneio){
-                pai2 = P[SELECAO.torneioN(P, quantidadeTorneio, 0, particao - 1)];
-            } else {
-                pai2 = P[SELECAO.torneioN(P, particao-1, 0, particao - 1)];
-            }
-        } else {
-            pai2 = P[SELECAO.torneioN(P, quantidadeTorneio, particao, P.length - 1)];
-        }
-
-        novoIndividuo = CRUZAMENTO.AND(pai1, pai2, pai1.getTipoAvaliacao());
-
-        return novoIndividuo;
-    }
 }

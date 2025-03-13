@@ -17,7 +17,7 @@ public class VarSortAceita extends Threshold{
         int gerou = 0;
         int particao = P.length;
 
-        while (gerou < maxIndividuosGerados) {
+        while (gerou < maxIndividuosGerados && particao > 0) {
 
             int index = SELECAO.torneioN(P, quantidadeTorneio);
 
@@ -32,9 +32,9 @@ public class VarSortAceita extends Threshold{
                 }
                 if(gerou % P.length == 0){
                     quantidadeTorneio++;
-                    System.out.println("Torneio de: "+quantidadeTorneio);
-                    System.out.println("Partição: "+ particao);
-                    //avaliarPopulacao(P);
+                    //System.out.println("Torneio de: "+quantidadeTorneio);
+                    //System.out.println("Partição: "+ particao);
+                    avaliarPopulacao(P);
                 }
             }
         }

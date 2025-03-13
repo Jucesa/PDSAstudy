@@ -23,7 +23,6 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Scanner;
 import sd.SD;
-import newSD.Partition;
 
 /**
  *
