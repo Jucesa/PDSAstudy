@@ -497,6 +497,18 @@ public class Avaliador {
         }        
     }
     
+    //Retorna as regras em formato de texto
+    //ESSE AQUI BRUNO ADICIONOU
+    public static String getRegrasString(Pattern[] p, int kPrimeiros) {
+        StringBuilder sb = new StringBuilder();
+        Pattern vazio = new Pattern(new HashSet<Integer>(), p[0].getTipoAvaliacao());
+        sb.append(vazio.toString2()).append("\n");
+        for(int i = 0; i < kPrimeiros; i++){
+            sb.append(p[i].toString2()).append("\n");
+        }
+        return sb.toString();
+    }
+    
     
     public static void imprimirDimensaoQuantidade(Pattern[] p, int kPrimeiros, int dDimensoes){
         int[] dimensaoQuantidade = new int[dDimensoes]; //Até dimensão 10

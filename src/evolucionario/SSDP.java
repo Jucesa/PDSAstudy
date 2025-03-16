@@ -158,7 +158,7 @@ public class SSDP {
        
        //String nomeBase = "evasao.CSV";
        //String nomeBase = "ENEM2014_81_NOTA_10k.csv";
-       String nomeBase = "matrixBinaria-Global-100-p.csv";
+       String nomeBase = "alon-clean50-pn-width-2.csv";
         //String nomeBase = "chiaretti-clean50-pn-width-2.CSV";
        //String nomeBase = "matrixBinaria-Global-1000-p.csv";
        //String nomeBase = "burczynski-pn-freq-2.CSV";//"chiaretti-pn-freq-2.CSV";

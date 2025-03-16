@@ -1,10 +1,13 @@
 package pso;
 
+import dp.Avaliador;
 import dp.Const;
 import dp.D;
 import dp.Pattern;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Random;
 
@@ -12,14 +15,19 @@ public class PSO {
     // Caso vá usar um número fixo de partículas, pode descomentar a linha abaixo
     // private static final int NUM_PARTICULAS = 30;
     private static final int ITERACOES_MAX = 100;
+    private static final int K = 10;
 
-    private static int idCounter = 1; // Novo campo para gerenciar IDs únicos
+    private static int idCounter = 1; // IDs únicos
+    private static FileWriter fileWriter = new FileWriter(); // Instância do FileWriter
 
-    public static Pattern run(int dimensao, String tipoAvaliacao) {
+
+    public static Pattern run(int dimensao, String tipoAvaliacao, String nomeBase) {
+        System.out.println("Iniciando PSO...");
         ArrayList<Particle> particulas = new ArrayList<>();
         Particle globalBest = null; // Alterar o tipo para Particle
         HashSet<HashSet<Integer>> combinacoesDistintas = new HashSet<>(); // Para rastrear combinações distintas
 
+        System.out.println("Inicializando partículas...");
         // Inicialização: Cada partícula começa com um único item
         for (int i = 0; i < dimensao; i++) {
             HashSet<Integer> itens = new HashSet<>();
@@ -31,10 +39,15 @@ public class PSO {
                 globalBest = particula; // Atribuir a partícula, não o pattern
             }
         }
+        System.out.println("Inicialização completa. Total de partículas: " + particulas.size());
 
         // Loop principal do BPSO
+        System.out.println("\nIniciando loop principal do PSO...");
+        StringBuilder log = new StringBuilder();
+        log.append("====== Nome da Base Analisada: ").append(nomeBase).append(" ======").append("\n");
         for (int iteracao = 0; iteracao < ITERACOES_MAX; iteracao++) {
-            System.out.println("\n=== Iteração: " + iteracao + " ===");
+            System.out.println("Executando iteração " + (iteracao + 1) + " de " + ITERACOES_MAX);
+            log.append("\n=== Iteração: ").append(iteracao).append(" ===\n");
 
             double somaQualidade = 0.0;
             double somaTamanho = 0.0;
@@ -43,6 +56,7 @@ public class PSO {
             Pattern melhorIndividuo = null;
             Pattern piorIndividuo = null;
 
+            System.out.println("Atualizando partículas...");
             for (Particle particula : particulas) {
                 // Atualiza a velocidade e a posição da partícula
                 particula.updateVelocityAndPosition(globalBest.getPattern());
@@ -73,37 +87,54 @@ public class PSO {
                 combinacoesDistintas.add(new HashSet<>(particula.getPattern().getItens()));
             }
 
+            System.out.println("Calculando estatísticas da iteração...");
             double qualidadeMedia = somaQualidade / particulas.size();
             double tamanhoMedio = somaTamanho / particulas.size();
 
-            // Imprimir estatísticas dos indivíduos
-            System.out.println("\n=== Estatísticas dos Indivíduos após a iteração " + iteracao + " ===");
-            System.out.println("  - Qualidade Média: " + qualidadeMedia);
-            System.out.println("  - Tamanho Médio: " + tamanhoMedio);
-            System.out.println("  - Maior Qualidade: " + maiorQualidade);
-            System.out.println("  - Menor Qualidade (não zero): " + (menorQualidadeNaoZero == Double.POSITIVE_INFINITY ? "N/A" : menorQualidadeNaoZero));
-            System.out.println("  - Melhor Indivíduo: " + melhorIndividuo.getItens());
-            System.out.println("  - Pior Indivíduo: " + piorIndividuo.getItens());
-            System.out.println("===================================");
+            // Adicionar estatísticas dos indivíduos ao log
+            log.append("\n=== Estatísticas dos Indivíduos após a iteração ").append(iteracao).append(" ===\n");
+            log.append("  - Qualidade Média: ").append(qualidadeMedia).append("\n");
+            log.append("  - Tamanho Médio: ").append(tamanhoMedio).append("\n");
+            log.append("  - Maior Qualidade: ").append(maiorQualidade).append("\n");
+            log.append("  - Menor Qualidade (não zero): ").append(menorQualidadeNaoZero == Double.POSITIVE_INFINITY ? "N/A" : menorQualidadeNaoZero).append("\n");
+            log.append("  - Melhor Indivíduo: ").append(melhorIndividuo.getItens()).append("\n");
+            log.append("  - Pior Indivíduo: ").append(piorIndividuo.getItens()).append("\n");
+            log.append("  - Número de Subgrupos Distintos ao Final Desta Iteração: ").append(combinacoesDistintas.size()).append("\n");
 
-            // Imprimir número de subgrupos distintos
-            System.out.println("Número de Subgrupos Distintos ao Final Desta Iteração: " + combinacoesDistintas.size());
+            System.out.println("Ordenando e selecionando top " + K + " partículas...");
+            // Ordenar partículas pela qualidade e selecionar as top K
+            Collections.sort(particulas, Comparator.comparingDouble(Particle::getQualidade).reversed());
+            ArrayList<Particle> topKParticles = new ArrayList<>(particulas.subList(0, Math.min(K, particulas.size())));
+            log.append("  - Top K ").append(K).append(" Partículas:\n");
+            for (int i = 0; i < topKParticles.size(); i++) {
+                Particle p = topKParticles.get(i);
+                String regras = Avaliador.getRegrasString(new Pattern[]{p.getPattern()}, 1);
+                log.append("    * Posição: ").append(i + 1)
+                   .append(" | Itens: ").append(p.getPattern().getItens().toString())
+                   .append(" | Qualidade: ").append(String.valueOf(p.getQualidade()))
+                   .append(" | Subgrupo: ").append(regras)
+                   .append("\n");
+                // Imprime também no console
+            }
 
-            // Log do melhor global após atualizar todas as partículas
-            System.out.println("\n=== GlobalBest após a iteração " + iteracao + " ===");
-            System.out.println("  - ID: " + globalBest.getId());
-            System.out.println("  - Itens: " + globalBest.getPattern().getItens());
-            System.out.println("  - Qualidade: " + globalBest.getQualidade());
-            System.out.println("===================================");
-
+            // Adicionar log do melhor global após atualizar todas as partículas
+            log.append("\n=== GlobalBest após a iteração ").append(iteracao).append(" ===\n");
+            log.append("  - ID: ").append(globalBest.getId()).append("\n");
+            log.append("  - Itens: ").append(globalBest.getPattern().getItens()).append("\n");
+            log.append("  - Qualidade: ").append(globalBest.getQualidade()).append("\n");
+            log.append("===================================\n");
         }
+
+        System.out.println("\nPSO finalizado!");
+        System.out.println("Escrevendo logs no arquivo...");
+        fileWriter.writeLines(new String[]{log.toString()});
 
         return globalBest.getPattern(); // Retornar o Pattern da melhor partícula
     }
 
     public static void main(String[] args) {
         String caminho = "pastas/bases/";
-        String nomebase = "alon-clean50-pn-width-2.csv";
+        String nomebase = "alon-clean50-pn-width-2.CSV";
         String caminhoBase = caminho + nomebase;
         D.SEPARADOR = ",";
         Const.random = new Random(Const.SEEDS[0]);
@@ -119,8 +150,6 @@ public class PSO {
         int dimensao = D.numeroItens;
         String tipoAvaliacao = Const.METRICA_WRACC;
 
-        Pattern melhorSubgrupo = run(dimensao, tipoAvaliacao);
-        System.out.println("Melhor Subgrupo: " + melhorSubgrupo.toString2());
+        Pattern melhorSubgrupo = run(dimensao, tipoAvaliacao, nomebase);
     }
-
 }
