@@ -35,9 +35,9 @@ public class VarSortNaoAceita extends Threshold {
                 }
                 if(gerou % P.length == 0){
                     quantidadeTorneio++;
-                    //avaliarPopulacao(P);
+                    avaliarPopulacao(P);
                 }
-                System.out.println("Torneio de: "+quantidadeTorneio);
+                //System.out.println("Torneio de: "+quantidadeTorneio);
                 System.out.println("Partição: "+ particao);
             }
         }

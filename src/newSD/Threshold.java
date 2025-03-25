@@ -17,11 +17,11 @@ import java.util.logging.Logger;
 public class Threshold {
 
     protected static void aceitaFilho(Pattern pai1, Pattern pai2, Pattern filho){
-        //filho é melhor que o pior p acima do threshold
-        //antes de substituir, checa se é melhor que os dois pais
+        //filho é pior que o pior p acima do threshold
+        //antes de descartar, checa se é melhor que os pelo menos um dos pais
 
         // caso 1 - Filho melhor que os dois pais: substitui p
-        // caso 2 - Filho pior que o melhor pai: substitui
+        // caso 2 - Filho pior que o melhor pai: substitui caso
         // caso 3 - Pior que os dois pais: checa alguma coisa
     }
 
@@ -117,7 +117,7 @@ public class Threshold {
         int k = 10;
         String metricaAvaliacao = Const.METRICA_WRACC;
         int tentativasMelhoria = 20;
-        int maxIndividuosGerados = 1000000;
+        int maxIndividuosGerados = 10000000;
         int quantidadeTorneio = 5;
 
 
@@ -134,9 +134,9 @@ public class Threshold {
 //
 //        System.out.println("-------------------------");
 //
-//        System.out.println("VarSortNaoAceita");
-//        p = VarSortNaoAceita.run(tentativasMelhoria, maxIndividuosGerados, metricaAvaliacao, k);
-//        Avaliador.imprimirRegras(p, k);
+        System.out.println("VarSortNaoAceita");
+        Pattern[] p = VarSortNaoAceita.run(tentativasMelhoria, maxIndividuosGerados, metricaAvaliacao, k);
+        Avaliador.imprimirRegras(p, k);
 //
 //        System.out.println("-------------------------");
 //
@@ -144,9 +144,9 @@ public class Threshold {
 //        p = VarIgnNaoAceita.run(tentativasMelhoria, maxIndividuosGerados, metricaAvaliacao, k);
 //        Avaliador.imprimirRegras(p, k);
 
-        System.out.println("VarSortAceita");
-        Pattern[] p = VarSortAceita.run(tentativasMelhoria, maxIndividuosGerados, metricaAvaliacao, k);
-        Avaliador.imprimirRegras(p, k);
+//        System.out.println("VarSortAceita");
+//        Pattern[] p = VarSortAceita.run(tentativasMelhoria, maxIndividuosGerados, metricaAvaliacao, k);
+//        Avaliador.imprimirRegras(p, k);
 
 
         System.out.println("-------------------------");
