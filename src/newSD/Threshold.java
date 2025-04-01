@@ -16,13 +16,15 @@ import java.util.logging.Logger;
 
 public class Threshold {
 
-    protected static void aceitaFilho(Pattern pai1, Pattern pai2, Pattern filho){
-        //filho é pior que o pior p acima do threshold
-        //antes de descartar, checa se é melhor que os pelo menos um dos pais
+    //filho tem que ser melhor que pior p acima do threshold
+    //e melhor q os dois pais
+    protected static boolean filhoPiorQuePais(Pattern pai1, Pattern pai2, Pattern filho){
+        if (filho.getQualidade() < pai1.getQualidade() && filho.getQualidade() < pai2.getQualidade()) return false;
+        return true;
+    }
 
-        // caso 1 - Filho melhor que os dois pais: substitui p
-        // caso 2 - Filho pior que o melhor pai: substitui caso
-        // caso 3 - Pior que os dois pais: checa alguma coisa
+    protected static void ordenaP(Pattern[] P){
+        Arrays.sort(P, (p1, p2) -> Double.compare(p2.getQualidade(), p1.getQualidade()));
     }
 
     protected static Pattern melhorarIndividuo(Pattern pai1, Pattern[] P, int quantidadeTorneio, int particao) {
@@ -45,6 +47,31 @@ public class Threshold {
 
         return novoIndividuo;
     }
+
+    protected static Pattern sortear(Pattern[] P, int quantidadeTorneio, int particao) {
+        Pattern aux;
+
+        double aDouble = Const.random.nextDouble(0, 1);
+
+        if (aDouble < (float) particao / P.length) {
+            if(particao > quantidadeTorneio){
+                aux = P[SELECAO.torneioN(P, quantidadeTorneio, 0, particao - 1)];
+            } else {
+                int n;
+                if(particao > 1){
+                    n = particao-1;
+                } else {
+                    n = 1;
+                }
+                aux = P[SELECAO.torneioN(P, n, 0, n)];
+            }
+        } else {
+            aux = P[SELECAO.torneioN(P, quantidadeTorneio, particao, P.length - 1)];
+        }
+
+        return aux;
+    }
+
 
     protected static Pattern melhorarIndividuo(Pattern pai1, Pattern[] P, int quantidadeTorneio) {
         Pattern pai2 = P[SELECAO.torneioN(P, quantidadeTorneio)];
@@ -100,7 +127,7 @@ public class Threshold {
                 diretorioBases+texto+"/matrixBinaria-ALL-TERMS-59730-p.csv"
         };
 
-        String base = "pastas/bases/alon-clean50-pn-width-2.csv";
+        String base = "pastas/bases/bases_teste/alon-clean50-pn-width-2.CSV";
         D.SEPARADOR = ",";
 
         try {
@@ -120,39 +147,8 @@ public class Threshold {
         int maxIndividuosGerados = 10000000;
         int quantidadeTorneio = 5;
 
+        Pattern[] p = FixSortAceita.run(quantidadeTorneio, tentativasMelhoria, maxIndividuosGerados, metricaAvaliacao, k);
 
-//        System.out.println("FixIgnNaoAceita");
-//        Pattern[] p = FixIgnNaoAceita.run(quantidadeTorneio, tentativasMelhoria, maxIndividuosGerados, metricaAvaliacao, k);
-//        Avaliador.imprimirRegras(p, k);
-//
-//        System.out.println("-------------------------");
-//
-//        System.out.println("FixSortNaoAceita");
-//        p = FixSortNaoAceita.run(quantidadeTorneio, tentativasMelhoria, maxIndividuosGerados, metricaAvaliacao, k);
-//        Avaliador.imprimirRegras(p, k);
-//
-//
-//        System.out.println("-------------------------");
-//
-        System.out.println("VarSortNaoAceita");
-        Pattern[] p = VarSortNaoAceita.run(tentativasMelhoria, maxIndividuosGerados, metricaAvaliacao, k);
         Avaliador.imprimirRegras(p, k);
-//
-//        System.out.println("-------------------------");
-//
-//        System.out.println("VarIgnNaoAceita");
-//        p = VarIgnNaoAceita.run(tentativasMelhoria, maxIndividuosGerados, metricaAvaliacao, k);
-//        Avaliador.imprimirRegras(p, k);
-
-//        System.out.println("VarSortAceita");
-//        Pattern[] p = VarSortAceita.run(tentativasMelhoria, maxIndividuosGerados, metricaAvaliacao, k);
-//        Avaliador.imprimirRegras(p, k);
-
-
-        System.out.println("-------------------------");
-
-        System.out.println("SSDP");
-        Pattern[] pS = SSDP.run(k, metricaAvaliacao, 3600);
-        Avaliador.imprimirRegras(pS, k);
     }
 }
