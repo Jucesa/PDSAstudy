@@ -16,11 +16,18 @@ import java.util.logging.Logger;
 
 public class Threshold {
 
+
+    protected static Pattern[] topK(Pattern[] P, int k){
+        Pattern[] Pk = new Pattern[k];
+        ordenaP(P);
+        System.arraycopy(P, 0, Pk, 0, k);
+        return Pk;
+    }
     //filho tem que ser melhor que pior p acima do threshold
     //e melhor q os dois pais
     protected static boolean filhoPiorQuePais(Pattern pai1, Pattern pai2, Pattern filho){
-        if (filho.getQualidade() < pai1.getQualidade() && filho.getQualidade() < pai2.getQualidade()) return false;
-        return true;
+        if (filho.getQualidade() < pai1.getQualidade() && filho.getQualidade() < pai2.getQualidade()) return true;
+        return false;
     }
 
     protected static void ordenaP(Pattern[] P){
@@ -51,19 +58,13 @@ public class Threshold {
     protected static Pattern sortear(Pattern[] P, int quantidadeTorneio, int particao) {
         Pattern aux;
 
-        double aDouble = Const.random.nextDouble(0, 1);
+        double aDouble = Const.random.nextDouble(0, 0.99);
 
         if (aDouble < (float) particao / P.length) {
-            if(particao > quantidadeTorneio){
-                aux = P[SELECAO.torneioN(P, quantidadeTorneio, 0, particao - 1)];
+            if(particao > quantidadeTorneio && particao > 0){
+                aux = P[SELECAO.torneioN(P, quantidadeTorneio, 0, particao-1)];
             } else {
-                int n;
-                if(particao > 1){
-                    n = particao-1;
-                } else {
-                    n = 1;
-                }
-                aux = P[SELECAO.torneioN(P, n, 0, n)];
+                aux = P[0];
             }
         } else {
             aux = P[SELECAO.torneioN(P, quantidadeTorneio, particao, P.length - 1)];
@@ -147,7 +148,14 @@ public class Threshold {
         int maxIndividuosGerados = 10000000;
         int quantidadeTorneio = 5;
 
+        System.out.println("\n\n\n\nFixSortAceita");
+
         Pattern[] p = FixSortAceita.run(quantidadeTorneio, tentativasMelhoria, maxIndividuosGerados, metricaAvaliacao, k);
+
+        Avaliador.imprimirRegras(p, k);
+
+        System.out.println("\n\n\n\nFixSortNaoAceita");
+        p = FixSortNaoAceita.run(quantidadeTorneio, tentativasMelhoria, maxIndividuosGerados, metricaAvaliacao, k);
 
         Avaliador.imprimirRegras(p, k);
     }

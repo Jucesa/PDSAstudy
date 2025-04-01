@@ -41,16 +41,6 @@ public class VarIgnAceita extends Threshold {
             }
         }
 
-        ordenaP(P);
-
-//        double overallConfidence = calculateOverallConfidence(P, k);
-//        if (overallConfidence < 0.8) {
-//            System.out.println("Warning: Overall confidence in top-k is below threshold! " + overallConfidence);
-//        }
-//        System.out.println("Overall Confidence: " + overallConfidence);
-//        System.out.println("Threshold: " +particao);
-//        System.out.println("Population Size: " + P.length);
-//        System.out.println("Gerou: " + gerou);
-        return P;
+        return topK(P, k);
     }
 }

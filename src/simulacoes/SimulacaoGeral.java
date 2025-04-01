@@ -22,6 +22,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Scanner;
+
+import newSD.*;
 import sd.SD;
 
 /**
@@ -164,10 +166,39 @@ public class SimulacaoGeral {
                         Pattern[] p = null;
                         Const.random = new Random(Const.SEEDS[n]);
                         long t0 = System.currentTimeMillis();
+                        int quantidadeTorneio = 3;
+                        int tentivasMelhoria = 20;
+                        int maxIndividuos = 1000000;
                         switch(algoritmo){
                             case Const.ALGORITMO_SSDP:
                                 p = SSDP.run(k, tipoAvaliacao, tempoMaximoSegundosAlgoritmos);
                                 break;
+                            case Const.ALGORITMO_FixIgnAceita:
+                                p = FixIgnAceita.run(quantidadeTorneio, tentivasMelhoria,  maxIndividuos, tipoAvaliacao, k);
+                                break;
+                            case Const.ALGORITMO_FixIgnNaoAceita:
+                                p = FixIgnNaoAceita.run(quantidadeTorneio, tentivasMelhoria,  maxIndividuos, tipoAvaliacao, k);
+                                break;
+                            case Const.ALGORITMO_FixSortAceita:
+                                p = FixSortAceita.run(quantidadeTorneio, tentivasMelhoria,  maxIndividuos, tipoAvaliacao, k);
+                                break;
+                            case Const.ALGORITMO_FixSortNaoAceita:
+                                p = FixSortNaoAceita.run(quantidadeTorneio, tentivasMelhoria,  maxIndividuos, tipoAvaliacao, k);
+                                break;
+
+                            case Const.ALGORITMO_VarIgnAceita:
+                                p = VarIgnAceita.run(tentivasMelhoria,  maxIndividuos, tipoAvaliacao, k);
+                                break;
+                            case Const.ALGORITMO_VarIgnNaoAceita:
+                                p = VarIgnNaoAceita.run(tentivasMelhoria,  maxIndividuos, tipoAvaliacao, k);
+                                break;
+                            case Const.ALGORITMO_VarSortAceita:
+                                p = VarSortAceita.run(tentivasMelhoria,  maxIndividuos, tipoAvaliacao, k);
+                                break;
+                            case Const.ALGORITMO_VarSortNaoAceita:
+                                p = VarSortNaoAceita.run(tentivasMelhoria,  maxIndividuos, tipoAvaliacao, k);
+                                break;
+
                             case Const.ALGORITMO_SD:
                                 SD sd = new SD();
                                 double min_suport = Math.sqrt(D.numeroExemplosPositivo) / D.numeroExemplos;
@@ -232,7 +263,7 @@ public class SimulacaoGeral {
                             System.out.println("Tempo +: " + tempo);
                             System.out.println("Tentativas +: " + numeroTentativas);
                             System.out.println("Size: " + p.length);
-                            Avaliador.imprimirRegras(p, k);
+                            //Avaliador.imprimirRegras(p, k);
                         }
                         resultados[n] = new Resultado(p, tempo, numeroTentativas, Const.SEEDS[n]);
                     }
@@ -254,23 +285,36 @@ public class SimulacaoGeral {
         Pattern.medidaSimilaridade = Const.SIMILARIDADE_JACCARD;
 
         int[] K = {10};
-        int numeroRepeticoes = 10;
+        int numeroRepeticoes = 30;
         int hours = 1;
         double  tempoMaximoSegundosAlgoritmos = 60*60*(double)hours;
+
         String[] algoritmos = {
-            Const.ALGORITMO_TPSDt5,
-                Const.ALGORITMO_TPSDt10,
-                Const.ALGORITMO_TPSDt50
+                Const.ALGORITMO_FixSortAceita,
+                Const.ALGORITMO_FixSortNaoAceita,
+
+                Const.ALGORITMO_FixIgnAceita,
+                Const.ALGORITMO_FixIgnNaoAceita,
+
+
+                Const.ALGORITMO_VarSortAceita,
+                Const.ALGORITMO_VarSortNaoAceita,
+
+                Const.ALGORITMO_VarIgnAceita,
+                Const.ALGORITMO_VarIgnNaoAceita,
+
+                Const.ALGORITMO_SSDP
         };
 
         SimulacaoGeral sg = new SimulacaoGeral(new File(Const.CAMINHO_INDICE));
-        String tipoAvaliacao = Avaliador.METRICA_AVALIACAO_QG;
+        String tipoAvaliacao = Avaliador.METRICA_AVALIACAO_WRACC;
 
         sg.run(K, numeroRepeticoes, algoritmos, ",", tipoAvaliacao, tempoMaximoSegundosAlgoritmos);
 
         //Tabelão
         String[] metricas = {
-                Const.METRICA_Qg,
+                Const.METRICA_WRACC,
+                Const.METRICA_Qg
         };
         String separadorBase = ",";
         String separadorRelatorio = ",";
