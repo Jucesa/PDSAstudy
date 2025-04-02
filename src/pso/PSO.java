@@ -16,35 +16,45 @@ public class PSO {
     // private static final int NUM_PARTICULAS = 30;
     private static final int ITERACOES_MAX = 100;
     private static final int K = 10;
-
+    private static final int NUM_PARTICULAS = 400; // Número de partículas
     private static int idCounter = 1; // IDs únicos
     private static FileWriter fileWriter = new FileWriter(); // Instância do FileWriter
+    private static Random randomGenerator = new Random(); // Gerador de números aleatórios  
 
 
     public static Pattern run(int dimensao, String tipoAvaliacao, String nomeBase) {
         System.out.println("Iniciando PSO...");
+        StringBuilder log = new StringBuilder();
         ArrayList<Particle> particulas = new ArrayList<>();
         Particle globalBest = null; // Alterar o tipo para Particle
         HashSet<HashSet<Integer>> combinacoesDistintas = new HashSet<>(); // Para rastrear combinações distintas
 
         System.out.println("Inicializando partículas...");
         // Inicialização: Cada partícula começa com um único item
-        for (int i = 0; i < dimensao; i++) {
+        log.append("Inicializando as partículas abaixo:\n");
+        for (int i = 0; i < NUM_PARTICULAS; i++) {
             HashSet<Integer> itens = new HashSet<>();
-            itens.add(i); // Cada partícula começa com um item único
+            int randomItem = randomGenerator.nextInt(dimensao);
+            itens.add(randomItem);
             Particle particula = new Particle(idCounter++, itens, tipoAvaliacao, dimensao, ITERACOES_MAX);
             particulas.add(particula);
-            combinacoesDistintas.add(itens); // Adicionar combinação inicial
+            log.append("Partícula ").append(particula.getId())
+               .append(" inicializada com itens: ").append(itens).append("\n");
+            combinacoesDistintas.add(itens);
             if (globalBest == null || particula.getQualidade() > globalBest.getQualidade()) {
-                globalBest = particula; // Atribuir a partícula, não o pattern
+                globalBest = particula; 
             }
         }
         System.out.println("Inicialização completa. Total de partículas: " + particulas.size());
 
         // Loop principal do BPSO
         System.out.println("\nIniciando loop principal do PSO...");
-        StringBuilder log = new StringBuilder();
-        log.append("====== Nome da Base Analisada: ").append(nomeBase).append(" ======").append("\n");
+        log.append("\n====== Nome da Base Analisada: ").append(nomeBase).append(" ======").append("\n");
+        log.append("====== Tipo de Avaliação: ").append(tipoAvaliacao).append(" ======").append("\n");
+        log.append("====== Número de Partículas: ").append(NUM_PARTICULAS).append(" ======").append("\n");
+        log.append("====== Número de Iterações Máximas: ").append(ITERACOES_MAX).append(" ======").append("\n");
+        log.append("====== Número de Top K Partículas Selecionadas: ").append(K).append(" ======").append("\n");
+        log.append("====== Dimensão do Problema: ").append(dimensao).append(" ======").append("\n");
         for (int iteracao = 0; iteracao < ITERACOES_MAX; iteracao++) {
             System.out.println("Executando iteração " + (iteracao + 1) + " de " + ITERACOES_MAX);
             log.append("\n=== Iteração: ").append(iteracao).append(" ===\n");
@@ -97,8 +107,8 @@ public class PSO {
             log.append("  - Tamanho Médio: ").append(tamanhoMedio).append("\n");
             log.append("  - Maior Qualidade: ").append(maiorQualidade).append("\n");
             log.append("  - Menor Qualidade (não zero): ").append(menorQualidadeNaoZero == Double.POSITIVE_INFINITY ? "N/A" : menorQualidadeNaoZero).append("\n");
-            log.append("  - Melhor Indivíduo: ").append(melhorIndividuo.getItens()).append("\n");
-            log.append("  - Pior Indivíduo: ").append(piorIndividuo.getItens()).append("\n");
+            log.append("  - Melhor Indivíduo: ").append(melhorIndividuo != null ? melhorIndividuo.getItens() : "N/A").append("\n");
+            log.append("  - Pior Indivíduo: ").append(piorIndividuo != null ? piorIndividuo.getItens() : "N/A").append("\n");
             log.append("  - Número de Subgrupos Distintos ao Final Desta Iteração: ").append(combinacoesDistintas.size()).append("\n");
 
             System.out.println("Ordenando e selecionando top " + K + " partículas...");
@@ -147,9 +157,9 @@ public class PSO {
             return;
         }
 
+
         int dimensao = D.numeroItens;
         String tipoAvaliacao = Const.METRICA_WRACC;
-
         Pattern melhorSubgrupo = run(dimensao, tipoAvaliacao, nomebase);
     }
 }

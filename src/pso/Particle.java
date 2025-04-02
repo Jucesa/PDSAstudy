@@ -16,9 +16,10 @@ public class Particle {
     private int iteracao;
     private int maxIteracoes;
     private UpdateStrategy updateStrategy;
+    private HashSet<Integer> reusableItems = new HashSet<>();
 
     public Particle(int id, HashSet<Integer> posicaoInicial, String tipoAvaliacao, int dimensao, int maxIteracoes) {
-        this.id = id; // Atribuir o ID
+        this.id = id; 
         this.pattern = new Pattern(posicaoInicial, tipoAvaliacao);
         this.velocity = new double[dimensao];
         for (int i = 0; i < dimensao; i++) {
@@ -29,7 +30,7 @@ public class Particle {
         this.maxIteracoes = maxIteracoes;
 
         // É SÓ MUDAR AQUI A ESTRATÉGIA DE ATUALIZAÇÃO
-        this.updateStrategy = new RandomUpdateStrategy(); 
+        this.updateStrategy = new BestFromNScalingStrategy(1, dimensao ,1); 
     }
 
     public void updateVelocityAndPosition(Pattern globalBest) {
@@ -37,13 +38,14 @@ public class Particle {
         double w = W_INITIAL - ((W_INITIAL - W_FINAL) * iteracao) / maxIteracoes;
     
         // Copiar os itens atuais
-        HashSet<Integer> novosItens = new HashSet<>(pattern.getItens());
+        reusableItems.clear();
+        reusableItems.addAll(pattern.getItens());
     
         // Usar a estratégia de atualização
-        updateStrategy.updateParticle(this, globalBest, velocity, novosItens, w);
+        updateStrategy.updateParticle(this, globalBest, velocity, reusableItems, w);
     
         // Atualizar o padrão com base nos novos itens
-        Pattern novoPattern = new Pattern(novosItens, pattern.getTipoAvaliacao());
+        Pattern novoPattern = new Pattern(reusableItems, pattern.getTipoAvaliacao());
         pattern = novoPattern;
         if (pattern.getQualidade() > pbest.getQualidade()) {
             pbest = pattern;
