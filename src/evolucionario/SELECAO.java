@@ -85,47 +85,37 @@ public class SELECAO {
         }        
     }
 
-    public static int torneioN(Pattern[] P, int n){
-        HashMap<Integer, Double> indices =  HashMap.newHashMap(n);
-        while(indices.size() < n){
-            int indice = Const.random.nextInt(P.length);
-            indices.put(indice, P[indice].getQualidade());
-        }
-
+    public static int torneioN(Pattern[] P, int n) {
         int bestIndex = -1;
         double bestQuality = Double.NEGATIVE_INFINITY;
 
-        for (Map.Entry<Integer, Double> entry : indices.entrySet()) {
-            int index = entry.getKey();
-            double quality = entry.getValue();
+        for (int i = 0; i < n; i++) {
+            int index = Const.random.nextInt(0, P.length);
+            double quality = P[index].getQualidade();
 
             if (quality > bestQuality) {
                 bestQuality = quality;
                 bestIndex = index;
             }
         }
+
         return bestIndex;
     }
 
-    public static int torneioN(Pattern[] P, int n, int inf, int sup){
-        HashMap<Integer, Double> indices =  HashMap.newHashMap(n);
-        while(indices.size() < n){
-            int indice = Const.random.nextInt(inf, sup);
-            indices.put(indice, P[indice].getQualidade());
-        }
-
+    public static int torneioN(Pattern[] P, int n, int inf, int sup) {
         int bestIndex = -1;
         double bestQuality = Double.NEGATIVE_INFINITY;
 
-        for (Map.Entry<Integer, Double> entry : indices.entrySet()) {
-            int index = entry.getKey();
-            double quality = entry.getValue();
+        for (int i = 0; i < n; i++) {
+            int index = Const.random.nextInt(inf, sup);
+            double quality = P[index].getQualidade();
 
             if (quality > bestQuality) {
                 bestQuality = quality;
                 bestIndex = index;
             }
         }
+
         return bestIndex;
     }
 

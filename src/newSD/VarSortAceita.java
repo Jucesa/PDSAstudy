@@ -4,6 +4,7 @@ import dp.Pattern;
 import evolucionario.CRUZAMENTO;
 import evolucionario.INICIALIZAR;
 import evolucionario.SELECAO;
+import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
 import java.util.Arrays;
 
@@ -18,9 +19,9 @@ public class VarSortAceita extends Threshold{
         int gerou = 0;
         int particao = P.length;
 
-        while (gerou < maxIndividuosGerados && particao > 0) {
+        while (gerou < maxIndividuosGerados && particao > 1) {
 
-            Pattern pai1 = sortear(P, quantidadeTorneio, particao);
+            Pattern pai1 = P[SELECAO.torneioN(P, quantidadeTorneio, 0, particao-1)];
 
             for (int i = 0; i < tentativasMelhoria; i++) {
                 Pattern paux;

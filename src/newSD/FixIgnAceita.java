@@ -14,13 +14,12 @@ public class FixIgnAceita extends Threshold {
         int gerou = 0;
         int particao = P.length;
 
-        while (gerou < maxIndividuosGerados && particao > quantidadeTorneio) {
-            int index = SELECAO.torneioN(P, quantidadeTorneio);
-            Pattern pai1 = P[index];
+        while (gerou < maxIndividuosGerados && particao > 0) {
+
+            Pattern pai1 = sortear(P, quantidadeTorneio, particao);
 
             for (int i = 0; i < tentativasMelhoria; i++) {
-                index = SELECAO.torneioN(P, quantidadeTorneio);
-                Pattern pai2 = P[index];
+                Pattern pai2 = sortear(P, quantidadeTorneio, particao);
 
                 Pattern paux = CRUZAMENTO.AND(pai1, pai2, pai1.getTipoAvaliacao());
                 gerou++;

@@ -3,6 +3,7 @@ package newSD;
 import dp.Pattern;
 import evolucionario.CRUZAMENTO;
 import evolucionario.INICIALIZAR;
+import evolucionario.SELECAO;
 
 public class VarSortNaoAceita extends Threshold {
 
@@ -16,9 +17,9 @@ public class VarSortNaoAceita extends Threshold {
         int gerou = 0;
         int particao = P.length;
 
-        while (gerou < maxIndividuosGerados && particao > 0) {
+        while (gerou < maxIndividuosGerados && particao > 1) {
 
-            Pattern pai1 = sortear(P, quantidadeTorneio, particao);
+            Pattern pai1 = P[SELECAO.torneioN(P, quantidadeTorneio, 0, particao-1)];
 
             for (int i = 0; i < tentativasMelhoria; i++) {
                 Pattern paux;

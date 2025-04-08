@@ -16,9 +16,9 @@ public class FixSortNaoAceita extends Threshold {
         int gerou = 0;
         int particao = P.length;
 
-        while (gerou < maxIndividuosGerados && particao > 0 && particao > quantidadeTorneio) {
+        while (gerou < maxIndividuosGerados && particao > 1) {
 
-            Pattern pai1 = sortear(P, quantidadeTorneio, particao);
+            Pattern pai1 = P[SELECAO.torneioN(P, quantidadeTorneio, 0, particao-1)];
 
             for (int i = 0; i < tentativasMelhoria; i++) {
 
@@ -33,6 +33,9 @@ public class FixSortNaoAceita extends Threshold {
                     particao--;
                     break;
                 }
+//                if(gerou == gerou % P.length){
+//                    avaliarPopulacao(P);
+//                }
 
             }
         }

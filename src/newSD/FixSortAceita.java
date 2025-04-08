@@ -3,6 +3,7 @@ package newSD;
 import dp.Pattern;
 import evolucionario.CRUZAMENTO;
 import evolucionario.INICIALIZAR;
+import evolucionario.SELECAO;
 
 public class FixSortAceita extends Threshold {
     public static Pattern[] run(int quantidadeTorneio, int tentativasMelhoria, int maxIndividuosGerados, String tipoAvaliacao, int k) {
@@ -13,9 +14,8 @@ public class FixSortAceita extends Threshold {
         int gerou = 0;
         int particao = P.length;
 
-        while (gerou < maxIndividuosGerados && particao > 0 && particao > quantidadeTorneio) {
-
-            Pattern pai1 = sortear(P, quantidadeTorneio, particao);
+        while (gerou < maxIndividuosGerados && particao > 1) {
+            Pattern pai1 = P[SELECAO.torneioN(P, quantidadeTorneio, 0, particao-1)];
 
             for (int i = 0; i < tentativasMelhoria; i++) {
 
@@ -28,6 +28,9 @@ public class FixSortAceita extends Threshold {
                     particao--;
                     break;
                 }
+//                if(gerou == gerou % P.length){
+//                    avaliarPopulacao(P);
+//                }
             }
         }
 

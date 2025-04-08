@@ -80,8 +80,8 @@ public class Threshold {
     }
 
     protected static boolean substituirIndividuo(Pattern[] P, Pattern paux, int particao) {
-        //if(paux.getQualidade() > P[particao - 1].getQualidade()){
-        if (SELECAO.ehRelevante(paux, P)) {
+        if(paux.getQualidade() > P[particao - 1].getQualidade()){
+        //if (SELECAO.ehRelevante(paux, P)) {
             P[particao - 1] = paux;
             return true;
         }
@@ -128,7 +128,7 @@ public class Threshold {
                 diretorioBases+texto+"/matrixBinaria-ALL-TERMS-59730-p.csv"
         };
 
-        String base = "pastas/bases/bases_teste/alon-clean50-pn-width-2.CSV";
+        String base = "pastas/bases/Bases BIO 10/alon-pn-freq-2.CSV";
         D.SEPARADOR = ",";
 
         try {
@@ -138,7 +138,7 @@ public class Threshold {
             return;
         }
 
-        Const.random = new Random(Const.SEEDS[0]); //Seed
+        Const.random = new Random(Const.SEEDS[9]); //Seed
         D.GerarDpDn("p");
 
         //Parameters of the algorithm
@@ -148,14 +148,14 @@ public class Threshold {
         int maxIndividuosGerados = 10000000;
         int quantidadeTorneio = 5;
 
-        System.out.println("\n\n\n\nFixSortAceita");
+        System.out.println("\n\n\n\nVarSortAceita");
 
-        Pattern[] p = FixSortAceita.run(quantidadeTorneio, tentativasMelhoria, maxIndividuosGerados, metricaAvaliacao, k);
+        Pattern[] p = VarSortAceita.run(tentativasMelhoria, maxIndividuosGerados, metricaAvaliacao, k);
 
         Avaliador.imprimirRegras(p, k);
 
-        System.out.println("\n\n\n\nFixSortNaoAceita");
-        p = FixSortNaoAceita.run(quantidadeTorneio, tentativasMelhoria, maxIndividuosGerados, metricaAvaliacao, k);
+        System.out.println("\n\n\n\nVarSortNaoAceita");
+        p = VarSortNaoAceita.run(tentativasMelhoria, maxIndividuosGerados, metricaAvaliacao, k);
 
         Avaliador.imprimirRegras(p, k);
     }
