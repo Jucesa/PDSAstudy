@@ -28,7 +28,7 @@ import sd.SD;
  * @author Tarcisio Lucas
  */
 public class SimulacaoGeralJAR {
-        public static void main(String[] args) throws IOException, FileNotFoundException{
+        public static void main(String[] args) throws IOException, InterruptedException {
                 
          
         Pattern.ITENS_OPERATOR = Const.PATTERN_AND;

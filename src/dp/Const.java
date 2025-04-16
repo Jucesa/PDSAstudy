@@ -14,7 +14,33 @@ import java.util.Random;
  */
 public class Const {
     public final static String ALGORITMO_SSDP = "SSDP";
-    public final static String ALGORITMO_PDSA = "PDSA";
+
+    public final static String ALGORITMO_FixIgnAceitat3 = "FixIgnAceitat3";
+    public final static String ALGORITMO_FixIgnAceitat5 = "FixIgnAceitat5";
+    public final static String ALGORITMO_FixIgnAceitat10 = "FixIgnAceitat10";
+    public final static String ALGORITMO_FixIgnAceitat20 = "FixIgnAceitat20";
+
+    public final static String ALGORITMO_FixIgnNaoAceitat3 = "FixIgnNaoAceitat3";
+    public final static String ALGORITMO_FixIgnNaoAceitat5 = "FixIgnNaoAceitat5";
+    public final static String ALGORITMO_FixIgnNaoAceitat10 = "FixIgnNaoAceitat10";
+    public final static String ALGORITMO_FixIgnNaoAceitat20 = "FixIgnNaoAceitat20";
+
+    public final static String ALGORITMO_FixSortAceitat3 = "FixSortAceitat3";
+    public final static String ALGORITMO_FixSortAceitat5 = "FixSortAceitat5";
+    public final static String ALGORITMO_FixSortAceitat10 = "FixSortAceitat10";
+    public final static String ALGORITMO_FixSortAceitat20 = "FixSortAceitat20";
+
+    public final static String ALGORITMO_FixSortNaoAceitat3 = "FixSortNaoAceitat3";
+    public final static String ALGORITMO_FixSortNaoAceitat5 = "FixSortNaoAceitat5";
+    public final static String ALGORITMO_FixSortNaoAceitat10 = "FixSortNaoAceitat10";
+    public final static String ALGORITMO_FixSortNaoAceitat20 = "FixSortNaoAceitat20";
+
+    public final static String ALGORITMO_VarIgnAceita = "VarIgnAceita";
+    public final static String ALGORITMO_VarIgnNaoAceita = "VarIgnNaoAceita";
+    public final static String ALGORITMO_VarSortAceita = "VarSortAceita";
+    public final static String ALGORITMO_VarSortNaoAceita = "VarSortNaoAceita";
+
+
     public final static String ALGORITMO_SSDPmais = "SSDPplus";
     public final static String ALGORITMO_SSDPmaisS00 = "SSDPplusS00";
     public final static String ALGORITMO_SSDPmaisS10 = "SSDPplusS10";
@@ -89,23 +115,16 @@ public class Const {
     public final static int PATTERN_OR = 0;
     public final static int PATTERN_AND = 1;
 
-//    public final static String CAMINHO = "../dist/pastas/";
-//    public final static String CAMINHO_BASES = Const.CAMINHO + "bases/";
-//    public final static String CAMINHO_BASES_EDITADAS = Const.CAMINHO + "bases_editadas/";
-//    public final static String CAMINHO_RESULTADOS = Const.CAMINHO + "resultados/";
-//    public final static String CAMINHO_RESULTADOS_OBJ = Const.CAMINHO + "resultados_obj/";  
-//    public final static String CAMINHO_RELATORIO = Const.CAMINHO + "relatorios/";
-//    public final static String CAMINHO_DICIONARIOS = Const.CAMINHO + "dicionarios/";
-//    public final static String CAMINHO_INDICE = Const.CAMINHO + "indice.txt";
+    private final static String CAMINHO_PC = "C:/Users/jc160/IdeaProjects/PDSAstudy";
+    //private final static String CAMINHO_PC = "C:/Users/11305645413/IdeaProjects/PDSAstudy";
+    public final static String CAMINHO_BASES = CAMINHO_PC+"/pastas/bases/Bases BIO 10";
+    public final static String CAMINHO_BASES_EDITADAS = CAMINHO_PC+"/pastas/bases_editadas/";
+    public final static String CAMINHO_RESULTADOS = CAMINHO_PC+"/pastas/resultados/";
+    public final static String CAMINHO_RESULTADOS_OBJ = CAMINHO_PC+"/pastas/resultados_obj/";
+    public final static String CAMINHO_RELATORIO = CAMINHO_PC+"/pastas/relatorios/";
+    public final static String CAMINHO_DICIONARIOS = CAMINHO_PC+"/pastas/dicionarios/";
+    public final static String CAMINHO_INDICE = "C:/Users/jc160/IdeaProjects/PDSAstudy/pastas/indice.txt";
 
-    public final static String CAMINHO_BASES = "..//subgroupAlgorithms//pastas/bases//";
-    public final static String CAMINHO_BASES_EDITADAS = "../subgroupAlgorithms/pastas/bases_editadas/";
-    public final static String CAMINHO_RESULTADOS = "..//subgroupAlgorithms//pastas//resultados//";
-    public final static String CAMINHO_RESULTADOS_OBJ = "../subgroupAlgorithms/pastas/resultados_obj/";
-    public final static String CAMINHO_RELATORIO = "..//subgroupAlgorithms//pastas//relatorios//";
-    public final static String CAMINHO_DICIONARIOS = "../subgroupAlgorithms/pastas/dicionarios/";
-    public final static String CAMINHO_INDICE = "../subgroupAlgorithms/pastas/indice.txt";
-       
     public static Random random;
     public static final long[] SEEDS = {179424673, 125164703, 132011827, 124987441, 123979721 , 119777719, 117705823 , 112131119, 108626351, 107980007,
         106368047, 99187427, 98976029, 97875523, 96763291, 95808337, 94847387, 87552823, 86842271 , 80650457, 78220001, 74585729, 73852469 , 68750849, 58160551 , 

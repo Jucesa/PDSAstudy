@@ -455,14 +455,13 @@ public class Avaliador {
      * @return 
      */
     private static boolean patternContemplaExemploOR(HashSet<Integer> itens, int[] exemplo){
-        Iterator iterator = itens.iterator();
-        while(iterator.hasNext()){
-            int item = (int)iterator.next();
+        for (Integer iten : itens) {
+            int item = iten;
             int itemAtributo = D.itemAtributo[item];
             int itemValor = D.itemValor[item];
-            if(exemplo[itemAtributo] == itemValor){
-                return true;                    
-            } 
+            if (exemplo[itemAtributo] == itemValor) {
+                return true;
+            }
         }       
         return false; 
     }
@@ -481,16 +480,18 @@ public class Avaliador {
       
     //Imprime regras em texto
     public static void imprimirRegras(Pattern[] p, int kPrimeiros){
-        Pattern vazio = new Pattern(new HashSet<Integer>(), p[0].getTipoAvaliacao());
-        System.out.println(vazio.toString2());
+        Pattern vazio = new Pattern(new HashSet<>(), p[0].getTipoAvaliacao());
+        System.out.println(vazio.toString2()+" Avaliação-> "+vazio.getTipoAvaliacao());
         for(int i = 0; i < kPrimeiros; i++){
-            System.out.println(p[i].toString2());        
+            System.out.println(p[i].toString2());
+            System.out.println(p[i].getItens());
+            System.out.println("Qualidade:"+p[i].getQualidade());
         }        
     }
     
     //Imprime regras em texto
     public static void imprimirRegras(Pattern[] p, int kPrimeiros, String[] metricas, boolean imprimirCoberturaDp, boolean imprimirCoberturaDn, boolean imprimirSimilares){
-        Pattern vazio = new Pattern(new HashSet<Integer>(), p[0].getTipoAvaliacao());
+        Pattern vazio = new Pattern(new HashSet<>(), p[0].getTipoAvaliacao());
         System.out.println(vazio.toString2());
         for(int i = 0; i < kPrimeiros; i++){
             System.out.println(p[i].toString(metricas, imprimirCoberturaDp, imprimirCoberturaDn, imprimirSimilares));                    

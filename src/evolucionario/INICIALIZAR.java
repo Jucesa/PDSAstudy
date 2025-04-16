@@ -38,7 +38,7 @@ public class INICIALIZAR {
     
     /**Inicializa população com todas as possibilidades de indivíduos com apenas uma dimensão
      * mas antes juntanto itens considerados similares entre si com relação ao índice adotado
-     * objetivo é diminuir volume de itens correlacionados tem perda de informação.
+     * objetivo é diminuir volume de itens correlacionados sem perda de informação.
      * Ao mesmo tempo itens similares não aumentam o fitness de um subgrupo!
      *@author Tarcísio Pontes
      * @param tipoAvaliacao int - tipo de avaliação utilizado para qualificar indivíduo

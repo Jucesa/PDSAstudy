@@ -8,10 +8,8 @@ package evolucionario;
 import dp.Avaliador;
 import dp.Const;
 import dp.Pattern;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
+
+import java.util.*;
 
 
 /**
@@ -30,7 +28,7 @@ public class SELECAO {
      * A quantidade de índies retornado é sempre do mesmo do tamanho da população.
      *@author Tarcísio Lucas
      * @param tamanhoPopulacao
-     * @return int[]
+     * @return int[]vou
      * @since 14/01/2016
      * @version 1.0
      */
@@ -87,6 +85,40 @@ public class SELECAO {
         }        
     }
 
+    public static int torneioN(Pattern[] P, int n) {
+        int bestIndex = -1;
+        double bestQuality = Double.NEGATIVE_INFINITY;
+
+        for (int i = 0; i < n; i++) {
+            int index = Const.random.nextInt(0, P.length);
+            double quality = P[index].getQualidade();
+
+            if (quality > bestQuality) {
+                bestQuality = quality;
+                bestIndex = index;
+            }
+        }
+
+        return bestIndex;
+    }
+
+    public static int torneioN(Pattern[] P, int n, int inf, int sup) {
+        int bestIndex = -1;
+        double bestQuality = Double.NEGATIVE_INFINITY;
+
+        for (int i = 0; i < n; i++) {
+            int index = Const.random.nextInt(inf, sup);
+            double quality = P[index].getQualidade();
+
+            if (quality > bestQuality) {
+                bestQuality = quality;
+                bestIndex = index;
+            }
+        }
+
+        return bestIndex;
+    }
+
     /**
      * Recebe duas populações de mesmo tamanho T e retorna os T melhores
      * indivíduos distintos.
@@ -99,11 +131,10 @@ public class SELECAO {
      */
     public static Pattern[] selecionarMelhoresDistintos(Pattern[] P, Pattern[] Pnovo){
         int tamanhoPopulacao = P.length;
-        Pattern[] PAsterisco = new Pattern[tamanhoPopulacao];        
-        ArrayList<Pattern> patternAux = new ArrayList<>();
-        
+        Pattern[] PAsterisco = new Pattern[tamanhoPopulacao];
+
         //System.out.println("\tAdicioando P");
-        patternAux.addAll(Arrays.asList(P));
+        ArrayList<Pattern> patternAux = new ArrayList<>(Arrays.asList(P));
         
         //System.out.println("\tAdicioando Pnovos");
         for (Pattern pnovo : Pnovo) {
@@ -432,8 +463,8 @@ public class SELECAO {
      * @return boolean - se novo indivíduo é relevante
      */
     public static boolean ehRelevante(Pattern p, Pattern[] Pk){
-        for(int i = 0; i  < Pk.length; i++){
-            if(Pk[i].sobrescreve(p) != -1){
+        for (Pattern pattern : Pk) {
+            if (pattern.sobrescreve(p) != -1) {
                 return false;
             }
         }

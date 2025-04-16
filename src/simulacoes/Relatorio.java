@@ -295,7 +295,7 @@ public class Relatorio{
     
     
     
-    public static void main(String[] args) throws IOException, ClassNotFoundException{
+    public static void main(String[] args) throws IOException{
         
         String separadorBase = ",";
         String separadorRelatorio = ",";
@@ -332,7 +332,6 @@ public class Relatorio{
         
         //Arquivo para teste de hipótese
         String[] nomeAlgoritmos = {
-                Const.ALGORITMO_PDSA
             //"DSSD-k20-foWRAcc"
 //            Const.ALGORITMO_SSDP + "-k10-foWRAccN",
 //            Const.ALGORITMO_SSDPmaisS10 + "-k10-foWRAccN",
