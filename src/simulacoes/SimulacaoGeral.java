@@ -93,7 +93,6 @@ public class SimulacaoGeral {
 
         //Abrindo arquivo para gravação de tabelão
         File file = new File(Const.CAMINHO_RESULTADOS + nomeArquivo);
-        file.createNewFile();
         // creates a FileWriter Object
         FileWriter writer = new FileWriter(file);
         writer.write(sb + "");
@@ -127,7 +126,7 @@ public class SimulacaoGeral {
 
     }
 
-    public void run(int[] K, int numeroRepeticoes, String[] algoritmos, String separadorBase, String tipoAvaliacao, double tempoMaximoSegundosAlgoritmos) throws IOException{
+    public void run(int[] K, int numeroRepeticoes, String[] algoritmos, String separadorBase, String tipoAvaliacao, double tempoMaximoSegundosAlgoritmos) throws IOException, InterruptedException {
 
         D.SEPARADOR = separadorBase;
         File diretorio = new File(Const.CAMINHO_BASES);
@@ -171,7 +170,7 @@ public class SimulacaoGeral {
                         long t0 = System.currentTimeMillis();
                         int quantidadeTorneio = 3;
                         int tentivasMelhoria = 20;
-                        int maxIndividuos = 100000;
+                        int maxIndividuos = 1000000;
                         switch(algoritmo){
                             case Const.ALGORITMO_SSDP:
                                 p = SSDP.run(k, tipoAvaliacao, tempoMaximoSegundosAlgoritmos);
@@ -324,54 +323,55 @@ public class SimulacaoGeral {
 
                     this.salvarResultado(simulacao);
                     indiceSimulacoes++;
+                    //Thread.sleep(10000);
                 }
             }
         }
     }
 
+    public static void main(String[] args) throws IOException, InterruptedException {
 
-
-    public static void main(String[] args) throws IOException {
         Pattern.ITENS_OPERATOR = Const.PATTERN_AND;
         Pattern.maxSimulares = 3;
         Pattern.medidaSimilaridade = Const.SIMILARIDADE_JACCARD;
 
         int[] K = {10};
-        int numeroRepeticoes = 30;
-        int hours = 2;
+        int numeroRepeticoes = 1;
+        int hours = 10;
         double  tempoMaximoSegundosAlgoritmos = 60*60*(double)hours;
 
         String[] algoritmos = {
                 Const.ALGORITMO_VarSortAceita,
-                Const.ALGORITMO_VarSortNaoAceita,
+                //Const.ALGORITMO_VarSortNaoAceita,
 
                 Const.ALGORITMO_VarIgnAceita,
-                Const.ALGORITMO_VarIgnNaoAceita,
+                //Const.ALGORITMO_VarIgnNaoAceita,
 
-                Const.ALGORITMO_FixSortAceitat3,
-                Const.ALGORITMO_FixSortAceitat5,
-                Const.ALGORITMO_FixSortAceitat10,
+//                Const.ALGORITMO_FixSortAceitat3,
+//                Const.ALGORITMO_FixSortAceitat5,
+//                Const.ALGORITMO_FixSortAceitat10,
                 Const.ALGORITMO_FixSortAceitat20,
 
-                Const.ALGORITMO_FixSortNaoAceitat3,
-                Const.ALGORITMO_FixSortNaoAceitat5,
-                Const.ALGORITMO_FixSortNaoAceitat10,
+//                Const.ALGORITMO_FixSortNaoAceitat3,
+//                Const.ALGORITMO_FixSortNaoAceitat5,
+//                Const.ALGORITMO_FixSortNaoAceitat10,
                 Const.ALGORITMO_FixSortNaoAceitat20,
 
-                Const.ALGORITMO_FixIgnAceitat3,
-                Const.ALGORITMO_FixIgnAceitat5,
-                Const.ALGORITMO_FixIgnAceitat10,
+
+//                Const.ALGORITMO_FixIgnAceitat3,
+//                Const.ALGORITMO_FixIgnAceitat5,
+//                Const.ALGORITMO_FixIgnAceitat10,
                 Const.ALGORITMO_FixIgnAceitat20,
 
-                Const.ALGORITMO_FixIgnNaoAceitat3,
-                Const.ALGORITMO_FixIgnNaoAceitat5,
-                Const.ALGORITMO_FixIgnNaoAceitat10,
+//                Const.ALGORITMO_FixIgnNaoAceitat3,
+//                Const.ALGORITMO_FixIgnNaoAceitat5,
+//                Const.ALGORITMO_FixIgnNaoAceitat10,
                 Const.ALGORITMO_FixIgnNaoAceitat20,
 
-                Const.ALGORITMO_SSDP,
-                Const.ALGORITMO_SD,
-                Const.ALGORITMO_Aleatorio1M,
-                Const.ALGORITMO_ExaustivoK
+//                Const.ALGORITMO_SSDP,
+//                Const.ALGORITMO_SD,
+//                Const.ALGORITMO_Aleatorio1M,
+//                Const.ALGORITMO_ExaustivoK
         };
 
         SimulacaoGeral sg = new SimulacaoGeral(new File(Const.CAMINHO_INDICE));
@@ -398,12 +398,14 @@ public class SimulacaoGeral {
                 Const.METRICA_CONF,
                 Const.METRICA_SUPP,
                 Const.METRICA_SUPP_POSITIVO,
-                Const.METRICA_SUPP_NEGATIVO
+                Const.METRICA_SUPP_NEGATIVO,
+                Const.METRICA_SIZE
         };
         String separadorBase = ",";
         String separadorRelatorio = ",";
-        Relatorio.gerarTabelaoCSV(metricas, separadorBase, separadorRelatorio);
+//        Relatorio.gerarTabelaoCSV(metricas, separadorBase, separadorRelatorio);
+//
+//        System.out.println("Tabelão concluído");
 
-        System.out.println("Tabelão concluído");
     }
 }

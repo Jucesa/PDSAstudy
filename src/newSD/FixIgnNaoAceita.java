@@ -13,10 +13,9 @@ public class FixIgnNaoAceita extends Threshold {
 
         ordenaP(P);
 
-        int gerou = 0;
         int particao = P.length;
 
-        while (gerou < maxIndividuosGerados && particao > quantidadeTorneio) {
+        while (Pattern.numeroIndividuosGerados < maxIndividuosGerados && particao > quantidadeTorneio) {
             int index = SELECAO.torneioN(P, quantidadeTorneio);
             Pattern pai1 = P[index];
 
@@ -25,17 +24,22 @@ public class FixIgnNaoAceita extends Threshold {
                 Pattern pai2 = P[index];
 
                 Pattern paux = CRUZAMENTO.AND(pai1, pai2, pai1.getTipoAvaliacao());
-                gerou++;
 
-                if(filhoPiorQuePais(pai1, pai2, paux)) break;
+                if (filhoPiorQuePais(pai1, pai2, paux)) {
+                    i = tentativasMelhoria;
+                } else {
+                    if (substituirIndividuo(P, paux, particao)) {
+                        particao--;
+                        break;
+                    }
+                    if (Pattern.numeroIndividuosGerados % P.length == 0) {
+                        avaliarPopulacao(P, quantidadeTorneio, particao, Pattern.numeroIndividuosGerados);
+                    }
 
-                if (substituirIndividuo(P, paux, particao)) {
-                    particao--;
-                    break;
                 }
             }
-        }
 
+        }
         return topK(P, k);
     }
 }

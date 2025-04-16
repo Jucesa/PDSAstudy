@@ -23,11 +23,9 @@ public class Threshold {
         System.arraycopy(P, 0, Pk, 0, k);
         return Pk;
     }
-    //filho tem que ser melhor que pior p acima do threshold
-    //e melhor q os dois pais
+
     protected static boolean filhoPiorQuePais(Pattern pai1, Pattern pai2, Pattern filho){
-        if (filho.getQualidade() < pai1.getQualidade() && filho.getQualidade() < pai2.getQualidade()) return true;
-        return false;
+        return filho.getQualidade() < pai1.getQualidade() && filho.getQualidade() < pai2.getQualidade();
     }
 
     protected static void ordenaP(Pattern[] P){
@@ -61,7 +59,7 @@ public class Threshold {
         double aDouble = Const.random.nextDouble(0, 0.99);
 
         if (aDouble < (float) particao / P.length) {
-            if(particao > quantidadeTorneio && particao > 0){
+            if(particao > 1){
                 aux = P[SELECAO.torneioN(P, quantidadeTorneio, 0, particao-1)];
             } else {
                 aux = P[0];
@@ -96,7 +94,10 @@ public class Threshold {
         return totalConfidence / k;
     }
 
-    protected static void avaliarPopulacao(Pattern[] P) {
+    protected static void avaliarPopulacao(Pattern[] P, int torneio, int threshold, int numeroIndividuos) {
+        System.out.println();
+
+
         double melhorQualidade = Arrays.stream(P).mapToDouble(Pattern::getQualidade).max().getAsDouble();
 
         double mediaQualidade = Arrays.stream(P)
@@ -108,9 +109,16 @@ public class Threshold {
                 .mapToDouble(pattern -> pattern.getItens().size()).average().getAsDouble();
 
         System.out.println("------ Avaliação da População ------");
+        logging(torneio, threshold, numeroIndividuos);
         System.out.println("Melhor qualidade: " + melhorQualidade);
         System.out.println("Qualidade média: " + mediaQualidade);
         System.out.println("Tamanho médio dos indivíduos: " + mediaTamanho);
+    }
+
+    protected static void logging(int torneio, int threshold, int numeroIndividuos){
+        System.out.println("Torneio: " + torneio);
+        System.out.println("Threshold: " + threshold);
+        System.out.println("Testes: " + numeroIndividuos);
     }
 
     public static void main(String[] args) throws FileNotFoundException {

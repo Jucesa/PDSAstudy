@@ -16,10 +16,9 @@ public class VarIgnNaoAceita extends Threshold {
         Pattern[] P = INICIALIZAR.D1(tipoAvaliacao);
         ordenaP(P);
 
-        int gerou = 0;
         int particao = P.length;
 
-        while (gerou < maxIndividuosGerados && particao > 0) {
+        while (Pattern.numeroIndividuosGerados < maxIndividuosGerados && particao > 0) {
             int index = SELECAO.torneioN(P, quantidadeTorneio);
 
             Pattern pai1 = P[index];
@@ -31,19 +30,23 @@ public class VarIgnNaoAceita extends Threshold {
                 Pattern pai2 = P[index];
 
                 paux = CRUZAMENTO.AND(pai1, pai2, pai1.getTipoAvaliacao());
-                gerou++;
-                //Nao aceita
-                if(filhoPiorQuePais(pai1, pai2, paux)) break;
 
-                if(gerou % P.length == 0){
-                    quantidadeTorneio++;
-                    //avaliarPopulacao(P);
-                }
-                if (substituirIndividuo(P, paux, particao)) {
-                    particao--;
-                    break;
+                //Nao aceita
+                if(filhoPiorQuePais(pai1, pai2, paux)){
+                    i = tentativasMelhoria;
+                } else{
+                    if (substituirIndividuo(P, paux, particao)) {
+                        particao--;
+                        break;
+                    }
+                    if(Pattern.numeroIndividuosGerados % P.length == 0){
+                        quantidadeTorneio++;
+                        avaliarPopulacao(P, quantidadeTorneio, particao, Pattern.numeroIndividuosGerados);
+
+                    }
                 }
             }
+
         }
 
         return topK(P, k);
