@@ -20,24 +20,50 @@ public class Const {
     public final static String ALGORITMO_FixIgnAceitat10 = "FixIgnAceitat10";
     public final static String ALGORITMO_FixIgnAceitat20 = "FixIgnAceitat20";
 
+    public final static String ALGORITMO_FixIgnAceitat3mais = "FixIgnAceitat3mais";
+    public final static String ALGORITMO_FixIgnAceitat5mais = "FixIgnAceitat5mais";
+    public final static String ALGORITMO_FixIgnAceitat10mais = "FixIgnAceitat10mais";
+    public final static String ALGORITMO_FixIgnAceitat20mais = "FixIgnAceitat20mais";
+
+
     public final static String ALGORITMO_FixIgnNaoAceitat3 = "FixIgnNaoAceitat3";
     public final static String ALGORITMO_FixIgnNaoAceitat5 = "FixIgnNaoAceitat5";
     public final static String ALGORITMO_FixIgnNaoAceitat10 = "FixIgnNaoAceitat10";
     public final static String ALGORITMO_FixIgnNaoAceitat20 = "FixIgnNaoAceitat20";
+
+    public final static String ALGORITMO_FixIgnNaoAceitat3mais = "FixIgnNaoAceitat3mais";
+    public final static String ALGORITMO_FixIgnNaoAceitat5mais = "FixIgnNaoAceitat5mais";
+    public final static String ALGORITMO_FixIgnNaoAceitat10mais = "FixIgnNaoAceitat10mais";
+    public final static String ALGORITMO_FixIgnNaoAceitat20mais = "FixIgnNaoAceitat20mais";
+
 
     public final static String ALGORITMO_FixSortAceitat3 = "FixSortAceitat3";
     public final static String ALGORITMO_FixSortAceitat5 = "FixSortAceitat5";
     public final static String ALGORITMO_FixSortAceitat10 = "FixSortAceitat10";
     public final static String ALGORITMO_FixSortAceitat20 = "FixSortAceitat20";
 
+    public final static String ALGORITMO_FixSortAceitat3mais = "FixSortAceitat3mais";
+    public final static String ALGORITMO_FixSortAceitat5mais = "FixSortAceitat5mais";
+    public final static String ALGORITMO_FixSortAceitat10mais = "FixSortAceitat10mais";
+    public final static String ALGORITMO_FixSortAceitat20mais = "FixSortAceitat20mais";
+
+
     public final static String ALGORITMO_FixSortNaoAceitat3 = "FixSortNaoAceitat3";
     public final static String ALGORITMO_FixSortNaoAceitat5 = "FixSortNaoAceitat5";
     public final static String ALGORITMO_FixSortNaoAceitat10 = "FixSortNaoAceitat10";
     public final static String ALGORITMO_FixSortNaoAceitat20 = "FixSortNaoAceitat20";
 
+    public final static String ALGORITMO_FixSortNaoAceitat3mais = "FixSortNaoAceitat3mais";
+    public final static String ALGORITMO_FixSortNaoAceitat5mais = "FixSortNaoAceitat5mais";
+    public final static String ALGORITMO_FixSortNaoAceitat10mais = "FixSortNaoAceitat10mais";
+    public final static String ALGORITMO_FixSortNaoAceitat20mais = "FixSortNaoAceitat20mais";
+
+
     public final static String ALGORITMO_VarIgnAceita = "VarIgnAceita";
+    public final static String ALGORITMO_VarIgnAceitamais = "VarIgnAceitamais";
     public final static String ALGORITMO_VarIgnNaoAceita = "VarIgnNaoAceita";
     public final static String ALGORITMO_VarSortAceita = "VarSortAceita";
+    public static final String ALGORITMO_VarSortAceitamais = "VarSortAceitamais";
     public final static String ALGORITMO_VarSortNaoAceita = "VarSortNaoAceita";
 
 
@@ -114,6 +140,7 @@ public class Const {
     
     public final static int PATTERN_OR = 0;
     public final static int PATTERN_AND = 1;
+
 
     private final static String CAMINHO_PC = "C:/Users/jc160/IdeaProjects/PDSAstudy";
     //private final static String CAMINHO_PC = "C:/Users/11305645413/IdeaProjects/PDSAstudy";

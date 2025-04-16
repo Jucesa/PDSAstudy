@@ -24,8 +24,8 @@ import java.util.Random;
 import java.util.Scanner;
 
 import newSD.*;
+import newSD.mais.*;
 import sd.Aleatorio;
-import sd.Exaustivo;
 import sd.ExaustivoK;
 import sd.SD;
 
@@ -184,18 +184,21 @@ public class SimulacaoGeral {
                             case Const.ALGORITMO_Aleatorio2M:
                                 p = Aleatorio.runNtentativas(tipoAvaliacao, k, 2000000, 10);
                                 break;
-                            case Const.ALGORITMO_FixIgnAceitat3:
-                                p = FixIgnAceita.run(3, tentivasMelhoria,  maxIndividuos, tipoAvaliacao, k);
+
+
+                            case Const.ALGORITMO_FixIgnAceitat3mais:
+                                p = FixIgnAceitamais.run(3, tentivasMelhoria,  0.5, tipoAvaliacao, k);
                                 break;
-                            case Const.ALGORITMO_FixIgnAceitat5:
-                                p = FixIgnAceita.run(5, tentivasMelhoria,  maxIndividuos, tipoAvaliacao, k);
+                            case Const.ALGORITMO_FixIgnAceitat5mais:
+                                p = FixIgnAceitamais.run(5, tentivasMelhoria,  0.5, tipoAvaliacao, k);
                                 break;
-                            case Const.ALGORITMO_FixIgnAceitat10:
-                                p = FixIgnAceita.run(10, tentivasMelhoria,  maxIndividuos, tipoAvaliacao, k);
+                            case Const.ALGORITMO_FixIgnAceitat10mais:
+                                p = FixIgnAceitamais.run(10, tentivasMelhoria,  0.5, tipoAvaliacao, k);
                                 break;
-                            case Const.ALGORITMO_FixIgnAceitat20:
-                                p = FixIgnAceita.run(20, tentivasMelhoria,  maxIndividuos, tipoAvaliacao, k);
+                            case Const.ALGORITMO_FixIgnAceitat20mais:
+                                p = FixIgnAceitamais.run(20, tentivasMelhoria,  0.5, tipoAvaliacao, k);
                                 break;
+
 
                             case Const.ALGORITMO_FixIgnNaoAceitat3:
                                 p = FixIgnNaoAceita.run(3, tentivasMelhoria,  maxIndividuos, tipoAvaliacao, k);
@@ -224,6 +227,20 @@ public class SimulacaoGeral {
                                 p = FixSortAceita.run(20, tentivasMelhoria,  maxIndividuos, tipoAvaliacao, k);
                                 break;
 
+                            case Const.ALGORITMO_FixSortAceitat3mais:
+                                p = FixSortAceitamais.run(3, tentivasMelhoria,  0.5, tipoAvaliacao, k);
+                                break;
+                            case Const.ALGORITMO_FixSortAceitat5mais:
+                                p = FixSortAceitamais.run(5, tentivasMelhoria,  0.5, tipoAvaliacao, k);
+                                break;
+                            case Const.ALGORITMO_FixSortAceitat10mais:
+                                p = FixSortAceitamais.run(10, tentivasMelhoria,  0.5, tipoAvaliacao, k);
+                                break;
+                            case Const.ALGORITMO_FixSortAceitat20mais:
+                                p = FixSortAceitamais.run(20, tentivasMelhoria,  0.5, tipoAvaliacao, k);
+                                break;
+
+
                             case Const.ALGORITMO_FixSortNaoAceitat3:
                                 p = FixSortNaoAceita.run(3, tentivasMelhoria,  maxIndividuos, tipoAvaliacao, k);
                                 break;
@@ -237,18 +254,32 @@ public class SimulacaoGeral {
                                 p = FixSortNaoAceita.run(20, tentivasMelhoria,  maxIndividuos, tipoAvaliacao, k);
                                 break;
 
+
+
                             case Const.ALGORITMO_VarIgnAceita:
                                 p = VarIgnAceita.run(tentivasMelhoria,  maxIndividuos, tipoAvaliacao, k);
                                 break;
+                            case Const.ALGORITMO_VarIgnAceitamais:
+                                p = VarIgnAceitamais.run(tentivasMelhoria,  0.5, tipoAvaliacao, k);
+                                break;
+
                             case Const.ALGORITMO_VarIgnNaoAceita:
                                 p = VarIgnNaoAceita.run(tentivasMelhoria,  maxIndividuos, tipoAvaliacao, k);
                                 break;
+
+
                             case Const.ALGORITMO_VarSortAceita:
                                 p = VarSortAceita.run(tentivasMelhoria,  maxIndividuos, tipoAvaliacao, k);
                                 break;
+                            case Const.ALGORITMO_VarSortAceitamais:
+                                p = VarSortAceitamais.run(tentivasMelhoria,  0.5, tipoAvaliacao, k);
+                                break;
+
                             case Const.ALGORITMO_VarSortNaoAceita:
                                 p = VarSortNaoAceita.run(tentivasMelhoria,  maxIndividuos, tipoAvaliacao, k);
                                 break;
+
+
 
                             case Const.ALGORITMO_SD:
                                 SD sd = new SD();
@@ -336,37 +367,37 @@ public class SimulacaoGeral {
         Pattern.medidaSimilaridade = Const.SIMILARIDADE_JACCARD;
 
         int[] K = {10};
-        int numeroRepeticoes = 1;
+        int numeroRepeticoes = 30;
         int hours = 10;
         double  tempoMaximoSegundosAlgoritmos = 60*60*(double)hours;
 
         String[] algoritmos = {
-                Const.ALGORITMO_VarSortAceita,
-                //Const.ALGORITMO_VarSortNaoAceita,
+                Const.ALGORITMO_FixIgnAceitat20mais,
+                Const.ALGORITMO_FixSortAceitat20mais,
+                Const.ALGORITMO_VarIgnAceitamais,
+                Const.ALGORITMO_VarSortAceitamais
 
-                Const.ALGORITMO_VarIgnAceita,
-                //Const.ALGORITMO_VarIgnNaoAceita,
+//                Const.ALGORITMO_VarSortAceita,
+//                //Const.ALGORITMO_VarSortNaoAceita,
+//
+//                Const.ALGORITMO_VarIgnAceita,
+//                //Const.ALGORITMO_VarIgnNaoAceita,
+//
+////                Const.ALGORITMO_FixSortAceitat3,
+////                Const.ALGORITMO_FixSortAceitat5,
+////                Const.ALGORITMO_FixSortAceitat10,
+//                Const.ALGORITMO_FixSortAceitat20,
+//
+////                Const.ALGORITMO_FixSortNaoAceitat3,
+////                Const.ALGORITMO_FixSortNaoAceitat5,
+////                Const.ALGORITMO_FixSortNaoAceitat10,
+//                Const.ALGORITMO_FixSortNaoAceitat20,
 
-//                Const.ALGORITMO_FixSortAceitat3,
-//                Const.ALGORITMO_FixSortAceitat5,
-//                Const.ALGORITMO_FixSortAceitat10,
-                Const.ALGORITMO_FixSortAceitat20,
 
-//                Const.ALGORITMO_FixSortNaoAceitat3,
-//                Const.ALGORITMO_FixSortNaoAceitat5,
-//                Const.ALGORITMO_FixSortNaoAceitat10,
-                Const.ALGORITMO_FixSortNaoAceitat20,
-
-
-//                Const.ALGORITMO_FixIgnAceitat3,
-//                Const.ALGORITMO_FixIgnAceitat5,
-//                Const.ALGORITMO_FixIgnAceitat10,
-                Const.ALGORITMO_FixIgnAceitat20,
-
-//                Const.ALGORITMO_FixIgnNaoAceitat3,
-//                Const.ALGORITMO_FixIgnNaoAceitat5,
-//                Const.ALGORITMO_FixIgnNaoAceitat10,
-                Const.ALGORITMO_FixIgnNaoAceitat20,
+////                Const.ALGORITMO_FixIgnNaoAceitat3,
+////                Const.ALGORITMO_FixIgnNaoAceitat5,
+////                Const.ALGORITMO_FixIgnNaoAceitat10,
+//                Const.ALGORITMO_FixIgnNaoAceitat20,
 
 //                Const.ALGORITMO_SSDP,
 //                Const.ALGORITMO_SD,
@@ -403,9 +434,9 @@ public class SimulacaoGeral {
         };
         String separadorBase = ",";
         String separadorRelatorio = ",";
-//        Relatorio.gerarTabelaoCSV(metricas, separadorBase, separadorRelatorio);
-//
-//        System.out.println("Tabelão concluído");
+        Relatorio.gerarTabelaoCSV(metricas, separadorBase, separadorRelatorio);
+
+        System.out.println("Tabelão concluído");
 
     }
 }

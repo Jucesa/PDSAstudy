@@ -6,7 +6,11 @@ import dp.D;
 import dp.Pattern;
 import evolucionario.CRUZAMENTO;
 import evolucionario.SELECAO;
-import evolucionario.SSDP;
+import evolucionario.SSDPmais;
+import newSD.mais.FixIgnAceitamais;
+import newSD.mais.FixSortAceitamais;
+import newSD.mais.VarIgnAceitamais;
+import newSD.mais.VarSortAceitamais;
 import simulacoes.DPinfo;
 
 import java.io.FileNotFoundException;
@@ -136,7 +140,7 @@ public class Threshold {
                 diretorioBases+texto+"/matrixBinaria-ALL-TERMS-59730-p.csv"
         };
 
-        String base = "pastas/bases/Bases BIO 10/alon-pn-freq-2.CSV";
+        String base = "pastas/bases/Bases BIO 10/burczynski-pn-freq-2.CSV";
         D.SEPARADOR = ",";
 
         try {
@@ -146,25 +150,35 @@ public class Threshold {
             return;
         }
 
-        Const.random = new Random(Const.SEEDS[9]); //Seed
+        Const.random = new Random(Const.SEEDS[0]); //Seed
         D.GerarDpDn("p");
 
         //Parameters of the algorithm
         int k = 10;
         String metricaAvaliacao = Const.METRICA_WRACC;
-        int tentativasMelhoria = 20;
-        int maxIndividuosGerados = 10000000;
-        int quantidadeTorneio = 5;
 
-        System.out.println("\n\n\n\nVarSortAceita");
-
-        Pattern[] p = VarSortAceita.run(tentativasMelhoria, maxIndividuosGerados, metricaAvaliacao, k);
-
+        System.out.println("\n\nFix20IgnAceitamais");
+        Pattern[] p = FixIgnAceitamais.run(20, 50, 0.5, metricaAvaliacao, k);
         Avaliador.imprimirRegras(p, k);
 
-        System.out.println("\n\n\n\nVarSortNaoAceita");
-        p = VarSortNaoAceita.run(tentativasMelhoria, maxIndividuosGerados, metricaAvaliacao, k);
 
+        System.out.println("\n\nFix20SortAceitamais");
+        p = FixSortAceitamais.run(20, 50, 0.5, metricaAvaliacao, k);
+        Avaliador.imprimirRegras(p, k);
+
+
+        System.out.println("\n\nVarIgnAceitamais");
+        p = VarIgnAceitamais.run(50, 0.5, metricaAvaliacao, k);
+        Avaliador.imprimirRegras(p, k);
+
+
+        System.out.println("\n\nVarSortAceitamais");
+        p = VarSortAceitamais.run(50, 0.5, metricaAvaliacao, k);
+        Avaliador.imprimirRegras(p, k);
+
+
+        p = SSDPmais.run(k, metricaAvaliacao, 0.5, 1200);
+        System.out.println("\n\nSSDP+");
         Avaliador.imprimirRegras(p, k);
     }
 }
