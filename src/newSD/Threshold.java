@@ -16,6 +16,14 @@ import java.util.logging.Logger;
 
 public class Threshold {
 
+    //PBSD -> Problem Based Subgroup Discovery
+    //TF -> Tournament = Fixed
+    //TV -> Tournament = Variable
+
+    //ST -> Sorting threshold = True
+    //SF -> Sorting threshold = False
+
+
     /**Inicializa população da seguinte forma:
      * 90% dimensão 1,
      * 10% aleatório com número de itens igual a dimensão média dos top-k DPs e utilizando apenas os itens dos top-k DPs.
@@ -195,7 +203,7 @@ public class Threshold {
                 diretorioBases+texto+"/matrixBinaria-ALL-TERMS-59730-p.csv"
         };
 
-        String base = "pastas/bases/Bases BIO 10/burczynski-pn-freq-2.CSV";
+        String base = "pastas/bases/Bases BIO 10/alon-pn-freq-2.CSV";
         D.SEPARADOR = ",";
 
         try {
@@ -211,54 +219,42 @@ public class Threshold {
         //Parameters of the algorithm
         int k = 10;
         String metricaAvaliacao = Const.METRICA_WRACC;
+        double similaridade = 0.5;
         Pattern[] p = null;
 
-//        System.out.println("\n\nFix20IgnAceitamais");
-//        p = FixIgnAceitamais.run(20, 50, 0.5, metricaAvaliacao, k);
-//        Avaliador.imprimirRegras(p, k);
 
-
-//        System.out.println("\n\nFix20SortAceitamais");
-//        p = FixSortAceitamais.run(10, 5, 0.5, metricaAvaliacao, k);
-//        Avaliador.imprimirRegras(p, k);
         Pattern.numeroIndividuosGerados = 0;
-        System.out.println("\n\nFix50SortAceitamais");
-        p = FixSortAceitamais.run(10, 100, 0.5, metricaAvaliacao, k);
+
+//        System.out.println("\n\nPBSD_TV5_SF");
+//        p = PBSD_TV_SF.run(5, 0.5, metricaAvaliacao, k);
+//        Avaliador.imprimirRegras(p, k);
+//
+//        System.out.println("\n\nPBSD_TV5_ST");
+//        p = PBSD_TV_ST.run(5, 0.5, metricaAvaliacao, k);
+//        Avaliador.imprimirRegras(p, k);
+//
+//
+//
+//        System.out.println("\n\nPBSD_TF20_ST");
+//        p = PBSD_TF_ST.run(20, 0.5, metricaAvaliacao, k);
+//        Avaliador.imprimirRegras(p, k);
+//
+//        System.out.println("\n\nPBSD_TF20_ST");
+//        p = PBSD_TF_SF.run(20, 0.5, metricaAvaliacao, k);
+//        Avaliador.imprimirRegras(p, k);
+
+
+
+        System.out.println("\n\nPBSD_Fibonacci_ST");
+        p = PBSD_Fibonacci_ST.run(similaridade, metricaAvaliacao, k);
         Avaliador.imprimirRegras(p, k);
 
-//        Pattern.numeroIndividuosGerados = 0;
-//        System.out.println("\n\nFix50SortAceitamais");
-//        p = FixSortAceitamais.run(10, 1, 0.5, metricaAvaliacao, k);
-//        Avaliador.imprimirRegras(p, k);
-//
-//        Pattern.numeroIndividuosGerados = 0;
-//        System.out.println("\n\nFix50SortAceitamais");
-//        p = FixSortAceitamais.run(10, 1, 0.5, metricaAvaliacao, k);
-//        Avaliador.imprimirRegras(p, k);
+        System.out.println("\n\nPBSD_Fibonacci_SF");
+        p = PBSD_Fibonacci_SF.run(similaridade, metricaAvaliacao, k);
+        Avaliador.imprimirRegras(p, k);
 
-
-//        System.out.println("\n\nFix100SortAceitamais");
-//        p = FixSortAceitamais.run(10, 100, 0.5, metricaAvaliacao, k);
-//        Avaliador.imprimirRegras(p, k);
-
-
-//        System.out.println("\n\nVarIgnAceitamais");
-//        p = VarIgnAceitamais.run(50, 0.5, metricaAvaliacao, k);
-//        Avaliador.imprimirRegras(p, k);
-
-
-//        System.out.println("\n\nVarSortAceitamais");
-//        p = VarSortAceitamais.run(5, 0.5, metricaAvaliacao, k);
-//        Avaliador.imprimirRegras(p, k);
-//
-//        Pattern.numeroIndividuosGerados = 0;
-//        System.out.println("\n\nVarSortAceitamais");
-//        p = VarSortAceitamais.run(1, 0.5, metricaAvaliacao, k);
-//        Avaliador.imprimirRegras(p, k);
-//        Pattern.numeroIndividuosGerados = 0;
-
-//        p = SSDPmais.run(k, metricaAvaliacao, 0.5, 1200);
-//        System.out.println("\n\nSSDP+");
-//        Avaliador.imprimirRegras(p, k);
+        System.out.println("\n\nSSDP+");
+        p = SSDPmais.run(k, metricaAvaliacao, similaridade, 3600);
+        Avaliador.imprimirRegras(p, k);
     }
 }

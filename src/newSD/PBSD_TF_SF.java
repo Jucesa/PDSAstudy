@@ -7,13 +7,13 @@ import evolucionario.SELECAO;
 
 import java.util.HashSet;
 
-public class FixIgnAceitamais extends Threshold {
-    public static Pattern[] run(int quantidadeTorneio, int tentativasMelhoria, double similaridade, String tipoAvaliacao, int k) {
+public class PBSD_TF_SF extends Threshold {
+    public static Pattern[] run(int quantidadeTorneio, double similaridade, String tipoAvaliacao, int k) {
 
         Pattern[] Pk = new Pattern[k]; //array de k melhores indivíduos
         Pattern[] P = null; // array da população manipulada pelo algoritmo
         Pattern[] I = null; // array que salva os Pattern de 1D ordenados
-        int individuosSemMelhora = 0;
+        int numeroGeracoesSemMelhoraPk = 0;
 
         //inicializa Pk com Pattern vazio
         for (int i = 0; i < Pk.length; i++) {
@@ -32,8 +32,8 @@ public class FixIgnAceitamais extends Threshold {
 
 
         for (int numeroReinicializacoes = 0; numeroReinicializacoes < 3; numeroReinicializacoes++) {
-            //System.out.println("Reinicializações: " + numeroReinicializacoes);
-            individuosSemMelhora = 0;
+            System.out.println("Reinicializações: " + numeroReinicializacoes);
+            numeroGeracoesSemMelhoraPk = 0;
 
             //reinicializa P para ter 90% pattern 1D e 10% pattern parecidos com Pk,
             // threshold settado para começar em 90% de P, ou seja, exatamente como o comportamento
@@ -44,35 +44,33 @@ public class FixIgnAceitamais extends Threshold {
             }
 
             //tenta melhorar P.length individuos até reinicializar
-            while (individuosSemMelhora < tamanhoP && threshold > 1) {
+            while (numeroGeracoesSemMelhoraPk < 3 && threshold > 1) {
                 int novosK = 0;
 
                 Pattern pai1 = P[SELECAO.torneioN(P, quantidadeTorneio)];
 
-                //for (int i = 0; i < tentativasMelhoria; i++) {
+                Pattern pai2 = P[SELECAO.torneioN(P, quantidadeTorneio)];
 
-                    Pattern pai2 = P[SELECAO.torneioN(P, quantidadeTorneio)];
+                Pattern paux = CRUZAMENTO.AND(pai1, pai2, pai1.getTipoAvaliacao());
 
-                    Pattern paux = CRUZAMENTO.AND(pai1, pai2, pai1.getTipoAvaliacao());
+                if (substituirIndividuo(P, paux, threshold)) {
 
-                    if (substituirIndividuo(P, paux, threshold)) {
+                    threshold--;
+                    //break;
+                }
 
-                        threshold--;
-                        //break;
-                    }
+                if (Pattern.numeroIndividuosGerados % P.length == 0) {
+
                     novosK = SELECAO.salvandoRelevantesDPmais(Pk, P, similaridade);
                     if (novosK == 0) {
-                        individuosSemMelhora++;
+                        numeroGeracoesSemMelhoraPk++;
                     } else {
-                        //System.out.println("NovosK:"+novosK);
-                        individuosSemMelhora = 0;
+                        System.out.println("NovosK:"+novosK);
+                        numeroGeracoesSemMelhoraPk = 0;
                     }
-//                    if (Pattern.numeroIndividuosGerados % P.length == 0) {
-//                        avaliarPopulacao(P, quantidadeTorneio, particao, Pattern.numeroIndividuosGerados);
-//                    }
-                //}
 
-
+                    //avaliarPopulacao(P, quantidadeTorneio, particao, Pattern.numeroIndividuosGerados);
+                }
 
             }
         }
