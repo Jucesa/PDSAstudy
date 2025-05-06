@@ -147,67 +147,6 @@ public class INICIALIZAR {
         return P0;
     }
 
-
-    /**Inicializa população da seguinte forma:
-     * 90% dimensão 1,
-     * 10% aleatório com número de itens igual a dimensão média dos top-k DPs e utilizando apenas os itens dos top-k DPs.
-     *@author Júlio Limeira
-     * @param tipoAvaliacao int - tipo de avaliação utilizado para qualificar indivíduo
-     * @param Pk Pattern[] - k melhores DPs: referência para criar metade da população
-     * @param tamanhoPopulacao int - tamanho da população
-     * @param I Pattern[] - Array de Pattern D1 ordenados por avaliação
-     * @return Pattern[] - nova população
-     */
-    public static Pattern[] aleatorioD1_Pk(String tipoAvaliacao, int tamanhoPopulacao, Pattern[] Pk, Pattern[] I){
-        int numeroDimensoes =  (int) Avaliador.avaliarMediaDimensoes(Pk, Pk.length);
-        if(numeroDimensoes < 2){
-            numeroDimensoes = 2;
-        }
-
-        //População que será retornada
-        Pattern[] P0 = new Pattern[tamanhoPopulacao];
-
-        //Adicionando os 90% melhores de D1
-        int i = 0;
-        for(; i < 9*tamanhoPopulacao/10; i++){
-            P0[i] = I[i];
-        }
-
-        //Coletanto todos os itens distintos da população Pk.
-        HashSet<Integer> itensPk = new HashSet<>();
-        for (Pattern pattern : Pk) {
-            itensPk.addAll(pattern.getItens());
-        }
-        int[] itensPkArray = new int[itensPk.size()];
-
-        Iterator<Integer> iterator = itensPk.iterator();
-        int n = 0;
-        while(iterator.hasNext()){
-            itensPkArray[n++] = iterator.next();
-        }
-
-        //Gerando parte da população utilizando os itens presentes em Pk
-        for(int j = i; j < tamanhoPopulacao; j++){
-            HashSet<Integer> itens = new HashSet<>();
-
-            while(itens.size() < numeroDimensoes){
-                if(itensPkArray.length > numeroDimensoes){
-                    itens.add(itensPkArray[Const.random.nextInt(itensPkArray.length)]);
-                }else{//Caso especial: existem menos itens nas top-k do que o tamanho exigido para o invíduo
-                    if(Const.random.nextBoolean()){
-                        itens.add(itensPkArray[Const.random.nextInt(itensPkArray.length)]);
-                    }else{
-                        itens.add(D.itensUtilizados[Const.random.nextInt(D.numeroItensUtilizados)]);
-                    }
-                }
-
-            }
-
-            P0[j] = new Pattern(itens, tipoAvaliacao);
-        }
-        return P0;
-    }
-
     
     /**Inicializa população de indivíduos aleatório com entre 1D e nD
      *@author Tarcísio Pontes

@@ -7,10 +7,6 @@ import dp.Pattern;
 import evolucionario.CRUZAMENTO;
 import evolucionario.SELECAO;
 import evolucionario.SSDPmais;
-import newSD.mais.FixIgnAceitamais;
-import newSD.mais.FixSortAceitamais;
-import newSD.mais.VarIgnAceitamais;
-import newSD.mais.VarSortAceitamais;
 import simulacoes.DPinfo;
 
 import java.io.FileNotFoundException;
@@ -20,6 +16,65 @@ import java.util.logging.Logger;
 
 public class Threshold {
 
+    /**Inicializa população da seguinte forma:
+     * 90% dimensão 1,
+     * 10% aleatório com número de itens igual a dimensão média dos top-k DPs e utilizando apenas os itens dos top-k DPs.
+     *@author Júlio Limeira
+     * @param tipoAvaliacao int - tipo de avaliação utilizado para qualificar indivíduo
+     * @param Pk Pattern[] - k melhores DPs: referência para criar metade da população
+     * @param tamanhoPopulacao int - tamanho da população
+     * @param I Pattern[] - Array de Pattern D1 ordenados por avaliação
+     * @return Pattern[] - nova população
+     */
+    public static Pattern[] aleatorioD1_Pk(String tipoAvaliacao, int tamanhoPopulacao, Pattern[] Pk, Pattern[] I){
+        int numeroDimensoes =  (int) Avaliador.avaliarMediaDimensoes(Pk, Pk.length);
+        if(numeroDimensoes < 2){
+            numeroDimensoes = 2;
+        }
+
+        //População que será retornada
+        Pattern[] P0 = new Pattern[tamanhoPopulacao];
+
+        //Adicionando os 90% melhores de D1
+        int i = 0;
+        for(; i < 9*tamanhoPopulacao/10; i++){
+            P0[i] = I[i];
+        }
+
+        //Coletanto todos os itens distintos da população Pk.
+        HashSet<Integer> itensPk = new HashSet<>();
+        for (Pattern pattern : Pk) {
+            itensPk.addAll(pattern.getItens());
+        }
+        int[] itensPkArray = new int[itensPk.size()];
+
+        Iterator<Integer> iterator = itensPk.iterator();
+        int n = 0;
+        while(iterator.hasNext()){
+            itensPkArray[n++] = iterator.next();
+        }
+
+        //Gerando parte da população utilizando os itens presentes em Pk
+        for(int j = i; j < tamanhoPopulacao; j++){
+            HashSet<Integer> itens = new HashSet<>();
+
+            while(itens.size() < numeroDimensoes){
+                if(itensPkArray.length > numeroDimensoes){
+                    itens.add(itensPkArray[Const.random.nextInt(itensPkArray.length)]);
+                }else{//Caso especial: existem menos itens nas top-k do que o tamanho exigido para o invíduo
+                    if(Const.random.nextBoolean()){
+                        itens.add(itensPkArray[Const.random.nextInt(itensPkArray.length)]);
+                    }else{
+                        itens.add(D.itensUtilizados[Const.random.nextInt(D.numeroItensUtilizados)]);
+                    }
+                }
+
+            }
+
+            P0[j] = new Pattern(itens, tipoAvaliacao);
+        }
+        return P0;
+    }
 
     protected static Pattern[] topK(Pattern[] P, int k){
         Pattern[] Pk = new Pattern[k];
@@ -150,35 +205,60 @@ public class Threshold {
             return;
         }
 
-        Const.random = new Random(Const.SEEDS[0]); //Seed
+        Const.random = new Random(Const.SEEDS[5]); //Seed
         D.GerarDpDn("p");
 
         //Parameters of the algorithm
         int k = 10;
         String metricaAvaliacao = Const.METRICA_WRACC;
+        Pattern[] p = null;
 
-        System.out.println("\n\nFix20IgnAceitamais");
-        Pattern[] p = FixIgnAceitamais.run(20, 50, 0.5, metricaAvaliacao, k);
+//        System.out.println("\n\nFix20IgnAceitamais");
+//        p = FixIgnAceitamais.run(20, 50, 0.5, metricaAvaliacao, k);
+//        Avaliador.imprimirRegras(p, k);
+
+
+//        System.out.println("\n\nFix20SortAceitamais");
+//        p = FixSortAceitamais.run(10, 5, 0.5, metricaAvaliacao, k);
+//        Avaliador.imprimirRegras(p, k);
+        Pattern.numeroIndividuosGerados = 0;
+        System.out.println("\n\nFix50SortAceitamais");
+        p = FixSortAceitamais.run(10, 100, 0.5, metricaAvaliacao, k);
         Avaliador.imprimirRegras(p, k);
 
-
-        System.out.println("\n\nFix20SortAceitamais");
-        p = FixSortAceitamais.run(20, 50, 0.5, metricaAvaliacao, k);
-        Avaliador.imprimirRegras(p, k);
-
-
-        System.out.println("\n\nVarIgnAceitamais");
-        p = VarIgnAceitamais.run(50, 0.5, metricaAvaliacao, k);
-        Avaliador.imprimirRegras(p, k);
-
-
-        System.out.println("\n\nVarSortAceitamais");
-        p = VarSortAceitamais.run(50, 0.5, metricaAvaliacao, k);
-        Avaliador.imprimirRegras(p, k);
+//        Pattern.numeroIndividuosGerados = 0;
+//        System.out.println("\n\nFix50SortAceitamais");
+//        p = FixSortAceitamais.run(10, 1, 0.5, metricaAvaliacao, k);
+//        Avaliador.imprimirRegras(p, k);
+//
+//        Pattern.numeroIndividuosGerados = 0;
+//        System.out.println("\n\nFix50SortAceitamais");
+//        p = FixSortAceitamais.run(10, 1, 0.5, metricaAvaliacao, k);
+//        Avaliador.imprimirRegras(p, k);
 
 
-        p = SSDPmais.run(k, metricaAvaliacao, 0.5, 1200);
-        System.out.println("\n\nSSDP+");
-        Avaliador.imprimirRegras(p, k);
+//        System.out.println("\n\nFix100SortAceitamais");
+//        p = FixSortAceitamais.run(10, 100, 0.5, metricaAvaliacao, k);
+//        Avaliador.imprimirRegras(p, k);
+
+
+//        System.out.println("\n\nVarIgnAceitamais");
+//        p = VarIgnAceitamais.run(50, 0.5, metricaAvaliacao, k);
+//        Avaliador.imprimirRegras(p, k);
+
+
+//        System.out.println("\n\nVarSortAceitamais");
+//        p = VarSortAceitamais.run(5, 0.5, metricaAvaliacao, k);
+//        Avaliador.imprimirRegras(p, k);
+//
+//        Pattern.numeroIndividuosGerados = 0;
+//        System.out.println("\n\nVarSortAceitamais");
+//        p = VarSortAceitamais.run(1, 0.5, metricaAvaliacao, k);
+//        Avaliador.imprimirRegras(p, k);
+//        Pattern.numeroIndividuosGerados = 0;
+
+//        p = SSDPmais.run(k, metricaAvaliacao, 0.5, 1200);
+//        System.out.println("\n\nSSDP+");
+//        Avaliador.imprimirRegras(p, k);
     }
 }

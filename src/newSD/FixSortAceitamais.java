@@ -1,20 +1,17 @@
-package newSD.mais;
+package newSD;
 
 import dp.Pattern;
 import evolucionario.CRUZAMENTO;
 import evolucionario.INICIALIZAR;
 import evolucionario.SELECAO;
-import newSD.Threshold;
 
 import java.util.HashSet;
 
-public class VarIgnAceitamais extends Threshold {
-    public static Pattern[] run(int tentativasMelhoria, double similaridade, String tipoAvaliacao, int k) {
+public class FixSortAceitamais extends Threshold {
 
+    public static Pattern[] run(int quantidadeTorneio, int tentativasMelhoria, double similaridade, String tipoAvaliacao, int k) {
         Pattern[] Pk = new Pattern[k];
         Pattern[] P = null;
-
-        int quantidadeTorneio = 1;
         int numeroGeracoesSemMelhoraPk = 0;
 
         for (int i = 0; i < Pk.length; i++) {
@@ -35,47 +32,40 @@ public class VarIgnAceitamais extends Threshold {
             numeroGeracoesSemMelhoraPk = 0;
 
             if (numeroReinicializacoes > 0) {
-                P = INICIALIZAR.aleatorioD1_Pk(tipoAvaliacao, tamanhoP, Pk, Paux);
+                P = aleatorioD1_Pk(tipoAvaliacao, tamanhoP, Pk, Paux);
                 particao = 9*P.length/10;
             }
 
-            while (numeroGeracoesSemMelhoraPk < tamanhoP && particao > 1) {
+            while (numeroGeracoesSemMelhoraPk < 3 && particao > 1) {
                 int novosK = 0;
-
-
-                int index = SELECAO.torneioN(P, quantidadeTorneio);
-
-                Pattern pai1 = P[index];
+                Pattern pai1 = P[SELECAO.torneioN(P, quantidadeTorneio, 0, particao-1)];
 
                 for (int i = 0; i < tentativasMelhoria; i++) {
 
-                    index = SELECAO.torneioN(P, quantidadeTorneio);
-                    Pattern pai2 = P[index];
+                    Pattern pai2 = sortear(P, quantidadeTorneio, particao);
 
                     Pattern paux = CRUZAMENTO.AND(pai1, pai2, pai1.getTipoAvaliacao());
 
-                    if (substituirIndividuo(P, paux, particao)) {
 
-                        novosK = SELECAO.salvandoRelevantesDPmais(Pk, P, similaridade);
+                    if (substituirIndividuo(P, paux, particao)) {
                         particao--;
                         break;
                     }
-                    if (Pattern.numeroIndividuosGerados % P.length == 0) {
-                        quantidadeTorneio++;
+                    if(Pattern.numeroIndividuosGerados % P.length == 0){
                         //avaliarPopulacao(P, quantidadeTorneio, particao, Pattern.numeroIndividuosGerados);
+                          novosK = SELECAO.salvandoRelevantesDPmais(Pk, P, similaridade);
+                          if (novosK == 0) {
+                              numeroGeracoesSemMelhoraPk++;
+                          } else {
+                              System.out.println("NovosK:"+novosK);
+                              numeroGeracoesSemMelhoraPk = 0;
+                          }
                     }
-                }
-
-                if (novosK == 0) {
-                    numeroGeracoesSemMelhoraPk++;
-                } else {
-                    //System.out.println("NovosK:"+novosK);
-                    numeroGeracoesSemMelhoraPk = 0;
                 }
 
             }
         }
-
+        System.out.println("Gerou: "+Pattern.numeroIndividuosGerados);
         return Pk;
     }
 }

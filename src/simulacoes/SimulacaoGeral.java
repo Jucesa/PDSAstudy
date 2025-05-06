@@ -24,7 +24,6 @@ import java.util.Random;
 import java.util.Scanner;
 
 import newSD.*;
-import newSD.mais.*;
 import sd.Aleatorio;
 import sd.ExaustivoK;
 import sd.SD;
@@ -168,9 +167,7 @@ public class SimulacaoGeral {
                         Pattern[] p = null;
                         Const.random = new Random(Const.SEEDS[n]);
                         long t0 = System.currentTimeMillis();
-                        int quantidadeTorneio = 3;
-                        int tentivasMelhoria = 20;
-                        int maxIndividuos = 1000000;
+
                         switch(algoritmo){
                             case Const.ALGORITMO_SSDP:
                                 p = SSDP.run(k, tipoAvaliacao, tempoMaximoSegundosAlgoritmos);
@@ -186,100 +183,99 @@ public class SimulacaoGeral {
                                 break;
 
 
-                            case Const.ALGORITMO_FixIgnAceitat3mais:
-                                p = FixIgnAceitamais.run(3, tentivasMelhoria,  0.5, tipoAvaliacao, k);
-                                break;
-                            case Const.ALGORITMO_FixIgnAceitat5mais:
-                                p = FixIgnAceitamais.run(5, tentivasMelhoria,  0.5, tipoAvaliacao, k);
-                                break;
-                            case Const.ALGORITMO_FixIgnAceitat10mais:
-                                p = FixIgnAceitamais.run(10, tentivasMelhoria,  0.5, tipoAvaliacao, k);
-                                break;
-                            case Const.ALGORITMO_FixIgnAceitat20mais:
-                                p = FixIgnAceitamais.run(20, tentivasMelhoria,  0.5, tipoAvaliacao, k);
-                                break;
-
-
-                            case Const.ALGORITMO_FixIgnNaoAceitat3:
-                                p = FixIgnNaoAceita.run(3, tentivasMelhoria,  maxIndividuos, tipoAvaliacao, k);
-                                break;
-                            case Const.ALGORITMO_FixIgnNaoAceitat5:
-                                p = FixIgnNaoAceita.run(5, tentivasMelhoria,  maxIndividuos, tipoAvaliacao, k);
-                                break;
-                            case Const.ALGORITMO_FixIgnNaoAceitat10:
-                                p = FixIgnNaoAceita.run(10, tentivasMelhoria,  maxIndividuos, tipoAvaliacao, k);
-                                break;
-                            case Const.ALGORITMO_FixIgnNaoAceitat20:
-                                p = FixIgnNaoAceita.run(20, tentivasMelhoria,  maxIndividuos, tipoAvaliacao, k);
-                                break;
-
-
-                            case Const.ALGORITMO_FixSortAceitat3:
-                                p = FixSortAceita.run(3, tentivasMelhoria,  maxIndividuos, tipoAvaliacao, k);
-                                break;
-                            case Const.ALGORITMO_FixSortAceitat5:
-                                p = FixSortAceita.run(5, tentivasMelhoria,  maxIndividuos, tipoAvaliacao, k);
-                                break;
-                            case Const.ALGORITMO_FixSortAceitat10:
-                                p = FixSortAceita.run(10, tentivasMelhoria,  maxIndividuos, tipoAvaliacao, k);
-                                break;
-                            case Const.ALGORITMO_FixSortAceitat20:
-                                p = FixSortAceita.run(20, tentivasMelhoria,  maxIndividuos, tipoAvaliacao, k);
-                                break;
-
-                            case Const.ALGORITMO_FixSortAceitat3mais:
-                                p = FixSortAceitamais.run(3, tentivasMelhoria,  0.5, tipoAvaliacao, k);
-                                break;
-                            case Const.ALGORITMO_FixSortAceitat5mais:
-                                p = FixSortAceitamais.run(5, tentivasMelhoria,  0.5, tipoAvaliacao, k);
-                                break;
-                            case Const.ALGORITMO_FixSortAceitat10mais:
-                                p = FixSortAceitamais.run(10, tentivasMelhoria,  0.5, tipoAvaliacao, k);
-                                break;
-                            case Const.ALGORITMO_FixSortAceitat20mais:
-                                p = FixSortAceitamais.run(20, tentivasMelhoria,  0.5, tipoAvaliacao, k);
-                                break;
-
-
-                            case Const.ALGORITMO_FixSortNaoAceitat3:
-                                p = FixSortNaoAceita.run(3, tentivasMelhoria,  maxIndividuos, tipoAvaliacao, k);
-                                break;
-                            case Const.ALGORITMO_FixSortNaoAceitat5:
-                                p = FixSortNaoAceita.run(5, tentivasMelhoria,  maxIndividuos, tipoAvaliacao, k);
-                                break;
-                            case Const.ALGORITMO_FixSortNaoAceitat10:
-                                p = FixSortNaoAceita.run(10, tentivasMelhoria,  maxIndividuos, tipoAvaliacao, k);
-                                break;
-                            case Const.ALGORITMO_FixSortNaoAceitat20:
-                                p = FixSortNaoAceita.run(20, tentivasMelhoria,  maxIndividuos, tipoAvaliacao, k);
-                                break;
-
-
-
-                            case Const.ALGORITMO_VarIgnAceita:
-                                p = VarIgnAceita.run(tentivasMelhoria,  maxIndividuos, tipoAvaliacao, k);
-                                break;
-                            case Const.ALGORITMO_VarIgnAceitamais:
-                                p = VarIgnAceitamais.run(tentivasMelhoria,  0.5, tipoAvaliacao, k);
-                                break;
-
-                            case Const.ALGORITMO_VarIgnNaoAceita:
-                                p = VarIgnNaoAceita.run(tentivasMelhoria,  maxIndividuos, tipoAvaliacao, k);
-                                break;
-
-
-                            case Const.ALGORITMO_VarSortAceita:
-                                p = VarSortAceita.run(tentivasMelhoria,  maxIndividuos, tipoAvaliacao, k);
-                                break;
-                            case Const.ALGORITMO_VarSortAceitamais:
-                                p = VarSortAceitamais.run(tentivasMelhoria,  0.5, tipoAvaliacao, k);
-                                break;
-
-                            case Const.ALGORITMO_VarSortNaoAceita:
-                                p = VarSortNaoAceita.run(tentivasMelhoria,  maxIndividuos, tipoAvaliacao, k);
-                                break;
-
-
+//                            case Const.ALGORITMO_FixIgnAceitat3mais:
+//                                p = FixIgnAceitamais.run(3, tentivasMelhoria,  0.5, tipoAvaliacao, k);
+//                                break;
+//                            case Const.ALGORITMO_FixIgnAceitat5mais:
+//                                p = FixIgnAceitamais.run(5, tentivasMelhoria,  0.5, tipoAvaliacao, k);
+//                                break;
+//                            case Const.ALGORITMO_FixIgnAceitat10mais:
+//                                p = FixIgnAceitamais.run(10, tentivasMelhoria,  0.5, tipoAvaliacao, k);
+//                                break;
+//                            case Const.ALGORITMO_FixIgnAceitat20mais:
+//                                p = FixIgnAceitamais.run(20, tentivasMelhoria,  0.5, tipoAvaliacao, k);
+//                                break;
+//
+//
+//                            case Const.ALGORITMO_FixIgnNaoAceitat3:
+//                                p = FixIgnNaoAceita.run(3, tentivasMelhoria,  maxIndividuos, tipoAvaliacao, k);
+//                                break;
+//                            case Const.ALGORITMO_FixIgnNaoAceitat5:
+//                                p = FixIgnNaoAceita.run(5, tentivasMelhoria,  maxIndividuos, tipoAvaliacao, k);
+//                                break;
+//                            case Const.ALGORITMO_FixIgnNaoAceitat10:
+//                                p = FixIgnNaoAceita.run(10, tentivasMelhoria,  maxIndividuos, tipoAvaliacao, k);
+//                                break;
+//                            case Const.ALGORITMO_FixIgnNaoAceitat20:
+//                                p = FixIgnNaoAceita.run(20, tentivasMelhoria,  maxIndividuos, tipoAvaliacao, k);
+//                                break;
+//
+//
+//                            case Const.ALGORITMO_FixSortAceitat3:
+//                                p = FixSortAceita.run(3, tentivasMelhoria,  maxIndividuos, tipoAvaliacao, k);
+//                                break;
+//                            case Const.ALGORITMO_FixSortAceitat5:
+//                                p = FixSortAceita.run(5, tentivasMelhoria,  maxIndividuos, tipoAvaliacao, k);
+//                                break;
+//                            case Const.ALGORITMO_FixSortAceitat10:
+//                                p = FixSortAceita.run(10, tentivasMelhoria,  maxIndividuos, tipoAvaliacao, k);
+//                                break;
+//                            case Const.ALGORITMO_FixSortAceitat20:
+//                                p = FixSortAceita.run(20, tentivasMelhoria,  maxIndividuos, tipoAvaliacao, k);
+//                                break;
+//
+//                            case Const.ALGORITMO_FixSortAceitat3mais:
+//                                p = FixSortAceitamais.run(3, tentivasMelhoria,  0.5, tipoAvaliacao, k);
+//                                break;
+//                            case Const.ALGORITMO_FixSortAceitat5mais:
+//                                p = FixSortAceitamais.run(5, tentivasMelhoria,  0.5, tipoAvaliacao, k);
+//                                break;
+//                            case Const.ALGORITMO_FixSortAceitat10mais:
+//                                p = FixSortAceitamais.run(10, tentivasMelhoria,  0.5, tipoAvaliacao, k);
+//                                break;
+//                            case Const.ALGORITMO_FixSortAceitat20mais:
+//                                p = FixSortAceitamais.run(20, tentivasMelhoria,  0.5, tipoAvaliacao, k);
+//                                break;
+//
+//
+//                            case Const.ALGORITMO_FixSortNaoAceitat3:
+//                                p = FixSortNaoAceita.run(3, tentivasMelhoria,  maxIndividuos, tipoAvaliacao, k);
+//                                break;
+//                            case Const.ALGORITMO_FixSortNaoAceitat5:
+//                                p = FixSortNaoAceita.run(5, tentivasMelhoria,  maxIndividuos, tipoAvaliacao, k);
+//                                break;
+//                            case Const.ALGORITMO_FixSortNaoAceitat10:
+//                                p = FixSortNaoAceita.run(10, tentivasMelhoria,  maxIndividuos, tipoAvaliacao, k);
+//                                break;
+//                            case Const.ALGORITMO_FixSortNaoAceitat20:
+//                                p = FixSortNaoAceita.run(20, tentivasMelhoria,  maxIndividuos, tipoAvaliacao, k);
+//                                break;
+//
+//
+//
+//                            case Const.ALGORITMO_VarIgnAceita:
+//                                p = VarIgnAceita.run(tentivasMelhoria,  maxIndividuos, tipoAvaliacao, k);
+//                                break;
+//                            case Const.ALGORITMO_VarIgnAceitamais:
+//                                p = VarIgnAceitamais.run(tentivasMelhoria,  0.5, tipoAvaliacao, k);
+//                                break;
+//
+//                            case Const.ALGORITMO_VarIgnNaoAceita:
+//                                p = VarIgnNaoAceita.run(tentivasMelhoria,  maxIndividuos, tipoAvaliacao, k);
+//                                break;
+//
+//
+//                            case Const.ALGORITMO_VarSortAceita:
+//                                p = VarSortAceita.run(tentivasMelhoria,  maxIndividuos, tipoAvaliacao, k);
+//                                break;
+//                            case Const.ALGORITMO_VarSortAceitamais:
+//                                p = VarSortAceitamais.run(tentivasMelhoria,  0.5, tipoAvaliacao, k);
+//                                break;
+//
+//                            case Const.ALGORITMO_VarSortNaoAceita:
+//                                p = VarSortNaoAceita.run(tentivasMelhoria,  maxIndividuos, tipoAvaliacao, k);
+//                                break;
+//
 
                             case Const.ALGORITMO_SD:
                                 SD sd = new SD();
@@ -372,10 +368,10 @@ public class SimulacaoGeral {
         double  tempoMaximoSegundosAlgoritmos = 60*60*(double)hours;
 
         String[] algoritmos = {
-                Const.ALGORITMO_FixIgnAceitat20mais,
-                Const.ALGORITMO_FixSortAceitat20mais,
-                Const.ALGORITMO_VarIgnAceitamais,
-                Const.ALGORITMO_VarSortAceitamais
+//                Const.ALGORITMO_FixIgnAceitat20mais,
+//                Const.ALGORITMO_FixSortAceitat20mais,
+//                Const.ALGORITMO_VarIgnAceitamais,
+//                Const.ALGORITMO_VarSortAceitamais
 
 //                Const.ALGORITMO_VarSortAceita,
 //                //Const.ALGORITMO_VarSortNaoAceita,
