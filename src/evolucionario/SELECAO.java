@@ -27,7 +27,7 @@ public class SELECAO {
      * Os 25% restantes são índices aleatórios entre zero e o tamanho da população
      * A quantidade de índies retornado é sempre do mesmo do tamanho da população.
      *@author Tarcísio Lucas
-     * @param tamanhoPopulacao
+     * @param tamanhoPopulacao int
      * @return int[]vou
      * @since 14/01/2016
      * @version 1.0
@@ -36,7 +36,7 @@ public class SELECAO {
         int[] indices = new int[tamanhoPopulacao];
         int i = 0;
         for(; i < tamanhoPopulacao*0.75; i++){
-            indices[i] = Const.random.nextInt(tamanhoPopulacao*1/4);
+            indices[i] = Const.random.nextInt(tamanhoPopulacao /4);
         }
         for(; i < tamanhoPopulacao; i++){
             indices[i] = Const.random.nextInt(tamanhoPopulacao);
@@ -47,7 +47,7 @@ public class SELECAO {
     /**
      * Retorna índices vencedores em torneios binários (entre dois indivíduos)
      *@author Tarcísio Lucas
-     * @param tamanhoPopulacao
+     * @param tamanhoPopulacao int
      * @param  P população
      * @return int[] - índices vencedores de P
      * @since 27/01/2016
@@ -167,11 +167,10 @@ public class SELECAO {
      */
     public static Pattern[] selecionarMelhoresDistintos(Pattern[] P1, Pattern[] P2, Pattern[] P3){
         int tamanhoPopulacao = P1.length;
-        Pattern[] PAsterisco = new Pattern[tamanhoPopulacao];        
-        ArrayList<Pattern> patternAux = new ArrayList<>();
-        
+        Pattern[] PAsterisco = new Pattern[tamanhoPopulacao];
+
         //System.out.println("\tAdicioando P");
-        patternAux.addAll(Arrays.asList(P1));
+        ArrayList<Pattern> patternAux = new ArrayList<>(Arrays.asList(P1));
         
         //System.out.println("\tAdicioando Pnovos");
         for (Pattern p2 : P2) {
@@ -296,8 +295,9 @@ public class SELECAO {
      * indivíduos NÃO distintos! Ou seja, não controla se indivíduos são
      * distintos.
      *@author Tarcísio Lucas
-     * @param P PAtterns[]
-     * @param Pnovo PAtterns[]
+     * @param P1 PAtterns[]
+     * @param P2 PAtterns[]
+     * @param P3 PAtterns[]
      * @return Pattern[]
      * @since 27/01/2016
      * @version 1.0
@@ -401,10 +401,6 @@ public class SELECAO {
         }
         return novosk;
     }
-    
-    
-    
-    
     
     /**
      * Retorna se um Pattern P é inédito em relação a um Conjunto de patterns.

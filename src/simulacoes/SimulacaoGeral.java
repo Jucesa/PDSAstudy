@@ -183,99 +183,6 @@ public class SimulacaoGeral {
                                 break;
 
 
-//                            case Const.ALGORITMO_FixIgnAceitat3mais:
-//                                p = FixIgnAceitamais.run(3, tentivasMelhoria,  0.5, tipoAvaliacao, k);
-//                                break;
-//                            case Const.ALGORITMO_FixIgnAceitat5mais:
-//                                p = FixIgnAceitamais.run(5, tentivasMelhoria,  0.5, tipoAvaliacao, k);
-//                                break;
-//                            case Const.ALGORITMO_FixIgnAceitat10mais:
-//                                p = FixIgnAceitamais.run(10, tentivasMelhoria,  0.5, tipoAvaliacao, k);
-//                                break;
-//                            case Const.ALGORITMO_FixIgnAceitat20mais:
-//                                p = FixIgnAceitamais.run(20, tentivasMelhoria,  0.5, tipoAvaliacao, k);
-//                                break;
-//
-//
-//                            case Const.ALGORITMO_FixIgnNaoAceitat3:
-//                                p = FixIgnNaoAceita.run(3, tentivasMelhoria,  maxIndividuos, tipoAvaliacao, k);
-//                                break;
-//                            case Const.ALGORITMO_FixIgnNaoAceitat5:
-//                                p = FixIgnNaoAceita.run(5, tentivasMelhoria,  maxIndividuos, tipoAvaliacao, k);
-//                                break;
-//                            case Const.ALGORITMO_FixIgnNaoAceitat10:
-//                                p = FixIgnNaoAceita.run(10, tentivasMelhoria,  maxIndividuos, tipoAvaliacao, k);
-//                                break;
-//                            case Const.ALGORITMO_FixIgnNaoAceitat20:
-//                                p = FixIgnNaoAceita.run(20, tentivasMelhoria,  maxIndividuos, tipoAvaliacao, k);
-//                                break;
-//
-//
-//                            case Const.ALGORITMO_FixSortAceitat3:
-//                                p = FixSortAceita.run(3, tentivasMelhoria,  maxIndividuos, tipoAvaliacao, k);
-//                                break;
-//                            case Const.ALGORITMO_FixSortAceitat5:
-//                                p = FixSortAceita.run(5, tentivasMelhoria,  maxIndividuos, tipoAvaliacao, k);
-//                                break;
-//                            case Const.ALGORITMO_FixSortAceitat10:
-//                                p = FixSortAceita.run(10, tentivasMelhoria,  maxIndividuos, tipoAvaliacao, k);
-//                                break;
-//                            case Const.ALGORITMO_FixSortAceitat20:
-//                                p = FixSortAceita.run(20, tentivasMelhoria,  maxIndividuos, tipoAvaliacao, k);
-//                                break;
-//
-//                            case Const.ALGORITMO_FixSortAceitat3mais:
-//                                p = FixSortAceitamais.run(3, tentivasMelhoria,  0.5, tipoAvaliacao, k);
-//                                break;
-//                            case Const.ALGORITMO_FixSortAceitat5mais:
-//                                p = FixSortAceitamais.run(5, tentivasMelhoria,  0.5, tipoAvaliacao, k);
-//                                break;
-//                            case Const.ALGORITMO_FixSortAceitat10mais:
-//                                p = FixSortAceitamais.run(10, tentivasMelhoria,  0.5, tipoAvaliacao, k);
-//                                break;
-//                            case Const.ALGORITMO_FixSortAceitat20mais:
-//                                p = FixSortAceitamais.run(20, tentivasMelhoria,  0.5, tipoAvaliacao, k);
-//                                break;
-//
-//
-//                            case Const.ALGORITMO_FixSortNaoAceitat3:
-//                                p = FixSortNaoAceita.run(3, tentivasMelhoria,  maxIndividuos, tipoAvaliacao, k);
-//                                break;
-//                            case Const.ALGORITMO_FixSortNaoAceitat5:
-//                                p = FixSortNaoAceita.run(5, tentivasMelhoria,  maxIndividuos, tipoAvaliacao, k);
-//                                break;
-//                            case Const.ALGORITMO_FixSortNaoAceitat10:
-//                                p = FixSortNaoAceita.run(10, tentivasMelhoria,  maxIndividuos, tipoAvaliacao, k);
-//                                break;
-//                            case Const.ALGORITMO_FixSortNaoAceitat20:
-//                                p = FixSortNaoAceita.run(20, tentivasMelhoria,  maxIndividuos, tipoAvaliacao, k);
-//                                break;
-//
-//
-//
-//                            case Const.ALGORITMO_VarIgnAceita:
-//                                p = VarIgnAceita.run(tentivasMelhoria,  maxIndividuos, tipoAvaliacao, k);
-//                                break;
-//                            case Const.ALGORITMO_VarIgnAceitamais:
-//                                p = VarIgnAceitamais.run(tentivasMelhoria,  0.5, tipoAvaliacao, k);
-//                                break;
-//
-//                            case Const.ALGORITMO_VarIgnNaoAceita:
-//                                p = VarIgnNaoAceita.run(tentivasMelhoria,  maxIndividuos, tipoAvaliacao, k);
-//                                break;
-//
-//
-//                            case Const.ALGORITMO_VarSortAceita:
-//                                p = VarSortAceita.run(tentivasMelhoria,  maxIndividuos, tipoAvaliacao, k);
-//                                break;
-//                            case Const.ALGORITMO_VarSortAceitamais:
-//                                p = VarSortAceitamais.run(tentivasMelhoria,  0.5, tipoAvaliacao, k);
-//                                break;
-//
-//                            case Const.ALGORITMO_VarSortNaoAceita:
-//                                p = VarSortNaoAceita.run(tentivasMelhoria,  maxIndividuos, tipoAvaliacao, k);
-//                                break;
-//
 
                             case Const.ALGORITMO_SD:
                                 SD sd = new SD();
@@ -328,6 +235,73 @@ public class SimulacaoGeral {
                             case Const.ALGORITMO_GulosoDplus:
                                 p = GulosoD.run(k, D.numeroExemplosPositivo, tipoAvaliacao, 0.7, tempoMaximoSegundosAlgoritmos, 4);
                                 break;
+
+
+
+                            // PBSD_TF_ST (Torneio Fixo, Sorteio)
+                            case Const.ALGORITMO_PBSD_TF_ST_5:
+                                p = PBSD_TF_ST.run(5, 0.5, tipoAvaliacao, k);
+                                break;
+                            case Const.ALGORITMO_PBSD_TF_ST_10:
+                                p = PBSD_TF_ST.run(10, 0.5, tipoAvaliacao, k);
+                                break;
+                            case Const.ALGORITMO_PBSD_TF_ST_20:
+                                p = PBSD_TF_ST.run(20, 0.5, tipoAvaliacao, k);
+                                break;
+                            case Const.ALGORITMO_PBSD_TF_ST_50:
+                                p = PBSD_TF_ST.run(50, 0.5, tipoAvaliacao, k);
+                                break;
+                            case Const.ALGORITMO_PBSD_TF_ST_100:
+                                p = PBSD_TF_ST.run(100, 0.5, tipoAvaliacao, k);
+                                break;
+
+                            // PBSD_TF_SF (Torneio Fixo, sem Sorteio)
+                            case Const.ALGORITMO_PBSD_TF_SF_5:
+                                p = PBSD_TF_SF.run(5, 0.5, tipoAvaliacao, k);
+                                break;
+                            case Const.ALGORITMO_PBSD_TF_SF_10:
+                                p = PBSD_TF_SF.run(10, 0.5, tipoAvaliacao, k);
+                                break;
+                            case Const.ALGORITMO_PBSD_TF_SF_20:
+                                p = PBSD_TF_SF.run(20, 0.5, tipoAvaliacao, k);
+                                break;
+                            case Const.ALGORITMO_PBSD_TF_SF_50:
+                                p = PBSD_TF_SF.run(50, 0.5, tipoAvaliacao, k);
+                                break;
+                            case Const.ALGORITMO_PBSD_TF_SF_100:
+                                p = PBSD_TF_SF.run(100, 0.5, tipoAvaliacao, k);
+                                break;
+
+                            // PBSD_TV_ST (Torneio Variável, Sorteio)
+                            case Const.ALGORITMO_PBSD_TV_ST_1:
+                                p = PBSD_TV_ST.run(1, 0.5, tipoAvaliacao, k);
+                                break;
+                            case Const.ALGORITMO_PBSD_TV_ST_5:
+                                p = PBSD_TV_ST.run(5, 0.5, tipoAvaliacao, k);
+                                break;
+                            case Const.ALGORITMO_PBSD_TV_ST_10:
+                                p = PBSD_TV_ST.run(10, 0.5, tipoAvaliacao, k);
+                                break;
+
+                            // PBSD_TV_SF (Torneio Variável, sem Sorteio)
+                            case Const.ALGORITMO_PBSD_TV_SF_1:
+                                p = PBSD_TV_SF.run(1, 0.5, tipoAvaliacao, k);
+                                break;
+                            case Const.ALGORITMO_PBSD_TV_SF_5:
+                                p = PBSD_TV_SF.run(5, 0.5, tipoAvaliacao, k);
+                                break;
+                            case Const.ALGORITMO_PBSD_TV_SF_10:
+                                p = PBSD_TV_SF.run(10, 0.5, tipoAvaliacao, k);
+                                break;
+
+                            // PBSD_Fibonacci_ST
+                            case Const.ALGORITMO_PBSD_FIBONACCI_ST:
+                                p = PBSD_Fibonacci_ST.run(0.5, tipoAvaliacao, k);
+                                break;
+                            case Const.ALGORITMO_PBSD_FIBONACCI_SF:
+                                p = PBSD_Fibonacci_SF.run(0.5, tipoAvaliacao, k);
+                                break;
+
                         }
 
                         double tempo = (System.currentTimeMillis() - t0)/1000.0;
@@ -364,47 +338,37 @@ public class SimulacaoGeral {
 
         int[] K = {10};
         int numeroRepeticoes = 30;
-        int hours = 10;
+        int hours = 1;
         double  tempoMaximoSegundosAlgoritmos = 60*60*(double)hours;
 
         String[] algoritmos = {
-//                Const.ALGORITMO_FixIgnAceitat20mais,
-//                Const.ALGORITMO_FixSortAceitat20mais,
-//                Const.ALGORITMO_VarIgnAceitamais,
-//                Const.ALGORITMO_VarSortAceitamais
+                Const.ALGORITMO_PBSD_TF_ST_5,
+                Const.ALGORITMO_PBSD_TF_ST_10,
+                Const.ALGORITMO_PBSD_TF_ST_20,
+                Const.ALGORITMO_PBSD_TF_ST_50,
+                Const.ALGORITMO_PBSD_TF_ST_100,
 
-//                Const.ALGORITMO_VarSortAceita,
-//                //Const.ALGORITMO_VarSortNaoAceita,
-//
-//                Const.ALGORITMO_VarIgnAceita,
-//                //Const.ALGORITMO_VarIgnNaoAceita,
-//
-////                Const.ALGORITMO_FixSortAceitat3,
-////                Const.ALGORITMO_FixSortAceitat5,
-////                Const.ALGORITMO_FixSortAceitat10,
-//                Const.ALGORITMO_FixSortAceitat20,
-//
-////                Const.ALGORITMO_FixSortNaoAceitat3,
-////                Const.ALGORITMO_FixSortNaoAceitat5,
-////                Const.ALGORITMO_FixSortNaoAceitat10,
-//                Const.ALGORITMO_FixSortNaoAceitat20,
+                Const.ALGORITMO_PBSD_TF_SF_5,
+                Const.ALGORITMO_PBSD_TF_SF_10,
+                Const.ALGORITMO_PBSD_TF_SF_20,
+                Const.ALGORITMO_PBSD_TF_SF_50,
+                Const.ALGORITMO_PBSD_TF_SF_100,
 
+                Const.ALGORITMO_PBSD_TV_ST_1,
+                Const.ALGORITMO_PBSD_TV_ST_5,
+                Const.ALGORITMO_PBSD_TV_ST_10,
 
-////                Const.ALGORITMO_FixIgnNaoAceitat3,
-////                Const.ALGORITMO_FixIgnNaoAceitat5,
-////                Const.ALGORITMO_FixIgnNaoAceitat10,
-//                Const.ALGORITMO_FixIgnNaoAceitat20,
+                Const.ALGORITMO_PBSD_TV_SF_1,
+                Const.ALGORITMO_PBSD_TV_SF_5,
+                Const.ALGORITMO_PBSD_TV_SF_10,
 
-//                Const.ALGORITMO_SSDP,
-//                Const.ALGORITMO_SD,
-//                Const.ALGORITMO_Aleatorio1M,
-//                Const.ALGORITMO_ExaustivoK
+                Const.ALGORITMO_PBSD_FIBONACCI_ST,
+                Const.ALGORITMO_PBSD_FIBONACCI_SF
         };
 
         SimulacaoGeral sg = new SimulacaoGeral(new File(Const.CAMINHO_INDICE));
-        String tipoAvaliacao = Const.METRICA_WRACC;
 
-        sg.run(K, numeroRepeticoes, algoritmos, ",", tipoAvaliacao, tempoMaximoSegundosAlgoritmos);
+        sg.run(K, numeroRepeticoes, algoritmos, ",", Const.METRICA_WRACC, tempoMaximoSegundosAlgoritmos);
 
         //Tabelão
         String[] metricas = {

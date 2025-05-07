@@ -11,10 +11,10 @@ public class PBSD_TV_ST extends Threshold {
     public static Pattern[] run(int passo, double similaridade, String tipoAvaliacao, int k) {
 
         Pattern[] Pk = new Pattern[k];
-        Pattern[] P = null;
+        Pattern[] P;
 
         int quantidadeTorneio = 1;
-        int numeroGeracoesSemMelhoraPk = 0;
+        int numeroGeracoesSemMelhoraPk;
 
         for (int i = 0; i < Pk.length; i++) {
             Pk[i] = new Pattern(new HashSet<>(), tipoAvaliacao);
@@ -29,8 +29,8 @@ public class PBSD_TV_ST extends Threshold {
         int tamanhoP = P.length;
         int threshold = P.length;
 
-        for (int numeroReinicializacoes = 0; numeroReinicializacoes < 3; numeroReinicializacoes++) {
-            System.out.println("Reinicializações: "+numeroReinicializacoes);
+        for (int numeroReinicializacoes = 0; numeroReinicializacoes < maxReinicializacoes; numeroReinicializacoes++) {
+//            System.out.println("Reinicializações: "+numeroReinicializacoes);
             numeroGeracoesSemMelhoraPk = 0;
 
             if (numeroReinicializacoes > 0) {
@@ -38,35 +38,33 @@ public class PBSD_TV_ST extends Threshold {
                 threshold = 9*P.length/10;
             }
 
-            while (numeroGeracoesSemMelhoraPk < 3 && threshold > 1) {
-                int novosK = 0;
+            while (numeroGeracoesSemMelhoraPk < maxGeracoesSemMelhoraPk && threshold > 1) {
+                int novosK;
 
                 Pattern pai1 = P[SELECAO.torneioN(P, quantidadeTorneio, 0, threshold-1)];
+
                 Pattern pai2 = sortear(P, quantidadeTorneio, threshold);
 
                 Pattern paux = CRUZAMENTO.AND(pai1, pai2, pai1.getTipoAvaliacao());
 
                 if (substituirIndividuo(P, paux, threshold)) {
-
-
                     threshold--;
-                    break;
                 }
                 if (Pattern.numeroIndividuosGerados % P.length == 0) {
                     quantidadeTorneio += passo;
 
-                    novosK = SELECAO.salvandoRelevantesDPmais(Pk, P, similaridade);
+                    novosK = SELECAO.salvandoRelevantesDPmais(Pk, modifiedSGs(P, threshold), similaridade);
                     if (novosK == 0) {
                         numeroGeracoesSemMelhoraPk++;
                     } else {
-                        System.out.println("NovosK:"+novosK);
+//                        System.out.println("NovosK:"+novosK);
                         numeroGeracoesSemMelhoraPk = 0;
                     }
-                    //avaliarPopulacao(P, quantidadeTorneio, threshold, Pattern.numeroIndividuosGerados);
+//                    avaliarPopulacao(P, quantidadeTorneio, threshold, Pattern.numeroIndividuosGerados);
                 }
             }
         }
-        System.out.println("Gerou: "+Pattern.numeroIndividuosGerados);
+        //System.out.println("Gerou: "+Pattern.numeroIndividuosGerados);
         return Pk;
     }
 

@@ -15,56 +15,29 @@ import java.util.Random;
 public class Const {
     public final static String ALGORITMO_SSDP = "SSDP";
 
-    public final static String ALGORITMO_FixIgnAceitat3 = "FixIgnAceitat3";
-    public final static String ALGORITMO_FixIgnAceitat5 = "FixIgnAceitat5";
-    public final static String ALGORITMO_FixIgnAceitat10 = "FixIgnAceitat10";
-    public final static String ALGORITMO_FixIgnAceitat20 = "FixIgnAceitat20";
+    public final static String ALGORITMO_PBSD_TF_ST_5 = "PBSD_TF_ST_5";
+    public final static String ALGORITMO_PBSD_TF_ST_10 = "PBSD_TF_ST_10";
+    public final static String ALGORITMO_PBSD_TF_ST_20 = "PBSD_TF_ST_20";
+    public final static String ALGORITMO_PBSD_TF_ST_50 = "PBSD_TF_ST_50";
+    public final static String ALGORITMO_PBSD_TF_ST_100 = "PBSD_TF_ST_100";
 
-    public final static String ALGORITMO_FixIgnAceitat3mais = "FixIgnAceitat3mais";
-    public final static String ALGORITMO_FixIgnAceitat5mais = "FixIgnAceitat5mais";
-    public final static String ALGORITMO_FixIgnAceitat10mais = "FixIgnAceitat10mais";
-    public final static String ALGORITMO_FixIgnAceitat20mais = "FixIgnAceitat20mais";
-
-
-    public final static String ALGORITMO_FixIgnNaoAceitat3 = "FixIgnNaoAceitat3";
-    public final static String ALGORITMO_FixIgnNaoAceitat5 = "FixIgnNaoAceitat5";
-    public final static String ALGORITMO_FixIgnNaoAceitat10 = "FixIgnNaoAceitat10";
-    public final static String ALGORITMO_FixIgnNaoAceitat20 = "FixIgnNaoAceitat20";
-
-    public final static String ALGORITMO_FixIgnNaoAceitat3mais = "FixIgnNaoAceitat3mais";
-    public final static String ALGORITMO_FixIgnNaoAceitat5mais = "FixIgnNaoAceitat5mais";
-    public final static String ALGORITMO_FixIgnNaoAceitat10mais = "FixIgnNaoAceitat10mais";
-    public final static String ALGORITMO_FixIgnNaoAceitat20mais = "FixIgnNaoAceitat20mais";
+    public final static String ALGORITMO_PBSD_TF_SF_5 = "PBSD_TF_SF_5";
+    public final static String ALGORITMO_PBSD_TF_SF_10 = "PBSD_TF_SF_10";
+    public final static String ALGORITMO_PBSD_TF_SF_20 = "PBSD_TF_SF_20";
+    public final static String ALGORITMO_PBSD_TF_SF_50 = "PBSD_TF_SF_50";
+    public final static String ALGORITMO_PBSD_TF_SF_100 = "PBSD_TF_SF_100";
 
 
-    public final static String ALGORITMO_FixSortAceitat3 = "FixSortAceitat3";
-    public final static String ALGORITMO_FixSortAceitat5 = "FixSortAceitat5";
-    public final static String ALGORITMO_FixSortAceitat10 = "FixSortAceitat10";
-    public final static String ALGORITMO_FixSortAceitat20 = "FixSortAceitat20";
+    public final static String ALGORITMO_PBSD_TV_ST_1 = "PBSD_TV_ST_1";
+    public final static String ALGORITMO_PBSD_TV_ST_5 = "PBSD_TV_ST_5";
+    public final static String ALGORITMO_PBSD_TV_ST_10 = "PBSD_TV_ST_10";
 
-    public final static String ALGORITMO_FixSortAceitat3mais = "FixSortAceitat3mais";
-    public final static String ALGORITMO_FixSortAceitat5mais = "FixSortAceitat5mais";
-    public final static String ALGORITMO_FixSortAceitat10mais = "FixSortAceitat10mais";
-    public final static String ALGORITMO_FixSortAceitat20mais = "FixSortAceitat20mais";
+    public final static String ALGORITMO_PBSD_TV_SF_1 = "PBSD_TV_SF_1";
+    public final static String ALGORITMO_PBSD_TV_SF_5 = "PBSD_TV_SF_5";
+    public final static String ALGORITMO_PBSD_TV_SF_10 = "PBSD_TV_SF_10";
 
-
-    public final static String ALGORITMO_FixSortNaoAceitat3 = "FixSortNaoAceitat3";
-    public final static String ALGORITMO_FixSortNaoAceitat5 = "FixSortNaoAceitat5";
-    public final static String ALGORITMO_FixSortNaoAceitat10 = "FixSortNaoAceitat10";
-    public final static String ALGORITMO_FixSortNaoAceitat20 = "FixSortNaoAceitat20";
-
-    public final static String ALGORITMO_FixSortNaoAceitat3mais = "FixSortNaoAceitat3mais";
-    public final static String ALGORITMO_FixSortNaoAceitat5mais = "FixSortNaoAceitat5mais";
-    public final static String ALGORITMO_FixSortNaoAceitat10mais = "FixSortNaoAceitat10mais";
-    public final static String ALGORITMO_FixSortNaoAceitat20mais = "FixSortNaoAceitat20mais";
-
-
-    public final static String ALGORITMO_VarIgnAceita = "VarIgnAceita";
-    public final static String ALGORITMO_VarIgnAceitamais = "VarIgnAceitamais";
-    public final static String ALGORITMO_VarIgnNaoAceita = "VarIgnNaoAceita";
-    public final static String ALGORITMO_VarSortAceita = "VarSortAceita";
-    public static final String ALGORITMO_VarSortAceitamais = "VarSortAceitamais";
-    public final static String ALGORITMO_VarSortNaoAceita = "VarSortNaoAceita";
+    public final static String ALGORITMO_PBSD_FIBONACCI_ST = "PBSD_FIBONACCI_ST";
+    public final static String ALGORITMO_PBSD_FIBONACCI_SF = "PBSD_FIBONACCI_SF";
 
 
     public final static String ALGORITMO_SSDPmais = "SSDPplus";
