@@ -130,21 +130,35 @@ public class SimulacoesCollection {
             String nomeArquivo = arquivos[i].getName();
             
             //Apagar possíveis ruídos
-            //String nomeArquivoClean = nomeArquivo.replace("-pn", "").replace(".txt", "");
             String nomeArquivoClean = nomeArquivo.replace(".txt", "");
             
+            // Extrair nome do algoritmo e nome da base de maneira mais robusta
+            String nomeAlgoritmo;
+            String nomeBase;
             
-            //Extrair palavras com informações relevantes
-            String[] palavras = nomeArquivoClean.split("_");
-            
-            String nomeAlgoritmo = palavras[0];           
-            //String nomeBase = palavras[1] + "-pn";
-            String nomeBase = palavras[1];
+            // Encontramos o último underscore para separar algoritmo da base
+            int ultimoUnderscore = nomeArquivoClean.lastIndexOf("_");
+            if (ultimoUnderscore != -1) {
+                nomeAlgoritmo = nomeArquivoClean.substring(0, ultimoUnderscore);
+                nomeBase = nomeArquivoClean.substring(ultimoUnderscore + 1);
+            } else {
+                // Fallback para o método antigo em caso de formato inesperado
+                String[] palavras = nomeArquivoClean.split("_");
+                nomeAlgoritmo = palavras[0];
+                nomeBase = palavras.length > 1 ? palavras[1] : "unknown";
+            }
                         
-            System.out.println("[" + i + "/" + (arquivos.length-1) + "]: " + nomeAlgoritmo + "_" +  nomeBase);
+            System.out.println("[" + i + "/" + (arquivos.length-1) + "]: " + nomeAlgoritmo + "_" + nomeBase);
             
-            D.CarregarArquivo(caminhoBases + "/" + nomeBase + ".CSV", D.TIPO_CSV);
-            D.GerarDpDn("p");
+            try {
+                D.CarregarArquivo(caminhoBases + "/" + nomeBase + ".CSV", D.TIPO_CSV);
+                D.GerarDpDn("p");
+            } catch (FileNotFoundException e) {
+                System.err.println("Arquivo da base não encontrado: " + caminhoBases + "/" + nomeBase + ".CSV");
+                System.err.println("Pulando esta simulação...");
+                continue;
+            }
+            
             Scanner scanner = new Scanner(new FileReader(arquivos[i].getAbsolutePath()))
                        .useDelimiter("\\n");
             
@@ -168,6 +182,8 @@ public class SimulacoesCollection {
             
             linha = scanner.next();
             linha = linha.replaceFirst("\r", "");
+            
+            // O resto do método permanece igual
             if(linha.contains("@rep")){//Arquivo de reultado: padrão completo.
                 palavra = linha.split(":")[1]; //Então coleto valor de repetição e entro dentro do while para extrair demais informações.
                 if(!palavra.equals("?")){

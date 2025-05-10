@@ -105,6 +105,13 @@ public class Const {
     public final static String CAMINHO_RELATORIO = "pastas\\relatorios";
     public final static String CAMINHO_DICIONARIOS = "pastas\\dicionarios";
     public final static String CAMINHO_INDICE = "pastas\\indice.txt";
+    
+    // Constante do PSO para o relatório do tabelão
+    public static final String ALGORITMO_PSO_RANDOM = "PSO_Random";
+    public static final String ALGORITMO_PSO_COMPLETE = "PSO_Complete";
+    public static final String ALGORITMO_PSO_BEST_FROM_10 = "PSO_BestFrom10";
+    public static final String ALGORITMO_PSO_BEST_FROM_100 = "PSO_BestFrom100";
+    public static final String ALGORITMO_PSO_BEST_FROM_N_SCALING_FROM_1 = "PSO_BestFromNScalingFrom1";
        
     public static Random random;
     public static final long[] SEEDS = {179424673, 125164703, 132011827, 124987441, 123979721 , 119777719, 117705823 , 112131119, 108626351, 107980007,

@@ -18,7 +18,7 @@ public class Particle {
     private UpdateStrategy updateStrategy;
     private HashSet<Integer> reusableItems = new HashSet<>();
 
-    public Particle(int id, HashSet<Integer> posicaoInicial, String tipoAvaliacao, int dimensao, int maxIteracoes) {
+    public Particle(int id, HashSet<Integer> posicaoInicial, String tipoAvaliacao, int dimensao, int maxIteracoes, String updateStrategy) {
         this.id = id; 
         this.pattern = new Pattern(posicaoInicial, tipoAvaliacao);
         this.velocity = new double[dimensao];
@@ -29,8 +29,26 @@ public class Particle {
         this.iteracao = 0;
         this.maxIteracoes = maxIteracoes;
 
-        // É SÓ MUDAR AQUI A ESTRATÉGIA DE ATUALIZAÇÃO
-        this.updateStrategy = new BestFromNScalingStrategy(1, dimensao ,1); 
+        // É SÓ ADICIONAR AQUI A ESTRATÉGIA DE ATUALIZAÇÃO
+        switch (updateStrategy) {
+            case "Random":
+                this.updateStrategy = new RandomUpdateStrategy();
+                break;
+            case "Complete":
+                this.updateStrategy = new CompleteUpdateStrategy();
+                break;
+            case "BestFromN10":
+                this.updateStrategy = new BestFromNStrategy(10);
+                break;
+            case "BestFromN100":
+                this.updateStrategy = new BestFromNStrategy(100);
+                break;
+            case "BestFromNScalingFrom1":
+                this.updateStrategy = new BestFromNScalingStrategy(1, dimensao ,1); 
+                break;
+            default:
+                break;
+        }
     }
 
     public void updateVelocityAndPosition(Pattern globalBest) {

@@ -11,7 +11,6 @@ import dp.Const;
 import dp.D;
 import dp.Pattern;
 import dp.RSS;
-import evolucionario.INICIALIZAR;
 import evolucionario.*;
 import exatos.GulosoD;
 import java.io.BufferedWriter;
@@ -24,7 +23,11 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Random;
 import java.util.Scanner;
+
+import sd.Aleatorio;
+import sd.ExaustivoK;
 import sd.SD;
+import pso.PSO; // Importação do PSO
 
 /**
  *
@@ -89,9 +92,8 @@ public class SimulacaoGeral {
         String nomeArquivo = nomeAlgoritmo + "_" + nomeBase + ".txt";
         
         //Abrindo arquivo para gravação de tabelão
-        File file = new File(Const.CAMINHO_RESULTADOS + nomeArquivo);
+        File file = new File(Const.CAMINHO_RESULTADOS + "//" + nomeArquivo);
         file.createNewFile();
-        // creates a FileWriter Object
         FileWriter writer = new FileWriter(file); 
         writer.write(sb + ""); 
         writer.flush();
@@ -167,6 +169,15 @@ public class SimulacaoGeral {
                         Const.random = new Random(Const.SEEDS[n]);
                         long t0 = System.currentTimeMillis();                
                         switch(algoritmo){
+                            case Const.ALGORITMO_ExaustivoK:
+                                p = ExaustivoK.run(k, tipoAvaliacao);
+                                break;
+                            case Const.ALGORITMO_Aleatorio1M:
+                                p = Aleatorio.runNtentativas(tipoAvaliacao,k,1000000,10);
+                                break;
+                            case Const.ALGORITMO_Aleatorio2M:
+                                p = Aleatorio.runNtentativas(tipoAvaliacao,k,2000000,10);
+                                break;
                             case Const.ALGORITMO_PDSA:
                                 p = PDSA.run(k, tipoAvaliacao, tempoMaximoSegundosAlgoritmos);
                                 break;
@@ -224,6 +235,27 @@ public class SimulacaoGeral {
                             case Const.ALGORITMO_GulosoDplus:
                                 p = GulosoD.run(k, D.numeroExemplosPositivo, tipoAvaliacao, 0.7, tempoMaximoSegundosAlgoritmos, 4);
                                 break;
+                            // Variante do PSO abaixo, adicionei pra poder rodar ele na simulação geral
+                            case Const.ALGORITMO_PSO_RANDOM: {
+                                p = PSO.run(k, tipoAvaliacao, tempoMaximoSegundosAlgoritmos, nomeBase, "Random");
+                                break;
+                            }
+                            case Const.ALGORITMO_PSO_COMPLETE: {
+                                p = PSO.run(k, tipoAvaliacao, tempoMaximoSegundosAlgoritmos, nomeBase, "Complete");
+                                break;
+                            }
+                            case Const.ALGORITMO_PSO_BEST_FROM_10: {
+                                p = PSO.run(k, tipoAvaliacao, tempoMaximoSegundosAlgoritmos, nomeBase, "BestFromN10");
+                                break;
+                            }
+                            case Const.ALGORITMO_PSO_BEST_FROM_100: {
+                                p = PSO.run(k, tipoAvaliacao, tempoMaximoSegundosAlgoritmos, nomeBase, "BestFromN100");
+                                break;
+                            }
+                            case Const.ALGORITMO_PSO_BEST_FROM_N_SCALING_FROM_1: {
+                                p = PSO.run(k, tipoAvaliacao, tempoMaximoSegundosAlgoritmos, nomeBase, "BestFromNScalingFrom1");
+                                break;
+                            }
                         }                       
                                                 
                         double tempo = (System.currentTimeMillis() - t0)/1000.0;
@@ -256,35 +288,39 @@ public class SimulacaoGeral {
     public static void main(String[] args) throws IOException {
                 
         Pattern.ITENS_OPERATOR = Const.PATTERN_AND;
-        Pattern.maxSimulares = 3;
+        Pattern.maxSimulares = 10; 
         Pattern.medidaSimilaridade = Const.SIMILARIDADE_JACCARD;
 
-        int[] K = {1};
-        int numeroRepeticoes = 3;
-        int hours = 1;
+        int[] K = {10}; 
+        int numeroRepeticoes = 30; // repetições de cada algoritmo aqui
+        int hours = 10; //aumentei pra ver se funciona com o PSO demoradao mesmo
         double  tempoMaximoSegundosAlgoritmos = 60*60*hours; //max 1h
         String[] algoritmos = {
-            Const.ALGORITMO_PDSA
+            Const.ALGORITMO_Aleatorio1M,
+            Const.ALGORITMO_ExaustivoK,
+            Const.ALGORITMO_SSDP,
+            Const.ALGORITMO_SSDPmais, // SSDP+ 
+            Const.ALGORITMO_PSO_RANDOM,
+            Const.ALGORITMO_PSO_BEST_FROM_10,
+            Const.ALGORITMO_PSO_BEST_FROM_100,
+            Const.ALGORITMO_PSO_BEST_FROM_N_SCALING_FROM_1,
+            //nao  rola  de colocar o pso completo, ele é muuuuuito demorado, muito mesmo
+            //Const.ALGORITMO_PSO_COMPLETE      // PSO
         };
 
         SimulacaoGeral sg = new SimulacaoGeral(new File(Const.CAMINHO_INDICE));
-        String tipoAvaliacao = Avaliador.METRICA_AVALIACAO_WRACC_NORMALIZED;
+        String tipoAvaliacao = Avaliador.METRICA_AVALIACAO_QG; // Usando Qg conforme solicitado
         
         sg.run(K, numeroRepeticoes, algoritmos, ",", tipoAvaliacao, tempoMaximoSegundosAlgoritmos);
 
         //Tabelão
         String[] metricas = {
                 Const.METRICA_WRACC,
-                Const.METRICA_WRACC_NORMALIZED,
-                //Const.METRICA_TIME,
-                Const.METRICA_SIZE,
-                Const.METRICA_TP,
-                Const.METRICA_FP,
+                Const.METRICA_Qg,
                 Const.METRICA_OVERALL_SUPP_POSITIVO,
                 Const.METRICA_COVER_REDUNDANCY_POSITIVO,
                 Const.METRICA_DESCRIPTION_REDUNDANCY_DENSITY,
                 Const.METRICA_DESCRIPTION_REDUNDANCY_DOMINATOR,
-                Const.METRICA_Qg,
                 Const.METRICA_CHI_QUAD,
                 Const.METRICA_P_VALUE,
                 Const.METRICA_LIFT,
@@ -296,8 +332,10 @@ public class SimulacaoGeral {
                 Const.METRICA_CONF,
                 Const.METRICA_SUPP,
                 Const.METRICA_SUPP_POSITIVO,
-                Const.METRICA_SUPP_NEGATIVO
+                Const.METRICA_SUPP_NEGATIVO,
+                Const.METRICA_SIZE
         };
+
         String separadorBase = ",";
         String separadorRelatorio = ",";
         Relatorio.gerarTabelaoCSV(metricas, separadorBase, separadorRelatorio);
