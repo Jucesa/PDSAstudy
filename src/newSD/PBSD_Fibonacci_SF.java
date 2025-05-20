@@ -23,9 +23,10 @@ public class PBSD_Fibonacci_SF extends Threshold {
             Pk[i] = new Pattern(new HashSet<>(), tipoAvaliacao);
         }
 
-        Pattern[] I = P = INICIALIZAR.D1(tipoAvaliacao);
+        Pattern[] I = INICIALIZAR.D1(tipoAvaliacao);
 
-        ordenaP(P);
+        ordenaP(I);
+        P = I;
 
         SELECAO.salvandoRelevantesDPmais(Pk, P, similaridade);
 
@@ -49,7 +50,6 @@ public class PBSD_Fibonacci_SF extends Threshold {
                 int novosK;
 
                 int index = SELECAO.torneioN(P, quantidadeTorneio);
-
                 Pattern pai1 = P[index];
 
                 index = SELECAO.torneioN(P, quantidadeTorneio);
@@ -62,7 +62,7 @@ public class PBSD_Fibonacci_SF extends Threshold {
                 }
 
                 if (Pattern.numeroIndividuosGerados % P.length == 0) {
-
+                    //System.out.println("Gerou: " + Pattern.numeroIndividuosGerados);
                     if(quantidadeTorneio >= maxTorneio) {
                         quantidadeTorneio = maxTorneio;
                     } else {
@@ -72,12 +72,12 @@ public class PBSD_Fibonacci_SF extends Threshold {
                         quantidadeTorneio = fib1;
                     }
 
-//                    System.out.println("TorneioFib:"+quantidadeTorneio);
+//                  System.out.println("TorneioFib:"+quantidadeTorneio);
                     novosK = SELECAO.salvandoRelevantesDPmais(Pk, modifiedSGs(P, threshold), similaridade);
                     if (novosK == 0) {
                         numeroGeracoesSemMelhoraPk++;
                     } else {
-//                        System.out.println("NovosK:"+novosK);
+//                      System.out.println("NovosK:"+novosK);
                         numeroGeracoesSemMelhoraPk = 0;
                     }
                     //avaliarPopulacao(P, quantidadeTorneio, threshold, Pattern.numeroIndividuosGerados);

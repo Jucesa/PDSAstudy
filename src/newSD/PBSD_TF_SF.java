@@ -57,7 +57,7 @@ public class PBSD_TF_SF extends Threshold {
                 }
 
                 if (Pattern.numeroIndividuosGerados % P.length == 0) {
-
+                   // System.out.println("Gerou: " + Pattern.numeroIndividuosGerados);
                     novosK = SELECAO.salvandoRelevantesDPmais(Pk, modifiedSGs(P, threshold), similaridade);
                     if (novosK == 0) {
                         numeroGeracoesSemMelhoraPk++;

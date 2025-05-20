@@ -20,9 +20,10 @@ public class PBSD_TV_ST extends Threshold {
             Pk[i] = new Pattern(new HashSet<>(), tipoAvaliacao);
         }
 
-        Pattern[] Paux = P = INICIALIZAR.D1(tipoAvaliacao);
+        Pattern[] I = INICIALIZAR.D1(tipoAvaliacao);
 
-        ordenaP(P);
+        ordenaP(I);
+        P = I;
 
         SELECAO.salvandoRelevantesDPmais(Pk, P, similaridade);
 
@@ -34,7 +35,7 @@ public class PBSD_TV_ST extends Threshold {
             numeroGeracoesSemMelhoraPk = 0;
 
             if (numeroReinicializacoes > 0) {
-                P =  aleatorioD1_Pk(tipoAvaliacao, tamanhoP, Pk, Paux);
+                P =  aleatorioD1_Pk(tipoAvaliacao, tamanhoP, Pk, I);
                 threshold = 9*P.length/10;
             }
 
@@ -51,6 +52,7 @@ public class PBSD_TV_ST extends Threshold {
                     threshold--;
                 }
                 if (Pattern.numeroIndividuosGerados % P.length == 0) {
+                    //System.out.println("Gerou: " + Pattern.numeroIndividuosGerados);
                     quantidadeTorneio += passo;
 
                     novosK = SELECAO.salvandoRelevantesDPmais(Pk, modifiedSGs(P, threshold), similaridade);

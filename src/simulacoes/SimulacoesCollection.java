@@ -20,8 +20,7 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Scanner;
-
-
+import java.util.regex.Matcher;
 
 /**
  *
@@ -76,14 +75,16 @@ public class SimulacoesCollection {
             
             //Apagar possíveis ruídos
             String nomeArquivoClean = nomeArquivo.replace("_pn", "").replace(".txt", "");
-            
-            
-            //Extrair palavras com informações relevantes
-            String[] palavras = nomeArquivoClean.split("_");
-            
-            String nomeAlgoritmo = palavras[0];           
-            String nomeBase = palavras[1] + "-pn";
-                        
+
+            java.util.regex.Pattern pattern = java.util.regex.Pattern.compile("^(.*?)\\-k\\d+-fo.*?-(.+\\.txt)$");
+            String nomeAlgoritmo = "";
+            String nomeBase = "";
+            Matcher matcher = pattern.matcher(nomeArquivoClean);
+            if (matcher.matches()) {
+                 nomeAlgoritmo = matcher.group(1);
+                 nomeBase = matcher.group(2);
+            }
+
             System.out.println("[" + i + "/" + (arquivos.length-1) + "]: " + nomeAlgoritmo + "_" +  nomeBase);
             
             D.CarregarArquivo(caminhoBases + "/" + nomeBase + ".CSV", D.TIPO_CSV);
@@ -124,22 +125,23 @@ public class SimulacoesCollection {
         
         File diretorio = new File(caminhoResultados);
         File arquivos[] = diretorio.listFiles();
-        System.out.println(arquivos.length);        
+        System.out.println(arquivos.length);
         for(int i = 0; i < arquivos.length; i++){
             
             String nomeArquivo = arquivos[i].getName();
             
             //Apagar possíveis ruídos
             //String nomeArquivoClean = nomeArquivo.replace("-pn", "").replace(".txt", "");
-            String nomeArquivoClean = nomeArquivo.replace(".txt", "");
-            
-            
-            //Extrair palavras com informações relevantes
-            String[] palavras = nomeArquivoClean.split("_");
-            
-            String nomeAlgoritmo = palavras[0];           
-            //String nomeBase = palavras[1] + "-pn";
-            String nomeBase = palavras[1];
+            //String nomeArquivoClean = nomeArquivo.replace(".txt", "");
+
+            java.util.regex.Pattern pattern = java.util.regex.Pattern.compile("^(.*?-k\\d+-fo[^_]+)_(.+)\\.txt$");
+            String nomeAlgoritmo = "";
+            String nomeBase = "";
+            Matcher matcher = pattern.matcher(nomeArquivo);
+            if (matcher.matches()) {
+                nomeAlgoritmo = matcher.group(1);
+                nomeBase = matcher.group(2);
+                }
                         
             System.out.println("[" + i + "/" + (arquivos.length-1) + "]: " + nomeAlgoritmo + "_" +  nomeBase);
             

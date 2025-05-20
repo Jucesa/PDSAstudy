@@ -21,9 +21,10 @@ public class PBSD_TV_SF extends Threshold {
             Pk[i] = new Pattern(new HashSet<>(), tipoAvaliacao);
         }
 
-        Pattern[] I = P = INICIALIZAR.D1(tipoAvaliacao);
+        Pattern[] I = INICIALIZAR.D1(tipoAvaliacao);
 
-        ordenaP(P);
+        ordenaP(I);
+        P = I;
 
         SELECAO.salvandoRelevantesDPmais(Pk, P, similaridade);
 
@@ -51,6 +52,7 @@ public class PBSD_TV_SF extends Threshold {
                     threshold--;
                 }
                 if (Pattern.numeroIndividuosGerados % P.length == 0) {
+                    //System.out.println("Gerou: " + Pattern.numeroIndividuosGerados);
                     quantidadeTorneio += passo;
 
                     novosK = SELECAO.salvandoRelevantesDPmais(Pk, modifiedSGs(P, threshold), similaridade);

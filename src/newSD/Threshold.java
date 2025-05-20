@@ -87,13 +87,6 @@ public class Threshold {
         return P0;
     }
 
-    protected static Pattern[] topK(Pattern[] P, int k){
-        Pattern[] Pk = new Pattern[k];
-        ordenaP(P);
-        System.arraycopy(P, 0, Pk, 0, k);
-        return Pk;
-    }
-
     protected static void ordenaP(Pattern[] P){
         Arrays.sort(P, (p1, p2) -> Double.compare(p2.getQualidade(), p1.getQualidade()));
     }
@@ -170,7 +163,7 @@ public class Threshold {
      @param P Pattern[] -> população original de todos Pattern
      @param threshold int -> indice de divisão entre itens e subgrupos de P
     */
-    protected static Pattern[] modifiedSGs(Pattern[] P, int threshold){
+    protected static Pattern[]  modifiedSGs(Pattern[] P, int threshold){
         Pattern[] subgroups = new Pattern[P.length - threshold];
         System.arraycopy(P, threshold, subgroups, 0, P.length - threshold);
         ordenaP(subgroups);
@@ -180,15 +173,8 @@ public class Threshold {
     public static void main(String[] args) throws FileNotFoundException {
         Logger logger = Logger.getLogger(Threshold.class.getName());
 
-
-        String base = "pastas/bases/Bases BIO 10/nakayama-pn-freq-2.CSV";
+        String base = "pastas/bases/Bases BIO 10/zsun-pn-freq-2.CSV";
         D.SEPARADOR = ",";
-
-//        for(int i = 0; i < 10; i++){
-//            for(int j = 0; j < 10; j++){
-//
-//            }
-//        }
 
         try {
             D.CarregarArquivo(base, D.TIPO_CSV);
@@ -197,47 +183,68 @@ public class Threshold {
             return;
         }
 
-        Const.random = new Random(Const.SEEDS[5]); //Seed
+        Const.random = new Random(Const.SEEDS[0]); //Seed
         D.GerarDpDn("p");
 
         //Parameters of the algorithm
         int k = 10;
-        String metricaAvaliacao = Const.METRICA_WRACC;
+        String metricaAvaliacao = Const.METRICA_Qg;
         double similaridade = 0.5;
-        int torneio = 100;
+        int torneio = 20;
         int passo = 10;
-        Pattern[] p = null;
+        Pattern[] p;
+
+//        Pattern.numeroIndividuosGerados = 0;
+//        System.out.println("\n\nPBSD_TV5_SF");
+//        p = PBSD_TV_SF.run(passo, similaridade, metricaAvaliacao, k);
+//        Avaliador.imprimirRegras(p, k);
+//
+//        Pattern.numeroIndividuosGerados = 0;
+//        System.out.println("\n\nPBSD_TV5_ST");
+//        p = PBSD_TV_ST.run(passo, similaridade, metricaAvaliacao, k);
+//        Avaliador.imprimirRegras(p, k);
+
 
         Pattern.numeroIndividuosGerados = 0;
-        System.out.println("\n\nPBSD_TV5_SF");
-        p = PBSD_TV_SF.run(passo, similaridade, metricaAvaliacao, k);
+        System.out.println("\n\nPBSD_TF5_ST");
+        p = PBSD_TF_ST.run(5, similaridade, metricaAvaliacao, k);
         Avaliador.imprimirRegras(p, k);
 
         Pattern.numeroIndividuosGerados = 0;
-        System.out.println("\n\nPBSD_TV5_ST");
-        p = PBSD_TV_ST.run(passo, similaridade, metricaAvaliacao, k);
+        System.out.println("\n\nPBSD_TF10_ST");
+        p = PBSD_TF_ST.run(10, similaridade, metricaAvaliacao, k);
         Avaliador.imprimirRegras(p, k);
 
 
         Pattern.numeroIndividuosGerados = 0;
         System.out.println("\n\nPBSD_TF20_ST");
-        p = PBSD_TF_ST.run(torneio, similaridade, metricaAvaliacao, k);
+        p = PBSD_TF_ST.run(20, similaridade, metricaAvaliacao, k);
+        Avaliador.imprimirRegras(p, k);
+
+
+        Pattern.numeroIndividuosGerados = 0;
+        System.out.println("\n\nPBSD_TF50_ST");
+        p = PBSD_TF_ST.run(50, similaridade, metricaAvaliacao, k);
         Avaliador.imprimirRegras(p, k);
 
         Pattern.numeroIndividuosGerados = 0;
-        System.out.println("\n\nPBSD_TF20_SF");
-        p = PBSD_TF_SF.run(torneio, similaridade, metricaAvaliacao, k);
+        System.out.println("\n\nPBSD_TF100_ST");
+        p = PBSD_TF_ST.run(100, similaridade, metricaAvaliacao, k);
         Avaliador.imprimirRegras(p, k);
 
 
-
-        System.out.println("\n\nPBSD_Fibonacci_ST");
-        p = PBSD_Fibonacci_ST.run(similaridade, metricaAvaliacao, k);
-        Avaliador.imprimirRegras(p, k);
-
-        System.out.println("\n\nPBSD_Fibonacci_SF");
-        p = PBSD_Fibonacci_SF.run(similaridade, metricaAvaliacao, k);
-        Avaliador.imprimirRegras(p, k);
+//        Pattern.numeroIndividuosGerados = 0;
+//        System.out.println("\n\nPBSD_TF20_SF");
+//        p = PBSD_TF_SF.run(torneio, similaridade, metricaAvaliacao, k);
+//        Avaliador.imprimirRegras(p, k);
+//
+//        System.out.println("\n\nPBSD_Fibonacci_ST");
+//        p = PBSD_Fibonacci_ST.run(similaridade, metricaAvaliacao, k);
+//        Avaliador.imprimirRegras(p, k);
+//
+//        System.out.println("\n\nPBSD_Fibonacci_SF");
+//        p = PBSD_Fibonacci_SF.run(similaridade, metricaAvaliacao, k);
+//        Avaliador.imprimirRegras(p, k);
 
         Pattern.numeroIndividuosGerados = 0;
         System.out.println("\n\nSSDP+");

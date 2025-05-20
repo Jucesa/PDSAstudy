@@ -18,11 +18,12 @@ public class PBSD_TF_ST extends Threshold {
             Pk[i] = new Pattern(new HashSet<>(), tipoAvaliacao);
         }
 
-        Pattern[] I = P = INICIALIZAR.D1(tipoAvaliacao);
+        Pattern[] I = INICIALIZAR.D1(tipoAvaliacao);
 
-        ordenaP(P);
+        ordenaP(I);
+        P = I; //população inicial recebe I ordenado
 
-        SELECAO.salvandoRelevantesDPmais(Pk, I, similaridade);
+        SELECAO.salvandoRelevantesDPmais(Pk, I, similaridade); // salva itens relevantes em Pk com similaridade
 
         int tamanhoP = P.length;
         int threshold = P.length;
@@ -38,17 +39,18 @@ public class PBSD_TF_ST extends Threshold {
 
             while (numeroGeracoesSemMelhoraPk < maxGeracoesSemMelhoraPk && threshold > 1) {
                 int novosK;
-                Pattern pai1 = P[SELECAO.torneioN(P, quantidadeTorneio, 0, threshold-1)];
+                Pattern item = P[SELECAO.torneioN(P, quantidadeTorneio, 0, threshold-1)]; //pega um item
 
                 Pattern pai2 = sortear(P, quantidadeTorneio, threshold);
 
-                Pattern paux = CRUZAMENTO.AND(pai1, pai2, pai1.getTipoAvaliacao());
-
+                Pattern paux = CRUZAMENTO.AND(item, pai2, item.getTipoAvaliacao());
 
                 if (substituirIndividuo(P, paux, threshold)) {
                     threshold--;
                 }
+
                 if(Pattern.numeroIndividuosGerados % P.length == 0){
+                    //System.out.println("Gerou: " + Pattern.numeroIndividuosGerados);
                     novosK = SELECAO.salvandoRelevantesDPmais(Pk, modifiedSGs(P, threshold), similaridade);
                     if (novosK == 0) {
                         numeroGeracoesSemMelhoraPk++;
@@ -58,6 +60,7 @@ public class PBSD_TF_ST extends Threshold {
                     }
 //                    avaliarPopulacao(P, quantidadeTorneio, threshold, Pattern.numeroIndividuosGerados);
                 }
+
             }
         }
         //System.out.println("Gerou: "+Pattern.numeroIndividuosGerados);

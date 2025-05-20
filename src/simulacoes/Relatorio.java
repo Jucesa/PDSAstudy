@@ -296,127 +296,32 @@ public class Relatorio{
     
     
     public static void main(String[] args) throws IOException{
-        
-        String separadorBase = ",";
-        String separadorRelatorio = ",";
-        
         //Tabelão
         String[] metricas = {
-            Const.METRICA_WRACC,          
-            Const.METRICA_WRACC_NORMALIZED,
-            //Const.METRICA_TIME,
-            Const.METRICA_SIZE,            
-            Const.METRICA_TP,
-            Const.METRICA_FP,   
-            Const.METRICA_OVERALL_SUPP_POSITIVO,    
-            Const.METRICA_COVER_REDUNDANCY_POSITIVO,
-            Const.METRICA_DESCRIPTION_REDUNDANCY_DENSITY,
-            Const.METRICA_DESCRIPTION_REDUNDANCY_DOMINATOR,
-            Const.METRICA_Qg,                        
-            Const.METRICA_CHI_QUAD,
-            Const.METRICA_P_VALUE,
-            Const.METRICA_LIFT,            
-            Const.METRICA_DIFF_SUP,
-            Const.METRICA_K,            
-            Const.METRICA_GROWTH_RATE,                            
-            Const.METRICA_ODDS_RATIO,            
-            Const.METRICA_COV,
-            Const.METRICA_CONF,
-            Const.METRICA_SUPP,
-            Const.METRICA_SUPP_POSITIVO,
-            Const.METRICA_SUPP_NEGATIVO            
-        };        
-        Relatorio.gerarTabelaoCSV(metricas, separadorBase, separadorRelatorio);
-        
-        System.out.println("Tabelão concluído");
-        
-        //Arquivo para teste de hipótese
-        String[] nomeAlgoritmos = {
-            //"DSSD-k20-foWRAcc"
-//            Const.ALGORITMO_SSDP + "-k10-foWRAccN",
-//            Const.ALGORITMO_SSDPmaisS10 + "-k10-foWRAccN",
-//            Const.ALGORITMO_SSDPmaisS50 + "-k10-foWRAccN",
-//            Const.ALGORITMO_SSDPmaisS90 + "-k10-foWRAccN"
-//            Const.ALGORITMO_SD + "-k20-foWRAcc",
-//            Const.ALGORITMO_SD_RSS + "-k20-foWRAcc",
-//            Const.ALGORITMO_SSDPmaisS00 + "-k20-foWRAcc",
-//            Const.ALGORITMO_SSDPmaisS10 + "-k20-foWRAcc",
-//            Const.ALGORITMO_SSDPmaisS20 + "-k20-foWRAcc",
-//            Const.ALGORITMO_SSDPmaisS30 + "-k20-foWRAcc",
-//            Const.ALGORITMO_SSDPmaisS40 + "-k20-foWRAcc",
-//            Const.ALGORITMO_SSDPmaisS50 + "-k20-foWRAcc",
-//            Const.ALGORITMO_SSDPmaisS60 + "-k20-foWRAcc",
-//            Const.ALGORITMO_SSDPmaisS70 + "-k20-foWRAcc",
-//            Const.ALGORITMO_SSDPmaisS80 + "-k20-foWRAcc",
-//            Const.ALGORITMO_SSDPmaisS90 + "-k20-foWRAcc",
-//            Const.ALGORITMO_SSDPmaisS100 + "-k20-foWRAcc"
-            
-//            Const.ALGORITMO_SSDPmais10Pbest + "-k20-foWRAcc",
-//            Const.ALGORITMO_SSDPmais10Prb + "-k20-foWRAcc",
-//            Const.ALGORITMO_SSDPmais50Pbest + "-k20-foWRAcc",
-//            Const.ALGORITMO_SSDPmais50Prb + "-k20-foWRAcc",
-//            Const.ALGORITMO_SSDPmais90Pbest + "-k20-foWRAcc",
-//            Const.ALGORITMO_SSDPmais90Prb + "-k20-foWRAcc"
-            
-            
-           // Const.ALGORITMO_SSDP + "-k10-foQg",
-//            Const.ALGORITMO_SSDPmais10Pbest + "-k20-foWRAcc",
-//            Const.ALGORITMO_SSDPmais10Prb + "-k20-foWRAcc",
-//            Const.ALGORITMO_SSDPmais50Pbest + "-k20-foWRAcc",
-//            Const.ALGORITMO_SSDPmais50Prb + "-k20-foWRAcc",
-//            Const.ALGORITMO_SSDPmais90Pbest + "-k20-foWRAcc",
-//            Const.ALGORITMO_SSDPmais90Prb + "-k20-foWRAcc"
-                
-//            Const.ALGORITMO_SD + "-k20-foQg",
-//            Const.ALGORITMO_SD_RSS + "-k20-foQg",
-//            Const.ALGORITMO_SSDP + "-k20-foQg",
-//            Const.ALGORITMO_SSDPmais80 + "-k20-foQg",
-//            Const.ALGORITMO_SSDPmais50 + "-k20-foQg",
-//            Const.ALGORITMO_SSDPmais20 + "-k20-foQg"
-//            Const.ALGORITMO_SSDP + "-k5-foQg",
-//            Const.ALGORITMO_SSDPmaisPbest + "-k5-foQg",
-//            Const.ALGORITMO_SSDPmaisPbest2k + "-k5-foQg",
-//            Const.ALGORITMO_SSDPmaisPbest2kselection + "-k5-foQg",
-//            Const.ALGORITMO_SSDPmaisRandom50Best50 + "-k5-foQg",
-//            Const.ALGORITMO_SSDPmaisRandom50Best502k + "-k5-foQg",
-//            Const.ALGORITMO_SSDPmaisRandom50Best502kselection + "-k5-foQg",
-//            
-//            Const.ALGORITMO_SSDP + "-k10-foQg",
-//            Const.ALGORITMO_SSDPmaisPbest + "-k10-foQg",
-//            Const.ALGORITMO_SSDPmaisPbest2k + "-k10-foQg",
-//            Const.ALGORITMO_SSDPmaisPbest2kselection + "-k10-foQg",
-//            Const.ALGORITMO_SSDPmaisRandom50Best50 + "-k10-foQg",
-//            Const.ALGORITMO_SSDPmaisRandom50Best502k + "-k10-foQg",
-//            Const.ALGORITMO_SSDPmaisRandom50Best502kselection + "-k10-foQg",
-//            
-//            Const.ALGORITMO_SSDP + "-k20-foQg",
-//            Const.ALGORITMO_SSDPmaisPbest + "-k20-foQg",
-//            Const.ALGORITMO_SSDPmaisPbest2k + "-k20-foQg",
-//            Const.ALGORITMO_SSDPmaisPbest2kselection + "-k20-foQg",
-//            Const.ALGORITMO_SSDPmaisRandom50Best50 + "-k20-foQg",
-//            Const.ALGORITMO_SSDPmaisRandom50Best502k + "-k20-foQg",
-//            Const.ALGORITMO_SSDPmaisRandom50Best502kselection + "-k20-foQg",
-            
-//            Const.ALGORITMO_SSDP + "-k50-foQg",
-//            Const.ALGORITMO_SSDPmaisPbest + "-k50-foQg",
-//            Const.ALGORITMO_SSDPmaisPbest2k + "-k50-foQg",
-//            Const.ALGORITMO_SSDPmaisPbest2kselection + "-k50-foQg",
-//            Const.ALGORITMO_SSDPmaisRandom50Best50 + "-k50-foQg",
-//            Const.ALGORITMO_SSDPmaisRandom50Best502k + "-k50-foQg",
-//            Const.ALGORITMO_SSDPmaisRandom50Best502kselection + "-k50-foQg"
-//            
-            
-            //Const.ALGORITMO_SSDPmais70NA + "-k10-foQg",
-            //Const.ALGORITMO_SSDPmais10NA + "-k10-foQg"
-            
-            //Const.ALGORITMO_SSDP + "-k10-foQg",
-            //Const.ALGORITMO_SD + "-k10-foQg"                            
+                Const.METRICA_WRACC,
+                Const.METRICA_Qg,
+                Const.METRICA_OVERALL_SUPP_POSITIVO,
+                Const.METRICA_COVER_REDUNDANCY_POSITIVO,
+                Const.METRICA_DESCRIPTION_REDUNDANCY_DENSITY,
+                Const.METRICA_DESCRIPTION_REDUNDANCY_DOMINATOR,
+                Const.METRICA_CHI_QUAD,
+                Const.METRICA_P_VALUE,
+                Const.METRICA_LIFT,
+                Const.METRICA_DIFF_SUP,
+                Const.METRICA_K,
+                Const.METRICA_GROWTH_RATE,
+                Const.METRICA_ODDS_RATIO,
+                Const.METRICA_COV,
+                Const.METRICA_CONF,
+                Const.METRICA_SUPP,
+                Const.METRICA_SUPP_POSITIVO,
+                Const.METRICA_SUPP_NEGATIVO,
+                Const.METRICA_SIZE
         };
-        
-        //String metrica = Const.METRICA_DESCRIPTION_REDUNDANCY_DOMINATOR;
-        //String metrica = Const.METRICA_COVER_REDUNDANCY_POSITIVO;
-        //String metrica = Const.METRICA_WRACC_NORMALIZED;
-        //String metrica = Const.METRICA_Qg;
-//        Relatorio.gerarArquivoTestesHipotese(nomeAlgoritmos, metrica, separadorBase);
+        String separadorBase = ",";
+        String separadorRelatorio = ",";
+        Relatorio.gerarTabelaoCSV(metricas, separadorBase, separadorRelatorio);
+
+        System.out.println("Tabelão concluído");
     }
 }

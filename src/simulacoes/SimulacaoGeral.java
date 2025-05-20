@@ -14,14 +14,12 @@ import dp.RSS;
 import evolucionario.INICIALIZAR;
 import evolucionario.*;
 import exatos.GulosoD;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Random;
-import java.util.Scanner;
+
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
 
 import newSD.*;
 import sd.Aleatorio;
@@ -331,7 +329,7 @@ public class SimulacaoGeral {
     }
 
     public static void main(String[] args) throws IOException, InterruptedException {
-
+//
         Pattern.ITENS_OPERATOR = Const.PATTERN_AND;
         Pattern.maxSimulares = 3;
         Pattern.medidaSimilaridade = Const.SIMILARIDADE_JACCARD;
@@ -363,13 +361,16 @@ public class SimulacaoGeral {
                 Const.ALGORITMO_PBSD_TV_SF_10,
 
                 Const.ALGORITMO_PBSD_FIBONACCI_ST,
-                Const.ALGORITMO_PBSD_FIBONACCI_SF
+                Const.ALGORITMO_PBSD_FIBONACCI_SF,
+                Const.ALGORITMO_SSDPmaisS50,
+                Const.ALGORITMO_SD
         };
 
         SimulacaoGeral sg = new SimulacaoGeral(new File(Const.CAMINHO_INDICE));
 
-        sg.run(K, numeroRepeticoes, algoritmos, ",", Const.METRICA_WRACC, tempoMaximoSegundosAlgoritmos);
+        sg.run(K, numeroRepeticoes, algoritmos, ",", Const.METRICA_Qg, tempoMaximoSegundosAlgoritmos);
 
+        System.out.println("Simulações WRAcc e Qg feitas.");
         //Tabelão
         String[] metricas = {
                 Const.METRICA_WRACC,
@@ -397,6 +398,5 @@ public class SimulacaoGeral {
         Relatorio.gerarTabelaoCSV(metricas, separadorBase, separadorRelatorio);
 
         System.out.println("Tabelão concluído");
-
     }
 }

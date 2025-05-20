@@ -86,7 +86,7 @@ public class SELECAO {
     }
 
     public static int torneioN(Pattern[] P, int n) {
-        int bestIndex = -1;
+        int bestIndex = 0;
         double bestQuality = Double.NEGATIVE_INFINITY;
 
         for (int i = 0; i < n; i++) {
