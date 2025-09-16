@@ -7,6 +7,7 @@ import dp.Pattern;
 import evolucionario.CRUZAMENTO;
 import evolucionario.SELECAO;
 import evolucionario.SSDP;
+import evolucionario.SSDPmais;
 import simulacoes.DPinfo;
 
 import java.io.FileNotFoundException;
@@ -16,82 +17,55 @@ import java.util.logging.Logger;
 
 public class Threshold {
 
-
-    protected static Pattern[] topK(Pattern[] P, int k){
-        Pattern[] Pk = new Pattern[k];
-        ordenaP(P);
-        System.arraycopy(P, 0, Pk, 0, k);
-        return Pk;
-    }
-
-    protected static boolean filhoPiorQuePais(Pattern pai1, Pattern pai2, Pattern filho){
-        return filho.getQualidade() < pai1.getQualidade() && filho.getQualidade() < pai2.getQualidade();
-    }
-
-    protected static void ordenaP(Pattern[] P){
-        Arrays.sort(P, (p1, p2) -> Double.compare(p2.getQualidade(), p1.getQualidade()));
-    }
-
-    protected static Pattern melhorarIndividuo(Pattern pai1, Pattern[] P, int quantidadeTorneio, int particao) {
-        Pattern novoIndividuo;
-        Pattern pai2;
-
-        double aDouble = Const.random.nextDouble(0, 1);
-
-        if (aDouble < (float) particao / P.length) {
-            if(particao > quantidadeTorneio){
-                pai2 = P[SELECAO.torneioN(P, quantidadeTorneio, 0, particao - 1)];
-            } else {
-                pai2 = P[SELECAO.torneioN(P, particao-1, 0, particao - 1)];
-            }
-        } else {
-            pai2 = P[SELECAO.torneioN(P, quantidadeTorneio, particao, P.length - 1)];
+    /**
+     * Mede a diversidade de um conjunto de padrões.
+     *
+     * Diversidade = 1 - média das similaridades entre os pares de padrões
+     *
+     * @param P - conjunto de padrões
+     * @param k - número de padrões considerados
+     * @param metricaSimilaridade - métrica usada (Const.SIMILARIDADE_JACCARD ou SOKAL_MICHENER)
+     * @return valor da diversidade (0 = nada diverso, 1 = totalmente diverso)
+     */
+    public static double avaliarDiversidade(Pattern[] P, int k, String metricaSimilaridade) {
+        if (k <= 1) {
+            return 0.0; // não existe diversidade com menos de 2 padrões
         }
 
-        novoIndividuo = CRUZAMENTO.AND(pai1, pai2, pai1.getTipoAvaliacao());
+        double somaSimilaridades = 0.0;
+        int numPares = 0;
 
-        return novoIndividuo;
+        for (int i = 0; i < k; i++) {
+            for (int j = i + 1; j < k; j++) {
+                somaSimilaridades += Avaliador.similaridade(P[i], P[j], metricaSimilaridade);
+                numPares++;
+            }
+        }
+
+        if (numPares == 0) return 0.0;
+
+        double mediaSimilaridade = somaSimilaridades / numPares;
+        return 1.0 - mediaSimilaridade; // diversidade é o inverso da similaridade média
     }
 
-    protected static Pattern sortear(Pattern[] P, int quantidadeTorneio, int particao) {
+    protected static Pattern sortear(Pattern[] P, int quantidadeTorneio, int limiar) {
         Pattern aux;
 
-        double aDouble = Const.random.nextDouble(0, 0.99);
+        // Sorteio r ~ U(0,1)
+        double r = Const.random.nextDouble();
 
-        if (aDouble < (float) particao / P.length) {
-            if(particao > 1){
-                aux = P[SELECAO.torneioN(P, quantidadeTorneio, 0, particao-1)];
-            } else {
-                aux = P[0];
-            }
+        // Probabilidade teórica
+        double Pth = (double) limiar / (P.length);
+
+        if (r < Pth) {
+            // Seleção acima do limiar: faixa 0..limiar-1
+            aux = P[SELECAO.torneioN(P, quantidadeTorneio, 0, limiar - 1)];
         } else {
-            aux = P[SELECAO.torneioN(P, quantidadeTorneio, particao, P.length - 1)];
+            // Seleção abaixo do limiar: faixa limiar..P.length-1
+            aux = P[SELECAO.torneioN(P, quantidadeTorneio, limiar, P.length - 1)];
         }
 
         return aux;
-    }
-
-
-    protected static Pattern melhorarIndividuo(Pattern pai1, Pattern[] P, int quantidadeTorneio) {
-        Pattern pai2 = P[SELECAO.torneioN(P, quantidadeTorneio)];
-        return CRUZAMENTO.AND(pai1, pai2, pai1.getTipoAvaliacao());
-    }
-
-    protected static boolean substituirIndividuo(Pattern[] P, Pattern paux, int particao) {
-        if(paux.getQualidade() > P[particao - 1].getQualidade()){
-        //if (SELECAO.ehRelevante(paux, P)) {
-            P[particao - 1] = paux;
-            return true;
-        }
-        return false;
-    }
-
-    protected static double calculateOverallConfidence(Pattern[] P, int k) {
-        double totalConfidence = 0;
-        for (int i = 0; i < k && i < P.length; i++) {
-            totalConfidence += DPinfo.conf(P[i]);
-        }
-        return totalConfidence / k;
     }
 
     protected static void avaliarPopulacao(Pattern[] P, int torneio, int threshold, int numeroIndividuos) {
@@ -136,7 +110,7 @@ public class Threshold {
                 diretorioBases+texto+"/matrixBinaria-ALL-TERMS-59730-p.csv"
         };
 
-        String base = "pastas/bases/Bases BIO 10/alon-pn-freq-2.CSV";
+        String base = "pastas/bases/alon-clean50-pn-width-2.csv";
         D.SEPARADOR = ",";
 
         try {
@@ -146,25 +120,25 @@ public class Threshold {
             return;
         }
 
-        Const.random = new Random(Const.SEEDS[9]); //Seed
+        Const.random = new Random(Const.SEEDS[0]); //Seed
         D.GerarDpDn("p");
 
         //Parameters of the algorithm
         int k = 10;
-        String metricaAvaliacao = Const.METRICA_WRACC;
-        int tentativasMelhoria = 20;
-        int maxIndividuosGerados = 10000000;
+        String metricaAvaliacao = Const.METRICA_Qg;
         int quantidadeTorneio = 5;
+        int passoTorneio = 5;
 
-        System.out.println("\n\n\n\nVarSortAceita");
+        System.out.println("\n\n\n\nFIXO");
+        Pattern[] pk = PBSD_FIXO.run(quantidadeTorneio, 0.5, metricaAvaliacao, k);
+        Avaliador.imprimirRegras(pk, k);
 
-        Pattern[] p = VarSortAceita.run(tentativasMelhoria, maxIndividuosGerados, metricaAvaliacao, k);
+        System.out.println("\n\n\n\nVAR");
+        pk = PBSD_VAR.run(passoTorneio, 0.5, metricaAvaliacao, k);
+        Avaliador.imprimirRegras(pk, k);
 
-        Avaliador.imprimirRegras(p, k);
-
-        System.out.println("\n\n\n\nVarSortNaoAceita");
-        p = VarSortNaoAceita.run(tentativasMelhoria, maxIndividuosGerados, metricaAvaliacao, k);
-
-        Avaliador.imprimirRegras(p, k);
+        System.out.println("SSDP+");
+        pk = SSDPmais.run(k, metricaAvaliacao, 0.5, 600);
+        Avaliador.imprimirRegras(pk, k);
     }
 }

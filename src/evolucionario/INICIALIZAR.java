@@ -9,8 +9,8 @@ import dp.Avaliador;
 import dp.Const;
 import dp.D;
 import dp.Pattern;
-import java.util.HashSet;
-import java.util.Iterator;
+
+import java.util.*;
 
 /**
  *
@@ -146,10 +146,69 @@ public class INICIALIZAR {
         }        
         return P0;
     }
-    
-    
-       
-    
+
+    /**
+     * Inicializa população da seguinte forma:
+     * 90% vêm diretamente do vetor I (padrões de 1 dimensão)
+     * 10% são gerados aleatoriamente usando os itens presentes nos top-k DPs (Pk).
+     *
+     * @param tipoAvaliacao String - tipo de avaliação utilizado para qualificar indivíduo
+     * @param tamanhoPopulacao int - tamanho da população
+     * @param I Pattern[] - vetor de padrões unitários (1 item cada)
+     * @param Pk Pattern[] - k melhores DPs
+     * @return Pattern[] - nova população
+     */
+    public static Pattern[] aleatorioD1_Pk(String tipoAvaliacao, int tamanhoPopulacao, Pattern[] I, Pattern[] Pk) {
+        Pattern[] P0 = new Pattern[tamanhoPopulacao];
+
+        // --- 1) Define quantidade de indivíduos a partir de I (90%) ---
+        int qtdI = (9 * tamanhoPopulacao) / 10;
+        qtdI = Math.min(qtdI, I.length); // não ultrapassa tamanho de I
+
+        // Copia padrões unitários de I
+        if (qtdI > 0) System.arraycopy(I, 0, P0, 0, qtdI);
+
+        // --- 2) Coleta itens distintos de Pk ---
+        HashSet<Integer> itensPkSet = new HashSet<>();
+        for (Pattern p : Pk) {
+            itensPkSet.addAll(p.getItens());
+        }
+        Integer[] itensPkArray = itensPkSet.toArray(new Integer[0]);
+
+        // --- 3) Define número médio de dimensões ---
+        int numeroDimensoes = (int) Avaliador.avaliarMediaDimensoes(Pk, Pk.length);
+        numeroDimensoes = Math.max(numeroDimensoes, 2); // mínimo 2 dimensões
+
+        // --- 4) Ajusta número de dimensões para não exceder itens disponíveis ---
+        if (itensPkArray.length > 0 && numeroDimensoes > itensPkArray.length) {
+            numeroDimensoes = itensPkArray.length;
+        }
+
+        // --- 5) Gera 10% restantes de forma aleatória ---
+        for (int j = qtdI; j < tamanhoPopulacao; j++) {
+            HashSet<Integer> itens = new HashSet<>();
+
+            // Se houver itens em Pk, sorteia sem repetição dentro do padrão
+            if (itensPkArray.length > 0) {
+                List<Integer> listaItens = new ArrayList<>(Arrays.asList(itensPkArray));
+                Collections.shuffle(listaItens, Const.random);
+                itens.addAll(listaItens.subList(0, numeroDimensoes));
+            } else {
+                // fallback: sorteia itens globalmente
+                while (itens.size() < numeroDimensoes) {
+                    itens.add(D.itensUtilizados[Const.random.nextInt(D.numeroItensUtilizados)]);
+                }
+            }
+
+            P0[j] = new Pattern(itens, tipoAvaliacao);
+        }
+
+        return P0;
+    }
+
+
+
+
     /**Inicializa população de indivíduos aleatório com entre 1D e nD
      *@author Tarcísio Pontes
      * @param tipoAvaliacao int - tipo de avaliação utilizado para qualificar indivíduo

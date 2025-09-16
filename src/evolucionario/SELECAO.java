@@ -107,6 +107,9 @@ public class SELECAO {
         double bestQuality = Double.NEGATIVE_INFINITY;
 
         for (int i = 0; i < n; i++) {
+            if (sup <= inf) {
+                return inf;
+            }
             int index = Const.random.nextInt(inf, sup);
             double quality = P[index].getQualidade();
 
