@@ -4,11 +4,10 @@ import dp.Avaliador;
 import dp.Const;
 import dp.D;
 import dp.Pattern;
-import evolucionario.CRUZAMENTO;
 import evolucionario.SELECAO;
-import evolucionario.SSDP;
 import evolucionario.SSDPmais;
-import simulacoes.DPinfo;
+import sd.Aleatorio;
+import sd.SD;
 
 import java.io.FileNotFoundException;
 import java.util.*;
@@ -67,6 +66,24 @@ public class Threshold {
 
         return aux;
     }
+    protected static double mediaQualidade(Pattern[] P){
+        return Arrays.stream(P)
+                .mapToDouble(Pattern::getQualidade)
+                .average()
+                .orElse(0.0);
+    }
+
+    public static Map<Integer, Integer> calcularFrequenciaItens(Pattern[] P) {
+        Map<Integer, Integer> frequencia = new HashMap<>();
+        if (P == null) return frequencia;
+
+        for (Pattern padrao : P) {
+            for (Integer item : padrao.getItens()) { // assumindo que Pattern tem getItens()
+                frequencia.put(item, frequencia.getOrDefault(item, 0) + 1);
+            }
+        }
+        return frequencia;
+    }
 
     protected static void avaliarPopulacao(Pattern[] P, int torneio, int threshold, int numeroIndividuos) {
         System.out.println();
@@ -83,34 +100,17 @@ public class Threshold {
                 .mapToDouble(pattern -> pattern.getItens().size()).average().getAsDouble();
 
         System.out.println("------ Avaliação da População ------");
-        logging(torneio, threshold, numeroIndividuos);
         System.out.println("Melhor qualidade: " + melhorQualidade);
         System.out.println("Qualidade média: " + mediaQualidade);
         System.out.println("Tamanho médio dos indivíduos: " + mediaTamanho);
     }
 
-    protected static void logging(int torneio, int threshold, int numeroIndividuos){
-        System.out.println("Torneio: " + torneio);
-        System.out.println("Threshold: " + threshold);
-        System.out.println("Testes: " + numeroIndividuos);
-    }
+
 
     public static void main(String[] args) throws FileNotFoundException {
         Logger logger = Logger.getLogger(Threshold.class.getName());
 
-        String diretorioBases = Const.CAMINHO_BASES;
-        String social = "/Humanitie and ssocial sciences";
-        String bio140 = "/Bases BIO 140";
-        String bioinformatica = "/Bioinformatic";
-        String texto = "/Text mining";
-
-        String[] bases = {diretorioBases+bioinformatica+"/alon-clean50-pn-width-2.csv",
-                diretorioBases+social+"/ENEM2014-NOTA-100K.csv",
-                diretorioBases+"/matrixBinaria-Global-100-p.csv",
-                diretorioBases+texto+"/matrixBinaria-ALL-TERMS-59730-p.csv"
-        };
-
-        String base = "pastas/bases/alon-clean50-pn-width-2.csv";
+        String base = "pastas/bases/alon-pn-freq-2.CSV";
         D.SEPARADOR = ",";
 
         try {
@@ -125,20 +125,27 @@ public class Threshold {
 
         //Parameters of the algorithm
         int k = 10;
-        String metricaAvaliacao = Const.METRICA_Qg;
+        String metricaAvaliacao = Const.METRICA_WRACC;
         int quantidadeTorneio = 5;
         int passoTorneio = 5;
 
         System.out.println("\n\n\n\nFIXO");
-        Pattern[] pk = PBSD_FIXO.run(quantidadeTorneio, 0.5, metricaAvaliacao, k);
+        Pattern[] pk = PBSD_FIXO.run(quantidadeTorneio, 0.5, metricaAvaliacao, k, false);
         Avaliador.imprimirRegras(pk, k);
 
-        System.out.println("\n\n\n\nVAR");
-        pk = PBSD_VAR.run(passoTorneio, 0.5, metricaAvaliacao, k);
-        Avaliador.imprimirRegras(pk, k);
 
-        System.out.println("SSDP+");
+        System.out.println("\n\n\nSSDP+");
         pk = SSDPmais.run(k, metricaAvaliacao, 0.5, 600);
+        Avaliador.imprimirRegras(pk, k);
+
+        System.out.println("\n\n\nSD");
+        SD sd = new SD();
+        double min_suport = Math.sqrt(D.numeroExemplosPositivo) / D.numeroExemplos;
+        pk = sd.run(min_suport, 2*k, metricaAvaliacao, k, 60);
+        Avaliador.imprimirRegras(pk, k);
+
+        System.out.println("\n\n\nAleatorio");
+        pk = Aleatorio.runNtentativas(metricaAvaliacao, k, 1000000, 10);
         Avaliador.imprimirRegras(pk, k);
     }
 }

@@ -242,30 +242,30 @@ public class SimulacaoGeral {
 
                             // ===================== PBSD FIXO =====================
                             case ALGORITMO_PBSD_TF_5:
-                                p = PBSD_FIXO.run(5, 0.5, tipoAvaliacao, k);
+                                p = PBSD_FIXO.run(5, 0.5, tipoAvaliacao, k, false);
                                 break;
                             case ALGORITMO_PBSD_TF_10:
-                                p = PBSD_FIXO.run(10, 0.5, tipoAvaliacao, k);
+                                p = PBSD_FIXO.run(10, 0.5, tipoAvaliacao, k, false);
                                 break;
                             case Const.ALGORITMO_PBSD_TF_20:
-                                p = PBSD_FIXO.run(20, 0.5, tipoAvaliacao, k);
+                                p = PBSD_FIXO.run(20, 0.5, tipoAvaliacao, k,false);
                                 break;
                             case Const.ALGORITMO_PBSD_TF_50:
-                                p = PBSD_FIXO.run(50, 0.5, tipoAvaliacao, k);
+                                p = PBSD_FIXO.run(50, 0.5, tipoAvaliacao, k, false);
                                 break;
                             case Const.ALGORITMO_PBSD_TF_100:
-                                p = PBSD_FIXO.run(100, 0.5, tipoAvaliacao, k);
+                                p = PBSD_FIXO.run(100, 0.5, tipoAvaliacao, k, false);
                                 break;
 
                             // ===================== PBSD VARIÁVEL =====================
                             case Const.ALGORITMO_PBSD_TV_1:
-                                p = PBSD_VAR.run(1, 0.5, tipoAvaliacao, k);
+                                p = PBSD_VAR.run(1, 0.5, tipoAvaliacao, k, false);
                                 break;
                             case Const.ALGORITMO_PBSD_TV_5:
-                                p = PBSD_VAR.run(5, 0.5, tipoAvaliacao, k);
+                                p = PBSD_VAR.run(5, 0.5, tipoAvaliacao, k, false);
                                 break;
                             case ALGORITMO_PBSD_TV_10:
-                                p = PBSD_VAR.run(10, 0.5, tipoAvaliacao, k);
+                                p = PBSD_VAR.run(10, 0.5, tipoAvaliacao, k, false);
                                 break;
 
                         }
@@ -303,9 +303,9 @@ public class SimulacaoGeral {
         Pattern.medidaSimilaridade = Const.SIMILARIDADE_JACCARD;
 
         int[] K = {10};
-        int numeroRepeticoes = 1;
-        int hours = 10;
-        double  tempoMaximoSegundosAlgoritmos = 60*60*(double)hours;
+        int numeroRepeticoes = 10;
+        int minutos = 1;
+        double  tempoMaximoSegundosAlgoritmos = 60*minutos;
 
         String[] algoritmos = {
                 // ===================== PBSD FIXO =====================
