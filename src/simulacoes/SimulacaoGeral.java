@@ -242,30 +242,40 @@ public class SimulacaoGeral {
 
                             // ===================== PBSD FIXO =====================
                             case ALGORITMO_PBSD_TF_5:
-                                p = PBSD_FIXO.run(5, 0.5, tipoAvaliacao, k, false);
+                                PBSD_FIXO fixo5 = new PBSD_FIXO();
+                                p = fixo5.run(5, 0.5, tipoAvaliacao, k, false);
                                 break;
                             case ALGORITMO_PBSD_TF_10:
-                                p = PBSD_FIXO.run(10, 0.5, tipoAvaliacao, k, false);
+                                PBSD_FIXO fixo10 = new PBSD_FIXO();
+                                p = fixo10.run(10, 0.5, tipoAvaliacao, k, false);
                                 break;
                             case Const.ALGORITMO_PBSD_TF_20:
-                                p = PBSD_FIXO.run(20, 0.5, tipoAvaliacao, k,false);
+                                PBSD_FIXO fixo20 = new PBSD_FIXO();
+                                p = fixo20.run(20, 0.5, tipoAvaliacao, k,false);
                                 break;
                             case Const.ALGORITMO_PBSD_TF_50:
-                                p = PBSD_FIXO.run(50, 0.5, tipoAvaliacao, k, false);
+                                PBSD_FIXO fixo50 = new PBSD_FIXO();
+
+                                p = fixo50.run(50, 0.5, tipoAvaliacao, k, false);
                                 break;
                             case Const.ALGORITMO_PBSD_TF_100:
-                                p = PBSD_FIXO.run(100, 0.5, tipoAvaliacao, k, false);
+                                PBSD_FIXO fixo100 = new PBSD_FIXO();
+                                p = fixo100.run(100, 0.5, tipoAvaliacao, k, false);
                                 break;
 
                             // ===================== PBSD VARIÁVEL =====================
                             case Const.ALGORITMO_PBSD_TV_1:
-                                p = PBSD_VAR.run(1, 0.5, tipoAvaliacao, k, false);
+                                PBSD_VAR var1 = new PBSD_VAR();
+                                p = var1.run(1, 0.5, tipoAvaliacao, k, false);
                                 break;
                             case Const.ALGORITMO_PBSD_TV_5:
-                                p = PBSD_VAR.run(5, 0.5, tipoAvaliacao, k, false);
+                                PBSD_VAR var5 = new PBSD_VAR();
+                                p = var5.run(5, 0.5, tipoAvaliacao, k, false);
                                 break;
-                            case ALGORITMO_PBSD_TV_10:
-                                p = PBSD_VAR.run(10, 0.5, tipoAvaliacao, k, false);
+                                case ALGORITMO_PBSD_TV_10:
+                                    PBSD_VAR var10 = new PBSD_VAR();
+
+                                p = var10.run(10, 0.5, tipoAvaliacao, k, false);
                                 break;
 
                         }
@@ -325,45 +335,45 @@ public class SimulacaoGeral {
                 Const.ALGORITMO_Aleatorio1M,
                 Const.ALGORITMO_ExaustivoK
         };
-
-        SimulacaoGeral sgWRAcc = new SimulacaoGeral(new File(Const.CAMINHO_INDICE));
-
-        sgWRAcc.run(K, numeroRepeticoes, algoritmos, ",", Const.METRICA_WRACC, tempoMaximoSegundosAlgoritmos);
-
-
-
-//        SimulacaoGeral sgQg = new SimulacaoGeral(new File(Const.CAMINHO_INDICE));
-//        tipoAvaliacao = METRICA_Qg;
 //
-//        sgQg.run(K, numeroRepeticoes, algoritmos, ",", tipoAvaliacao, tempoMaximoSegundosAlgoritmos);
+        SimulacaoGeral sg = new SimulacaoGeral(new File(Const.CAMINHO_INDICE));
+
+        sg.run(K, numeroRepeticoes, algoritmos, ",", METRICA_Qg, tempoMaximoSegundosAlgoritmos);
+
+        SimulacaoGeral sg2 = new SimulacaoGeral(new File(Const.CAMINHO_INDICE));
+
+        sg2.run(K, numeroRepeticoes, algoritmos, ",", METRICA_WRACC, tempoMaximoSegundosAlgoritmos);
+//
 //        //Tabelão
-//        String[] metricas = {
-//                Const.METRICA_WRACC,
-//                Const.METRICA_Qg,
-//                Const.METRICA_OVERALL_SUPP_POSITIVO,
-//                Const.METRICA_COVER_REDUNDANCY_POSITIVO,
-//                Const.METRICA_DESCRIPTION_REDUNDANCY_DENSITY,
-//                Const.METRICA_DESCRIPTION_REDUNDANCY_DOMINATOR,
-//                Const.METRICA_CHI_QUAD,
-//                Const.METRICA_P_VALUE,
-//                Const.METRICA_LIFT,
-//                Const.METRICA_DIFF_SUP,
-//                Const.METRICA_K,
-//                Const.METRICA_GROWTH_RATE,
-//                Const.METRICA_ODDS_RATIO,
-//                Const.METRICA_COV,
-//                Const.METRICA_CONF,
-//                Const.METRICA_SUPP,
-//                Const.METRICA_SUPP_POSITIVO,
-//                Const.METRICA_SUPP_NEGATIVO,
-//                Const.METRICA_SIZE
-//        };
+        String[] metricas = {
+                Const.METRICA_WRACC,
+                Const.METRICA_Qg,
+                Const.METRICA_OVERALL_SUPP_POSITIVO,
+                Const.METRICA_COVER_REDUNDANCY_POSITIVO,
+                Const.METRICA_DESCRIPTION_REDUNDANCY_DENSITY,
+                Const.METRICA_DESCRIPTION_REDUNDANCY_DOMINATOR,
+                Const.METRICA_CHI_QUAD,
+                Const.METRICA_P_VALUE,
+                Const.METRICA_LIFT,
+                Const.METRICA_DIFF_SUP,
+                Const.METRICA_K,
+                Const.METRICA_GROWTH_RATE,
+                Const.METRICA_ODDS_RATIO,
+                Const.METRICA_COV,
+                Const.METRICA_CONF,
+                Const.METRICA_SUPP,
+                Const.METRICA_SUPP_POSITIVO,
+                Const.METRICA_SUPP_NEGATIVO,
+                Const.METRICA_SIZE,
+                Const.METRICA_NUMERO_TESTES,
+                Const.METRICA_TIME,
+        };
 
         String separadorBase = ",";
         String separadorRelatorio = ",";
-//        Relatorio.gerarTabelaoCSV(metricas, separadorBase, separadorRelatorio);
-//
-//        System.out.println("Tabelão concluído");
+        Relatorio.gerarTabelaoCSV(metricas, separadorBase, separadorRelatorio);
+
+        System.out.println("Tabelão concluído");
 
     }
 }

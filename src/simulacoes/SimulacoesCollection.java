@@ -116,93 +116,96 @@ public class SimulacoesCollection {
     
     //Carrega Objetos Simulacao a partir de arquivos de resultados completos
     //É preciso o caminho das bases por gambiarra também! Não deveria ser necessário! Está assim por causa da forma de inidicalizadação das DPs e da base D tipo static
-    public void carregarSimulacoesFromText(String separadorBases, String separadorResultadoDPs) throws IOException{
+    public void carregarSimulacoesFromText(String separadorBases, String separadorResultadoDPs) throws IOException {
         String caminhoResultados = Const.CAMINHO_RESULTADOS;
-        String caminhoBases = Const.CAMINHO_BASES;        
+        String caminhoBases = Const.CAMINHO_BASES;
         D.SEPARADOR = separadorBases;
-        String funcaoObjetivo  = Avaliador.METRICA_AVALIACAO_WRACC; //Gambiarra pq classe Pattens exige tipo de função objetivo quando é inicializada
-        
+        String funcaoObjetivo  = Avaliador.METRICA_AVALIACAO_WRACC; // Gambiarra pq classe Pattens exige tipo de função objetivo quando é inicializada
+
         File diretorio = new File(caminhoResultados);
-        File arquivos[] = diretorio.listFiles();
-        System.out.println(arquivos.length);        
-        for(int i = 0; i < arquivos.length; i++){
-            
-            String nomeArquivo = arquivos[i].getName();
-            
-            //Apagar possíveis ruídos
-            //String nomeArquivoClean = nomeArquivo.replace("-pn", "").replace(".txt", "");
+        File[] arquivos = diretorio.listFiles();
+        assert arquivos != null;
+        System.out.println(arquivos.length);
+
+        java.util.regex.Pattern pattern = java.util.regex.Pattern.compile(
+                "^(?<algoritmo>.+)_(?<base>.+)$"
+        );
+        // Regex para capturar as partes do nome do arquivo
+
+        for (File arquivo : arquivos) {
+            String nomeArquivo = arquivo.getName();
             String nomeArquivoClean = nomeArquivo.replace(".txt", "");
-            
-            
-            //Extrair palavras com informações relevantes
-            String[] palavras = nomeArquivoClean.split("_");
-            
-            String nomeAlgoritmo = palavras[0];           
-            //String nomeBase = palavras[1] + "-pn";
-            String nomeBase = palavras[1];
-                        
-            System.out.println("[" + i + "/" + (arquivos.length-1) + "]: " + nomeAlgoritmo + "_" +  nomeBase);
-            
-            D.CarregarArquivo(caminhoBases + "/" + nomeBase + ".CSV", D.TIPO_CSV);
+
+            java.util.regex.Matcher matcher = pattern.matcher(nomeArquivoClean);
+
+            if (!matcher.matches()) {
+                System.err.println("Arquivo fora do padrão esperado: " + nomeArquivo);
+                continue; // pula este arquivo
+            }
+            String nomeAlgoritmo = matcher.group("algoritmo"); // inclui -kXX-foYYY
+            String base = matcher.group("base");           // nome completo da base
+
+            System.out.println("Algoritmo=" + nomeAlgoritmo +
+                    " | Base=" + base);
+
+            D.CarregarArquivo(caminhoBases + "/" + base + ".CSV", D.TIPO_CSV);
             D.GerarDpDn("p");
-            Scanner scanner = new Scanner(new FileReader(arquivos[i].getAbsolutePath()))
-                       .useDelimiter("\\n");
-            
+            Scanner scanner = new Scanner(new FileReader(arquivo.getAbsolutePath()))
+                    .useDelimiter("\\n");
+
             ArrayList<Resultado> resultadosArrayList = new ArrayList<>();
-            ArrayList<Pattern> DPsArrayLis = new ArrayList<>(); 
+            ArrayList<Pattern> DPsArrayLis = new ArrayList<>();
             int rep = -1;
             double time = -1;
             int trys = -1;
             long seed = -1L;
-            
+
             String linha = "";
             String palavra = "";
-            
-            
-            if(!scanner.hasNext()){//Caso específico de arquivo de resultado sem DPs dentro. Deve ser excluído quando não houver mais esse tipo de arquivo.
+
+            if (!scanner.hasNext()) { // Caso específico de arquivo de resultado sem DPs dentro.
                 Resultado[] rs = new Resultado[1];
                 rs[0] = new Resultado(null, time, trys, seed);
-                this.simulacoes.add(new Simulacao(nomeAlgoritmo, nomeBase, rs));
+                this.simulacoes.add(new Simulacao(nomeAlgoritmo, base, rs));
                 continue;
             }
-            
+
             linha = scanner.next();
             linha = linha.replaceFirst("\r", "");
-            if(linha.contains("@rep")){//Arquivo de reultado: padrão completo.
-                palavra = linha.split(":")[1]; //Então coleto valor de repetição e entro dentro do while para extrair demais informações.
-                if(!palavra.equals("?")){
+            if (linha.contains("@rep")) { // Arquivo de resultado: padrão completo.
+                palavra = linha.split(":")[1];
+                if (!palavra.equals("?")) {
                     rep = Integer.parseInt(palavra);
                 }
-                while (scanner.hasNext()) {//Coletando demais informações
-                    linha = scanner.next();                                                                       
+                while (scanner.hasNext()) {
+                    linha = scanner.next();
                     linha = linha.replaceFirst("\r", "");
-                    if(linha.contains("@rep")){
+                    if (linha.contains("@rep")) {
                         palavra = linha.split(":")[1];
-                        if(!palavra.equals("?")){
+                        if (!palavra.equals("?")) {
                             rep = Integer.parseInt(palavra);
-                        }                    
-                    }else if(linha.contains("@time")){
+                        }
+                    } else if (linha.contains("@time")) {
                         palavra = linha.split(":")[1];
-                        if(!palavra.equals("?")){
+                        if (!palavra.equals("?")) {
                             time = Double.parseDouble(palavra);
-                        }                    
-                    }else if(linha.contains("@trys")){
+                        }
+                    } else if (linha.contains("@trys")) {
                         palavra = linha.split(":")[1];
-                        if(!palavra.equals("?")){
-                            trys = Integer.parseInt( palavra );
-                        }                    
-                    }else if(linha.contains("@seed")){
+                        if (!palavra.equals("?")) {
+                            trys = Integer.parseInt(palavra);
+                        }
+                    } else if (linha.contains("@seed")) {
                         palavra = linha.split(":")[1];
-                        if(!palavra.equals("?")){
-                            seed = Long.parseLong( palavra );
-                        }                     
-                    }
-                    else if(linha.contains("@dps-begin")){
+                        if (!palavra.equals("?")) {
+                            seed = Long.parseLong(palavra);
+                        }
+                    } else if (linha.contains("@dps-begin")) {
                         DPsArrayLis = new ArrayList<>();
-                        while(!linha.contains("@dps-end")){
+                        while (!linha.contains("@dps-end")) {
                             linha = scanner.next();
                             linha = linha.replace("\r", "");
-                            if(linha.contains("@dps-end") || linha.isEmpty()){//Caso uma repatição não tenha nenhuma DP
+                            if (linha.contains("@dps-end") || linha.isEmpty()) {
                                 continue;
                             }
                             String[] itensStr = linha.split(separadorResultadoDPs);
@@ -214,31 +217,31 @@ public class SimulacoesCollection {
                             DPsArrayLis.add(p);
                         }
                         Pattern[] dps = new Pattern[DPsArrayLis.size()];
-                        for(int j = 0; j < dps.length; j++){
+                        for (int j = 0; j < dps.length; j++) {
                             dps[j] = DPsArrayLis.get(j);
-                        }            
+                        }
                         Resultado r = new Resultado(dps, time, trys, seed);
                         resultadosArrayList.add(r);
-                    }else if(linha.isEmpty()){ //Linha em branco é diferente de não ter nada!
+                    } else if (linha.isEmpty()) {
                         continue;
                     }
                 }
 
-            }else{//Arquivo de reultado: padrão simples (apenas inteiros que representam DPs.) Essa opção tende a ficar em desuso e ser excluida.       
+            } else { // Arquivo de resultado: padrão simples
                 DPsArrayLis = new ArrayList<>();
-                if(!linha.isEmpty()){//Ler e resolve primeira linha. Depois entra do loop para ser demais se for o caso.
+                if (!linha.isEmpty()) {
                     String[] itensStr = linha.split(separadorResultadoDPs);
                     HashSet<Integer> itens = new HashSet<>();
-                    for(int j = 0; j < itensStr.length; j++){
-                        itens.add( Integer.parseInt( itensStr[j].replace(" ", "") ) );
+                    for (int j = 0; j < itensStr.length; j++) {
+                        itens.add(Integer.parseInt(itensStr[j].replace(" ", "")));
                     }
                     Pattern p = new Pattern(itens, funcaoObjetivo);
-                    DPsArrayLis.add(p); 
-                }   
-                while(scanner.hasNext()){
+                    DPsArrayLis.add(p);
+                }
+                while (scanner.hasNext()) {
                     linha = scanner.next();
                     linha = linha.replaceFirst("\r", "");
-                    if(linha.isEmpty()){
+                    if (linha.isEmpty()) {
                         continue;
                     }
                     String[] itensStr = linha.split(separadorResultadoDPs);
@@ -247,27 +250,28 @@ public class SimulacoesCollection {
                         itens.add(Integer.parseInt(s.replace(" ", "")));
                     }
                     Pattern p = new Pattern(itens, funcaoObjetivo);
-                    DPsArrayLis.add(p);                        
+                    DPsArrayLis.add(p);
                 }
 
                 Pattern[] dps = new Pattern[DPsArrayLis.size()];
-                for(int j = 0; j < dps.length; j++){
+                for (int j = 0; j < dps.length; j++) {
                     dps[j] = DPsArrayLis.get(j);
-                }            
+                }
                 Resultado r = new Resultado(dps, time, trys, seed);
                 resultadosArrayList.add(r);
-            }                                
+            }
 
-            Resultado[] resultados = new Resultado[resultadosArrayList.size()];//Temoas apenas um resultado por simulação
-            for(int j = 0; j < resultados.length; j++){
-               resultados[j] = resultadosArrayList.get(j);
-            } 
-            
-            Simulacao simulacao = new Simulacao(nomeAlgoritmo, nomeBase, resultados);
+            Resultado[] resultados = new Resultado[resultadosArrayList.size()];
+            for (int j = 0; j < resultados.length; j++) {
+                resultados[j] = resultadosArrayList.get(j);
+            }
+
+            Simulacao simulacao = new Simulacao(nomeAlgoritmo, base, resultados);
             this.simulacoes.add(simulacao);
-        }//end-for
-    }    
-            
+        }
+    }
+
+
     public static void main(String[] args) throws IOException, ClassNotFoundException{
         SimulacoesCollection simulacoes = new SimulacoesCollection();
         simulacoes.carregarSimulacoesFromText(",", ",");

@@ -130,22 +130,23 @@ public class Threshold {
         int passoTorneio = 5;
 
         System.out.println("\n\n\n\nFIXO");
-        Pattern[] pk = PBSD_FIXO.run(quantidadeTorneio, 0.5, metricaAvaliacao, k, false);
+        PBSD_FIXO fixo = new PBSD_FIXO();
+        Pattern[] pk = fixo.run(quantidadeTorneio, 0.5, metricaAvaliacao, k, false);
         Avaliador.imprimirRegras(pk, k);
-
-
-        System.out.println("\n\n\nSSDP+");
-        pk = SSDPmais.run(k, metricaAvaliacao, 0.5, 600);
-        Avaliador.imprimirRegras(pk, k);
-
-        System.out.println("\n\n\nSD");
-        SD sd = new SD();
-        double min_suport = Math.sqrt(D.numeroExemplosPositivo) / D.numeroExemplos;
-        pk = sd.run(min_suport, 2*k, metricaAvaliacao, k, 60);
-        Avaliador.imprimirRegras(pk, k);
-
-        System.out.println("\n\n\nAleatorio");
-        pk = Aleatorio.runNtentativas(metricaAvaliacao, k, 1000000, 10);
-        Avaliador.imprimirRegras(pk, k);
+//
+//
+//        System.out.println("\n\n\nSSDP+");
+//        pk = SSDPmais.run(k, metricaAvaliacao, 0.5, 600);
+//        Avaliador.imprimirRegras(pk, k);
+//
+//        System.out.println("\n\n\nSD");
+//        SD sd = new SD();
+//        double min_suport = Math.sqrt(D.numeroExemplosPositivo) / D.numeroExemplos;
+//        pk = sd.run(min_suport, 2*k, metricaAvaliacao, k, 60);
+//        Avaliador.imprimirRegras(pk, k);
+//
+//        System.out.println("\n\n\nAleatorio");
+//        pk = Aleatorio.runNtentativas(metricaAvaliacao, k, 1000000, 10);
+//        Avaliador.imprimirRegras(pk, k);
     }
 }
