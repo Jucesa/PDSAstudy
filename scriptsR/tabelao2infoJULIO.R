@@ -21,14 +21,14 @@ tabelao <- read.csv(local, fileEncoding = "UTF-8")
 # -------------------------------
 # Filtrar algoritmos com sufixo "foQg"
 # -------------------------------
-tabelao <- tabelao %>% filter(grepl("foQg$", Algoritmo))
+tabelao <- tabelao %>% filter(grepl("foWRAcc$", Algoritmo))
 
 # -------------------------------
 # Colunas métricas numéricas
 # -------------------------------
 colunas_metrica <- c("size", "Tempo", "Testes", "WRAcc", "Qg", "overollSuppP", "suppP", "conf",
-                     "CoverRedundancyP","DescripRDensity","DescripRDominator",
-                     "Chi_Quad","p_value","Lift","DiffSup","GrowthRate","OddsRatio",
+                     "CoverRedundancyP","DescripRDensity","DescripRDominator"
+                     ,"Lift","DiffSup","GrowthRate","OddsRatio",
                      "cov","supp","suppN")
 
 # -------------------------------
@@ -55,16 +55,13 @@ for (p in lista_plots) {
 dev.off()
 
 # -------------------------------
-# Gerar PDF individual por base
+# Gerar CSV individual por base e boxplots por base
 # -------------------------------
 bases_unicas <- unique(tabelao$Base)
 
 for (base in bases_unicas) {
   dados_base <- subset(tabelao, Base == base)
   nome_base_limpa <- gsub("[^A-Za-z0-9]", "_", base)
-  nome_pdf <- paste0("Relatorio_", nome_base_limpa, ".pdf")
-  
-  pdf(nome_pdf, paper = "a4r", width = 11, height = 8.5)
   
   # -------------------------------
   # Tabela de médias por algoritmo
@@ -79,11 +76,16 @@ for (base in bases_unicas) {
   tabela_medias_arredondada <- tabela_medias
   tabela_medias_arredondada[colunas_validas] <- round(tabela_medias_arredondada[colunas_validas], 4)
   
-  grid.table(tabela_medias_arredondada)
+  # Salvar como CSV
+  nome_csv <- paste0("Medias_", nome_base_limpa, ".csv")
+  write.csv(tabela_medias_arredondada, file = nome_csv, row.names = FALSE)
   
   # -------------------------------
-  # Boxplots para cada métrica
+  # Gerar PDF com boxplots por base
   # -------------------------------
+  nome_pdf <- paste0("Relatorio_", nome_base_limpa, ".pdf")
+  pdf(nome_pdf, paper = "a4r", width = 11, height = 8.5)
+  
   for (metrica in colunas_metrica) {
     if (metrica %in% colnames(dados_base)) {
       p <- ggplot(dados_base, aes_string(x = "Algoritmo", y = metrica, fill = "Algoritmo")) +

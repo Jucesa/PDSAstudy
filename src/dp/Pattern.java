@@ -42,7 +42,6 @@ public class Pattern implements Comparable<Pattern>, Serializable{
     public static int maxSimulares = 5;
     public static String medidaSimilaridade = Const.SIMILARIDADE_JACCARD;
     
-    
     public Pattern(HashSet<Integer> itens, String tipoAvaliacao){
         this.itens = itens;
         this.tipoAvaliacao = tipoAvaliacao;            

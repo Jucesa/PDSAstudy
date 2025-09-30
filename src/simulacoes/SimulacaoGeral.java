@@ -27,7 +27,8 @@ import java.util.Scanner;
 import sd.Aleatorio;
 import sd.ExaustivoK;
 import sd.SD;
-import pso.PSO; // Importação do PSO
+import pso.pso1.PSO; // Importação do PSO
+import pso.pso2.BPSO; // Importação do PSO2
 
 /**
  *
@@ -240,10 +241,10 @@ public class SimulacaoGeral {
                                 p = PSO.run(k, tipoAvaliacao, tempoMaximoSegundosAlgoritmos, nomeBase, "Random");
                                 break;
                             }
-                            case Const.ALGORITMO_PSO_COMPLETE: {
-                                p = PSO.run(k, tipoAvaliacao, tempoMaximoSegundosAlgoritmos, nomeBase, "Complete");
-                                break;
-                            }
+                            // case Const.ALGORITMO_PSO_COMPLETE: {
+                            //     p = PSO.run(k, tipoAvaliacao, tempoMaximoSegundosAlgoritmos, nomeBase, "Complete");
+                            //     break;
+                            // }
                             case Const.ALGORITMO_PSO_BEST_FROM_10: {
                                 p = PSO.run(k, tipoAvaliacao, tempoMaximoSegundosAlgoritmos, nomeBase, "BestFromN10");
                                 break;
@@ -256,6 +257,21 @@ public class SimulacaoGeral {
                                 p = PSO.run(k, tipoAvaliacao, tempoMaximoSegundosAlgoritmos, nomeBase, "BestFromNScalingFrom1");
                                 break;
                             }
+                            case Const.ALGORITMO_BPSO: {
+                                int numParticles = 1000;
+                                int numIterations = 100;
+                                double wMax = 0.9;
+                                double wMin = 0.4;
+                                double c1Max = 4.0;
+                                double c1Min = 0.5;
+                                double c2Max = 5.0;
+                                double c2Min = 0.5;
+                                int dimensao = D.numeroItens;
+                                BPSO bpso = new BPSO(numParticles, numIterations, dimensao, wMax, c1Max, c2Min);
+                                bpso.setAdaptiveParams(wMax, wMin, c1Max, c1Min, c2Max, c2Min);
+                                p = bpso.run(k);
+                                break;
+                            }
                         }                       
                                                 
                         double tempo = (System.currentTimeMillis() - t0)/1000.0;
@@ -263,13 +279,13 @@ public class SimulacaoGeral {
                         
                         if(n == numeroRepeticoes-1){
                             System.out.println("\nÚltima repetição:");
-                            System.out.println("Qualidade média: " + Avaliador.avaliarMedia(p,k));
-                            System.out.println("Dimensão média: " + Avaliador.avaliarMediaDimensoes(p,k));        
-                            System.out.println("Cobertura +: " + Avaliador.coberturaPositivo(p,k));
+                            System.out.println("Qualidade média: " + Avaliador.avaliarMedia(p, p.length));
+                            System.out.println("Dimensão média: " + Avaliador.avaliarMediaDimensoes(p, p.length));        
+                            System.out.println("Cobertura +: " + Avaliador.coberturaPositivo(p, p.length));
                             System.out.println("Tempo +: " + tempo);
                             System.out.println("Tentativas +: " + numeroTentativas);
                             System.out.println("Size: " + p.length);
-                            Avaliador.imprimir(p, k);
+                            Avaliador.imprimirRegras(p, p.length);
                         }
                         resultados[n] = new Resultado(p, tempo, numeroTentativas, Const.SEEDS[n]);                    
                     }                    
@@ -292,25 +308,25 @@ public class SimulacaoGeral {
         Pattern.medidaSimilaridade = Const.SIMILARIDADE_JACCARD;
 
         int[] K = {10}; 
-        int numeroRepeticoes = 30; // repetições de cada algoritmo aqui
+        int numeroRepeticoes = 10; // repetições de cada algoritmo aqui
         int hours = 10; //aumentei pra ver se funciona com o PSO demoradao mesmo
         double  tempoMaximoSegundosAlgoritmos = 60*60*hours; //max 1h
         String[] algoritmos = {
             Const.ALGORITMO_Aleatorio1M,
-            Const.ALGORITMO_ExaustivoK,
-            Const.ALGORITMO_SSDP,
-            Const.ALGORITMO_SSDPmais, // SSDP+ 
-            Const.ALGORITMO_PSO_RANDOM,
-            Const.ALGORITMO_PSO_BEST_FROM_10,
-            Const.ALGORITMO_PSO_BEST_FROM_100,
-            Const.ALGORITMO_PSO_BEST_FROM_N_SCALING_FROM_1,
+            Const.ALGORITMO_SD,
+            Const.ALGORITMO_SSDPmais,  
+            //Const.ALGORITMO_PSO_RANDOM,
+            //Const.ALGORITMO_PSO_BEST_FROM_10,
+            //Const.ALGORITMO_PSO_BEST_FROM_100,
+           // Const.ALGORITMO_PSO_BEST_FROM_N_SCALING_FROM_1,
             //nao  rola  de colocar o pso completo, ele é muuuuuito demorado, muito mesmo
             //Const.ALGORITMO_PSO_COMPLETE      // PSO
+            Const.ALGORITMO_BPSO
         };
 
         SimulacaoGeral sg = new SimulacaoGeral(new File(Const.CAMINHO_INDICE));
-        String tipoAvaliacao = Avaliador.METRICA_AVALIACAO_QG; // Usando Qg conforme solicitado
-        
+        String tipoAvaliacao = Avaliador.METRICA_AVALIACAO_WRACC; // Usando WRACC conforme solicitado
+
         sg.run(K, numeroRepeticoes, algoritmos, ",", tipoAvaliacao, tempoMaximoSegundosAlgoritmos);
 
         //Tabelão
@@ -321,8 +337,6 @@ public class SimulacaoGeral {
                 Const.METRICA_COVER_REDUNDANCY_POSITIVO,
                 Const.METRICA_DESCRIPTION_REDUNDANCY_DENSITY,
                 Const.METRICA_DESCRIPTION_REDUNDANCY_DOMINATOR,
-                Const.METRICA_CHI_QUAD,
-                Const.METRICA_P_VALUE,
                 Const.METRICA_LIFT,
                 Const.METRICA_DIFF_SUP,
                 Const.METRICA_K,

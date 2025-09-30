@@ -145,7 +145,7 @@ public class SSDPmais {
         String caminho = "pastas\\bases\\";
         //String nomeBase = "pns-pessoa-Diabetes-P.CSV";
         //String nomeBase = "evasao.CSV";
-        String nomeBase = "alon-clean50-pn-width-2.csv";
+        String nomeBase = "alon-clean50-pn-width-2.CSV";
         //String nomeBase = "ENEM2014_81_NOTA_10k.csv";
         //String nomeBase = "pns_pessoa_AVC_P.csv";
         //String nomeBase = "pns_pessoa_Cancer_P.csv";
