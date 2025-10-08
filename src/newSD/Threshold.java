@@ -6,9 +6,6 @@ import dp.D;
 import dp.Pattern;
 import evolucionario.SELECAO;
 import evolucionario.SSDPmais;
-import sd.Aleatorio;
-import sd.SD;
-
 import java.io.FileNotFoundException;
 import java.util.*;
 import java.util.logging.Level;
@@ -58,10 +55,10 @@ public class Threshold {
 
         if (r < Pth) {
             // Seleção acima do limiar: faixa 0..limiar-1
-            aux = P[SELECAO.torneioN(P, quantidadeTorneio, 0, limiar - 1)];
+            aux = P[SELECAO.torneioN(P, quantidadeTorneio, 0, limiar)];
         } else {
             // Seleção abaixo do limiar: faixa limiar..P.length-1
-            aux = P[SELECAO.torneioN(P, quantidadeTorneio, limiar, P.length - 1)];
+            aux = P[SELECAO.torneioN(P, quantidadeTorneio, limiar, P.length )];
         }
 
         return aux;
@@ -131,22 +128,16 @@ public class Threshold {
 
         System.out.println("\n\n\n\nFIXO");
         PBSD_FIXO fixo = new PBSD_FIXO();
-        Pattern[] pk = fixo.run(quantidadeTorneio, 0.5, metricaAvaliacao, k, false);
+        Pattern[] pk = fixo.run(quantidadeTorneio, 0.5, metricaAvaliacao, k);
         Avaliador.imprimirRegras(pk, k);
-//
-//
-//        System.out.println("\n\n\nSSDP+");
-//        pk = SSDPmais.run(k, metricaAvaliacao, 0.5, 600);
-//        Avaliador.imprimirRegras(pk, k);
-//
-//        System.out.println("\n\n\nSD");
-//        SD sd = new SD();
-//        double min_suport = Math.sqrt(D.numeroExemplosPositivo) / D.numeroExemplos;
-//        pk = sd.run(min_suport, 2*k, metricaAvaliacao, k, 60);
-//        Avaliador.imprimirRegras(pk, k);
-//
-//        System.out.println("\n\n\nAleatorio");
-//        pk = Aleatorio.runNtentativas(metricaAvaliacao, k, 1000000, 10);
-//        Avaliador.imprimirRegras(pk, k);
+        System.out.println("Testes: " + Pattern.numeroIndividuosGerados);
+
+
+        Pattern.numeroIndividuosGerados = 0;
+
+        System.out.println("\n\n\n\nSSDP+");
+        Pattern[] p = SSDPmais.run(10, metricaAvaliacao, 0.5, 120);
+        Avaliador.imprimirRegras(p, k);
+        System.out.println("Testes: " + Pattern.numeroIndividuosGerados);
     }
 }

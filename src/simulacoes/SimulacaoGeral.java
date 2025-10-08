@@ -25,7 +25,6 @@ import java.util.Scanner;
 
 import newSD.*;
 import sd.Aleatorio;
-import sd.Exaustivo;
 import sd.ExaustivoK;
 import sd.SD;
 
@@ -243,39 +242,39 @@ public class SimulacaoGeral {
                             // ===================== PBSD FIXO =====================
                             case ALGORITMO_PBSD_TF_5:
                                 PBSD_FIXO fixo5 = new PBSD_FIXO();
-                                p = fixo5.run(5, 0.5, tipoAvaliacao, k, false);
+                                p = fixo5.run(5, 0.5, tipoAvaliacao, k);
                                 break;
                             case ALGORITMO_PBSD_TF_10:
                                 PBSD_FIXO fixo10 = new PBSD_FIXO();
-                                p = fixo10.run(10, 0.5, tipoAvaliacao, k, false);
+                                p = fixo10.run(10, 0.5, tipoAvaliacao, k);
                                 break;
                             case Const.ALGORITMO_PBSD_TF_20:
                                 PBSD_FIXO fixo20 = new PBSD_FIXO();
-                                p = fixo20.run(20, 0.5, tipoAvaliacao, k,false);
+                                p = fixo20.run(20, 0.5, tipoAvaliacao, k);
                                 break;
                             case Const.ALGORITMO_PBSD_TF_50:
                                 PBSD_FIXO fixo50 = new PBSD_FIXO();
 
-                                p = fixo50.run(50, 0.5, tipoAvaliacao, k, false);
+                                p = fixo50.run(50, 0.5, tipoAvaliacao, k);
                                 break;
                             case Const.ALGORITMO_PBSD_TF_100:
                                 PBSD_FIXO fixo100 = new PBSD_FIXO();
-                                p = fixo100.run(100, 0.5, tipoAvaliacao, k, false);
+                                p = fixo100.run(100, 0.5, tipoAvaliacao, k);
                                 break;
 
                             // ===================== PBSD VARIÁVEL =====================
                             case Const.ALGORITMO_PBSD_TV_1:
                                 PBSD_VAR var1 = new PBSD_VAR();
-                                p = var1.run(1, 0.5, tipoAvaliacao, k, false);
+                                p = var1.run(1, 0.5, tipoAvaliacao, k);
                                 break;
                             case Const.ALGORITMO_PBSD_TV_5:
                                 PBSD_VAR var5 = new PBSD_VAR();
-                                p = var5.run(5, 0.5, tipoAvaliacao, k, false);
+                                p = var5.run(5, 0.5, tipoAvaliacao, k);
                                 break;
                                 case ALGORITMO_PBSD_TV_10:
                                     PBSD_VAR var10 = new PBSD_VAR();
 
-                                p = var10.run(10, 0.5, tipoAvaliacao, k, false);
+                                p = var10.run(10, 0.5, tipoAvaliacao, k);
                                 break;
 
                         }
