@@ -1,4 +1,4 @@
-package newSD;
+package newSD.algorithm;
 
 import dp.Avaliador;
 import dp.Const;
@@ -63,6 +63,7 @@ public class Threshold {
 
         return aux;
     }
+
     protected static double mediaQualidade(Pattern[] P){
         return Arrays.stream(P)
                 .mapToDouble(Pattern::getQualidade)
@@ -102,12 +103,10 @@ public class Threshold {
         System.out.println("Tamanho médio dos indivíduos: " + mediaTamanho);
     }
 
-
-
     public static void main(String[] args) throws FileNotFoundException {
         Logger logger = Logger.getLogger(Threshold.class.getName());
 
-        String base = "pastas/bases/alon-pn-freq-2.CSV";
+        String base = "pastas/Bases BIO 10/alon-pn-freq-2.CSV";
         D.SEPARADOR = ",";
 
         try {

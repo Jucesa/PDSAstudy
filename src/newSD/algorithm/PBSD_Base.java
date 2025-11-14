@@ -1,4 +1,4 @@
-package newSD;
+package newSD.algorithm;
 
 import dp.Avaliador;
 import dp.Const;
@@ -8,6 +8,7 @@ import evolucionario.CRUZAMENTO;
 import evolucionario.INICIALIZAR;
 import evolucionario.SELECAO;
 import evolucionario.SSDPmais;
+import newSD.logging.PatternTracker;
 
 import java.io.FileNotFoundException;
 import java.util.*;
@@ -132,8 +133,12 @@ public abstract class PBSD_Base extends Threshold {
         }
     }
 
-
-
+    //mapear eventos
+    //Evento
+    // 1 - AND_ITEMxITEM_MELHORA
+    // 2 - AND_ITEMxSUBGRUPO_MELHORA
+    // 3 - AND_ITEMxITEM
+    // 4 - AND_ITEMxSUBGRUPO
 
     /**
      * Mét0d0 abstrato para determinar o tamanho do torneio na geração atual.
@@ -142,8 +147,10 @@ public abstract class PBSD_Base extends Threshold {
     protected abstract int calcularTamanhoTorneio(int tamanhoTorneio, int saltoTorneio);
 
     public Pattern[] run(int paramTorneio, double similaridade, String tipoAvaliacao, int k) {
-        Pattern[] Pk = new Pattern[k];
+
         Pattern[] P;
+
+        Pattern[] Pk = new Pattern[k];
 
         // Inicializa Pk com indivíduos vazios
         for (int i = 0; i < Pk.length; i++) {
@@ -152,6 +159,8 @@ public abstract class PBSD_Base extends Threshold {
 
         // População inicial
         Pattern[] I = INICIALIZAR.D1(tipoAvaliacao);
+        PatternTracker tracker = new PatternTracker(I, 50);
+
         Arrays.sort(I);
 
         if (I.length < k) {
@@ -171,7 +180,7 @@ public abstract class PBSD_Base extends Threshold {
         int numeroGeracoesSemMelhoraPk = 0;
         int tamanhoTorneio = 2;
 
-        header(P, k, similaridade, tipoAvaliacao, paramTorneio);
+        //header(P, k, similaridade, tipoAvaliacao, paramTorneio);
         for (int numeroReinicializacoes = 0; numeroReinicializacoes < 3; numeroReinicializacoes++) {
 
             if (numeroReinicializacoes > 0) {
@@ -184,6 +193,7 @@ public abstract class PBSD_Base extends Threshold {
             while (numeroGeracoesSemMelhoraPk < 3) {
                 Pattern pai1 = P[SELECAO.torneioN(P, tamanhoTorneio, 0, limiar)];
                 Pattern pai2;
+                String operador;
 
                 // Sorteio r ~ U(0,1)
                 double r = Const.random.nextDouble();
@@ -194,9 +204,11 @@ public abstract class PBSD_Base extends Threshold {
                 if (r < Pth) {
                     // Seleção acima do limiar: faixa 0..limiar-1
                     pai2 = P[SELECAO.torneioN(P, tamanhoTorneio, 0, limiar)];
+                    operador = "AND_ITEMxITEM";
                 } else {
                     // Seleção abaixo do limiar: faixa limiar..P.length-1
                     pai2 = P[SELECAO.torneioN(P, tamanhoTorneio, limiar, P.length)];
+                    operador = "AND_ITEMxPATTERN";
                 }
 
                 Pattern paux = CRUZAMENTO.AND(pai1, pai2, tipoAvaliacao);
@@ -204,6 +216,7 @@ public abstract class PBSD_Base extends Threshold {
                 if (paux.getQualidade() >= P[limiar - 1].getQualidade() && limiar > 1) {
                     P[limiar - 1] = paux;
                     limiar--;
+                    tracker.registrar(paux, operador);
                 }
 
                 if (Pattern.numeroIndividuosGerados % P.length == 0) {
@@ -213,19 +226,21 @@ public abstract class PBSD_Base extends Threshold {
 
                     // Atualiza tamanho do torneio usando mét0do polimórfico
                     tamanhoTorneio = calcularTamanhoTorneio(tamanhoTorneio, paramTorneio);
-                    body(P, Pk);
+                    //body(P, Pk);
 
                 }
             }
         }
-        footer(P, Pk);
+        //footer(P, Pk);
+        tracker.getHistorico().forEach(System.out::println);
+        tracker.exportarCSV("C:/Users/jc160/IdeaProjects/PDSAstudy/pastas/logRelatorio");
         return Pk;
     }
 
     public static void main(String[] args) throws FileNotFoundException {
         Logger logger = Logger.getLogger(Threshold.class.getName());
 
-        String base = "pastas/bases/alon-pn-freq-2.CSV";
+        String base = "pastas/Bases BIO 10/alon-pn-freq-2.CSV";
         D.SEPARADOR = ",";
 
         try {

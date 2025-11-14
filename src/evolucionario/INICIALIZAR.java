@@ -35,6 +35,41 @@ public class INICIALIZAR {
         }        
         return P0;
     }
+
+    /**Inicializa população com todas as possibilidades de indivíduos com dimensão N
+     *@author Julio Mota
+     * @param N int - dimensao de populacao
+     * @param tipoAvaliacao int - tipo de avaliação utilizado para qualificar indivíduo
+     * @return Pattern[] - nova população
+     */
+    public static Pattern[] DN(String tipoAvaliacao, int N) {
+        List<Pattern> lista = new ArrayList<>();
+        int[] itens = D.itensUtilizados;
+        int total = D.numeroItensUtilizados;
+
+        // Gera todas as combinações de tamanho N
+        gerarCombinacoes(itens, total, N, 0, new ArrayList<>(), lista, tipoAvaliacao);
+
+        // Converte lista para array
+        return lista.toArray(new Pattern[0]);
+    }
+
+    // Função recursiva para gerar todas as combinações de tamanho N
+    private static void gerarCombinacoes(int[] itens, int total, int N, int inicio,
+                                         List<Integer> atual, List<Pattern> lista,
+                                         String tipoAvaliacao) {
+        if (atual.size() == N) {
+            HashSet<Integer> conjunto = new HashSet<>(atual);
+            lista.add(new Pattern(conjunto, tipoAvaliacao));
+            return;
+        }
+
+        for (int i = inicio; i < total; i++) {
+            atual.add(itens[i]);
+            gerarCombinacoes(itens, total, N, i + 1, atual, lista, tipoAvaliacao);
+            atual.remove(atual.size() - 1);
+        }
+    }
     
     /**Inicializa população com todas as possibilidades de indivíduos com apenas uma dimensão
      * mas antes juntanto itens considerados similares entre si com relação ao índice adotado

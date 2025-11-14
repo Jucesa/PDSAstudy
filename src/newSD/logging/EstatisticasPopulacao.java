@@ -1,4 +1,4 @@
-package newSD;
+package newSD.logging;
 
 import dp.Pattern;
 import java.util.*;

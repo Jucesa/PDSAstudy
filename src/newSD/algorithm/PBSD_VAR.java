@@ -1,4 +1,4 @@
-package newSD;
+package newSD.algorithm;
 
 public class PBSD_VAR extends PBSD_Base {
 

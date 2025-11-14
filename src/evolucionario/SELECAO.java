@@ -299,8 +299,6 @@ public class SELECAO {
      * indivíduos NÃO distintos! Ou seja, não controla se indivíduos são
      * distintos.
      *@author Tarcísio Lucas
-     * @param P PAtterns[]
-     * @param Pnovo PAtterns[]
      * @return Pattern[]
      * @since 27/01/2016
      * @version 1.0
@@ -404,11 +402,64 @@ public class SELECAO {
         }
         return novosk;
     }
-    
-    
-    
-    
-    
+
+
+    /**
+     * Atualiza Pk com um único indivíduo (pNovo) de melhor qualidade se ele for relevante.
+     * Segue a mesma lógica de salvandoRelevantesDPmais, mas processa apenas um Pattern.
+     *
+     * @param Pk Pattern[] - top-k indivíduos ordenados e distintos
+     * @param pNovo Pattern - indivíduo candidato a ser incluído
+     * @param similaridadeLimite double - limite mínimo de similaridade
+     * @return int - número de substituições realizadas em Pk
+     */
+    public static int salvandoRelevanteDPmaisSingle(Pattern[] Pk, Pattern pNovo, double similaridadeLimite) {
+        int novosk = 0;
+
+        // Só tenta inserir se pNovo for melhor que o pior em Pk
+        if (pNovo.getQualidade() > Pk[Pk.length - 1].getQualidade()) {
+            for (int j = 0; j < Pk.length; j++) {
+                Pattern p_Pk = Pk[j];
+                double similaridade = Avaliador.similaridade(p_Pk, pNovo, Pattern.medidaSimilaridade);
+
+                if (similaridade >= similaridadeLimite) { // (1) Houve similaridade
+                    if (pNovo.ehIgual(p_Pk)) {
+                        break; // descarta duplicado
+                    } else {
+                        // (3.1) se p_Pk melhor que pNovo
+                        if (p_Pk.getQualidade() > pNovo.getQualidade() ||
+                                (p_Pk.getQualidade() == pNovo.getQualidade() &&
+                                        p_Pk.getItens().size() <= pNovo.getItens().size())) {
+                            boolean aproveitadoEmPk = p_Pk.addSimilar(pNovo);
+                            if (aproveitadoEmPk) novosk++;
+                        } else {
+                            // (3.2) pNovo melhor — substitui e reordena
+                            Pk[j] = new Pattern(pNovo.getItens(), pNovo.getTipoAvaliacao());
+                            Pk[j].addSimilar(p_Pk);
+
+                            if (p_Pk.getSimilares() != null) {
+                                salvandoRelevantesDPmais(Pk, p_Pk.getSimilares(), similaridadeLimite);
+                            }
+                            Arrays.sort(Pk);
+                            novosk++;
+                        }
+                        break; // terminou comparação com Pk[j]
+                    }
+
+                } else if (j == Pk.length - 1) {
+                    // (2) não similar a nenhum -> substitui o último
+                    Pk[Pk.length - 1] = new Pattern(pNovo.getItens(), pNovo.getTipoAvaliacao());
+                    Arrays.sort(Pk);
+                    novosk++;
+                }
+            }
+        }
+
+        return novosk;
+    }
+
+
+
     /**
      * Retorna se um Pattern P é inédito em relação a um Conjunto de patterns.
      * @author Tarcísio Pontes
