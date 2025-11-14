@@ -23,7 +23,8 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Scanner;
 
-import newSD.*;
+import newSD.algorithm.PBSD_FIXO;
+import newSD.algorithm.PBSD_VAR;
 import sd.Aleatorio;
 import sd.ExaustivoK;
 import sd.SD;
@@ -279,6 +280,7 @@ public class SimulacaoGeral {
 
                         }
 
+
                         double tempo = (System.currentTimeMillis() - t0)/1000.0;
                         int numeroTentativas = Pattern.numeroIndividuosGerados;
 
@@ -290,7 +292,7 @@ public class SimulacaoGeral {
                             System.out.println("Tempo +: " + tempo);
                             System.out.println("Tentativas +: " + numeroTentativas);
                             System.out.println("Size: " + p.length);
-                            //Avaliador.imprimirRegras(p, k);
+                            Avaliador.imprimirRegras(p, k);
                         }
                         resultados[n] = new Resultado(p, tempo, numeroTentativas, Const.SEEDS[n]);
                     }
@@ -312,67 +314,53 @@ public class SimulacaoGeral {
         Pattern.medidaSimilaridade = Const.SIMILARIDADE_JACCARD;
 
         int[] K = {10};
-        int numeroRepeticoes = 10;
+        int numeroRepeticoes = 1;
         int minutos = 1;
         double  tempoMaximoSegundosAlgoritmos = 60*minutos;
 
         String[] algoritmos = {
                 // ===================== PBSD FIXO =====================
-                ALGORITMO_PBSD_TF_5,
-                ALGORITMO_PBSD_TF_10,
-                ALGORITMO_PBSD_TF_20,
                 ALGORITMO_PBSD_TF_50,
-                ALGORITMO_PBSD_TF_100,
 
                 // ===================== PBSD VARIÁVEL =====================
-                ALGORITMO_PBSD_TV_1,
-                ALGORITMO_PBSD_TV_5,
-                ALGORITMO_PBSD_TV_10,
-
                 Const.ALGORITMO_SSDPmaisS50,
-                Const.ALGORITMO_SD,
-                Const.ALGORITMO_Aleatorio1M,
-                Const.ALGORITMO_ExaustivoK
         };
 //
         SimulacaoGeral sg = new SimulacaoGeral(new File(Const.CAMINHO_INDICE));
 
         sg.run(K, numeroRepeticoes, algoritmos, ",", METRICA_Qg, tempoMaximoSegundosAlgoritmos);
 
-        SimulacaoGeral sg2 = new SimulacaoGeral(new File(Const.CAMINHO_INDICE));
-
-        sg2.run(K, numeroRepeticoes, algoritmos, ",", METRICA_WRACC, tempoMaximoSegundosAlgoritmos);
+////
+////        //Tabelão
+//        String[] metricas = {
+//                Const.METRICA_WRACC,
+//                Const.METRICA_Qg,
+//                Const.METRICA_OVERALL_SUPP_POSITIVO,
+//                Const.METRICA_COVER_REDUNDANCY_POSITIVO,
+//                Const.METRICA_DESCRIPTION_REDUNDANCY_DENSITY,
+//                Const.METRICA_DESCRIPTION_REDUNDANCY_DOMINATOR,
+//                Const.METRICA_CHI_QUAD,
+//                Const.METRICA_P_VALUE,
+//                Const.METRICA_LIFT,
+//                Const.METRICA_DIFF_SUP,
+//                Const.METRICA_K,
+//                Const.METRICA_GROWTH_RATE,
+//                Const.METRICA_ODDS_RATIO,
+//                Const.METRICA_COV,
+//                Const.METRICA_CONF,
+//                Const.METRICA_SUPP,
+//                Const.METRICA_SUPP_POSITIVO,
+//                Const.METRICA_SUPP_NEGATIVO,
+//                Const.METRICA_SIZE,
+//                Const.METRICA_NUMERO_TESTES,
+//                Const.METRICA_TIME,
+//        };
 //
-//        //Tabelão
-        String[] metricas = {
-                Const.METRICA_WRACC,
-                Const.METRICA_Qg,
-                Const.METRICA_OVERALL_SUPP_POSITIVO,
-                Const.METRICA_COVER_REDUNDANCY_POSITIVO,
-                Const.METRICA_DESCRIPTION_REDUNDANCY_DENSITY,
-                Const.METRICA_DESCRIPTION_REDUNDANCY_DOMINATOR,
-                Const.METRICA_CHI_QUAD,
-                Const.METRICA_P_VALUE,
-                Const.METRICA_LIFT,
-                Const.METRICA_DIFF_SUP,
-                Const.METRICA_K,
-                Const.METRICA_GROWTH_RATE,
-                Const.METRICA_ODDS_RATIO,
-                Const.METRICA_COV,
-                Const.METRICA_CONF,
-                Const.METRICA_SUPP,
-                Const.METRICA_SUPP_POSITIVO,
-                Const.METRICA_SUPP_NEGATIVO,
-                Const.METRICA_SIZE,
-                Const.METRICA_NUMERO_TESTES,
-                Const.METRICA_TIME,
-        };
-
-        String separadorBase = ",";
-        String separadorRelatorio = ",";
-        Relatorio.gerarTabelaoCSV(metricas, separadorBase, separadorRelatorio);
-
-        System.out.println("Tabelão concluído");
+//        String separadorBase = ",";
+//        String separadorRelatorio = ",";
+//        Relatorio.gerarTabelaoCSV(metricas, separadorBase, separadorRelatorio);
+//
+//        System.out.println("Tabelão concluído");
 
     }
 }
