@@ -159,7 +159,8 @@ public abstract class PBSD_Base extends Threshold {
 
         // População inicial
         Pattern[] I = INICIALIZAR.D1(tipoAvaliacao);
-        PatternTracker tracker = new PatternTracker(I, 50);
+        PatternTracker tracker = new PatternTracker(I, I.length/100);
+        PatternTracker trackerK = new PatternTracker(I, I.length/100, k);
 
         Arrays.sort(I);
 
@@ -185,12 +186,13 @@ public abstract class PBSD_Base extends Threshold {
 
             if (numeroReinicializacoes > 0) {
                 P = INICIALIZAR.aleatorioD1_Pk(tipoAvaliacao, tamanhoPopulacao, I, Pk);
+                tamanhoTorneio = paramTorneio;
                 limiar = Math.max(1, (int) (P.length * 0.9));
             }
 
             tamanhoTorneio = calcularTamanhoTorneio(tamanhoTorneio, paramTorneio);
 
-            while (numeroGeracoesSemMelhoraPk < 3) {
+            while (numeroGeracoesSemMelhoraPk < tamanhoPopulacao || limiar == 0) {
                 Pattern pai1 = P[SELECAO.torneioN(P, tamanhoTorneio, 0, limiar)];
                 Pattern pai2;
                 String operador;
@@ -220,20 +222,25 @@ public abstract class PBSD_Base extends Threshold {
                 }
 
                 if (Pattern.numeroIndividuosGerados % P.length == 0) {
-                    int novosK = SELECAO.salvandoRelevantesDPmais(Pk, P, similaridade);
+                    Arrays.sort(P, limiar, P.length);
+
+                    int novosK = SELECAO.salvandoRelevantesDPmais(Pk,
+                            Arrays.copyOfRange(P, limiar, P.length),
+                            similaridade, trackerK);
+                    //System.out.println(novosK);
                     if (novosK == 0) numeroGeracoesSemMelhoraPk++;
                     else numeroGeracoesSemMelhoraPk = 0;
 
                     // Atualiza tamanho do torneio usando mét0do polimórfico
                     tamanhoTorneio = calcularTamanhoTorneio(tamanhoTorneio, paramTorneio);
                     //body(P, Pk);
-
                 }
             }
         }
         //footer(P, Pk);
-        tracker.getHistorico().forEach(System.out::println);
-        tracker.exportarCSV("C:/Users/jc160/IdeaProjects/PDSAstudy/pastas/logRelatorio");
+
+        trackerK.exportarCSV("C:/Users/jc160/IdeaProjects/PDSAstudy/pastas/logRelatorioK", this.getClass().getSimpleName(), k);
+        tracker.exportarCSV("C:/Users/jc160/IdeaProjects/PDSAstudy/pastas/logRelatorio", this.getClass().getSimpleName());
         return Pk;
     }
 

@@ -10,12 +10,15 @@ import dp.Const;
 import dp.D;
 import dp.Pattern;
 import dp.RSS;
+import evolucionario.INICIALIZAR;
 import evolucionario.SSDP;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Random;
+
+import newSD.logging.PatternTracker;
 import simulacoes.DPinfo;
 
 /**
@@ -32,7 +35,10 @@ public class SD {
             beam[i] = new Pattern(new HashSet<Integer>(), tipoAvaliacao);
             newBeam[i] = new Pattern(new HashSet<Integer>(), tipoAvaliacao);
         }
-        
+        Pattern[] I = INICIALIZAR.D1(tipoAvaliacao);
+        Arrays.sort(I);
+        PatternTracker tracker = new PatternTracker(I, I.length/100);
+        PatternTracker trackerK = new PatternTracker(I, I.length/100, k);
         boolean houveMelhoria = true;
         int ciclo = 0;
         while(houveMelhoria){
@@ -46,12 +52,13 @@ public class SD {
                     System.arraycopy(newBeam, 0, Pk, 0, Pk.length);
                     return Pk;
                 }
-                
+
                 for(int j = 0; j < D.numeroItensUtilizados; j++){
                     
                     HashSet<Integer> itens = (HashSet<Integer>)beam[i].getItens().clone();
                     itens.add(D.itensUtilizados[j]);
                     Pattern p = new Pattern(itens, tipoAvaliacao);
+                    tracker.registrar(p, "BEAM");
                     double suporte = (double)p.getTP()/(double)D.numeroExemplos;
                     boolean ehRelevante = this.ehRelevante(p, newBeam);
                     double qualidade = p.getQualidade();
@@ -76,7 +83,13 @@ public class SD {
         //Arrays.sort(beam);
         
         System.arraycopy(newBeam, 0, Pk, 0, Pk.length); 
-        
+        for(Pattern p : Pk){
+            trackerK.registrar(p, "K");
+        }
+
+        trackerK.exportarCSV("C:/Users/jc160/IdeaProjects/PDSAstudy/pastas/logRelatorioK", "SD", k);
+        tracker.exportarCSV("C:/Users/jc160/IdeaProjects/PDSAstudy/pastas/logRelatorio", "SD");
+
         return Pk;
     }
 

@@ -81,10 +81,10 @@ public class SSDP {
             while(numeroGeracoesSemMelhoraPk < 3){
 
                 if(indiceGeracoes == 1){
-                    Pnovo = CRUZAMENTO.ANDduasPopulacoes(P, P, tipoAvaliacao);
+                    Pnovo = CRUZAMENTO.ANDduasPopulacoes(P, P, tipoAvaliacao, null);
                     indiceGeracoes++; 
                 }else{
-                    Pnovo = CRUZAMENTO.uniforme2Pop(P, mutationTax, tipoAvaliacao);                 
+                    Pnovo = CRUZAMENTO.uniforme2Pop(P, mutationTax, tipoAvaliacao, null);
                 }                   
                 PAsterisco = SELECAO.selecionarMelhores(P, Pnovo); 
                 P = PAsterisco;   

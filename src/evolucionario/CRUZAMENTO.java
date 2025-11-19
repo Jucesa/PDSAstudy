@@ -7,6 +7,8 @@ package evolucionario;
 
 import dp.Const;
 import dp.Pattern;
+import newSD.logging.PatternTracker;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -30,7 +32,7 @@ public class CRUZAMENTO {
      * @param tipoAvaliacao int - tipo de função de avaliação utilizada
      * @return Pattern[] - nova população
      */
-    public static Pattern[] uniforme2Pop(Pattern[] P, double taxaMutacao, String tipoAvaliacao){
+    public static Pattern[] uniforme2Pop(Pattern[] P, double taxaMutacao, String tipoAvaliacao, PatternTracker tracker){
         int tamanhoPopulacao = P.length;
         Pattern[] Pnovo = new Pattern[tamanhoPopulacao];
         
@@ -42,6 +44,8 @@ public class CRUZAMENTO {
         while(indicePnovo < Pnovo.length-1){//Cuidado para não acessar índices maiores que o tamanho do array                
             if(Const.random.nextDouble() > taxaMutacao){                    
                 Pattern[] novos = CRUZAMENTO.uniforme2Individuos(P[selecao[indiceSelecao]], P[selecao[indiceSelecao+1]], tipoAvaliacao);
+                tracker.registrar(novos[0], "CruzamentoUniforme");
+                tracker.registrar(novos[1], "CruzamentoUniforme");
                 indiceSelecao += 2;
                 Pnovo[indicePnovo++] = novos[0];                    
                 if(indicePnovo < Pnovo.length){
@@ -49,7 +53,9 @@ public class CRUZAMENTO {
                 }
                 
             }else{
-                Pnovo[indicePnovo++] = MUTACAO.unGeneTrocaOuAdicionaOuExclui(P[selecao[indiceSelecao++]], tipoAvaliacao);                                                       
+                Pattern filho = MUTACAO.unGeneTrocaOuAdicionaOuExclui(P[selecao[indiceSelecao++]],  tipoAvaliacao);
+                tracker.registrar(filho, "Mutacao");
+                Pnovo[indicePnovo++] = filho;
             }         
         
         //Imprimir itens nos idivíduos gerados via cruzamento
@@ -114,19 +120,21 @@ public class CRUZAMENTO {
      * @param tipoAvaliacao int - tipo de função de avaliação
      * @return Pattern[] - nova população
      */
-    public static Pattern[] ANDduasPopulacoes(Pattern[] P1, Pattern[] P2, String tipoAvaliacao){
-        int tamanhoPopulacao = P1.length;       
+    public static Pattern[] ANDduasPopulacoes(Pattern[] P1, Pattern[] P2, String tipoAvaliacao, PatternTracker tracker){
+        int tamanhoPopulacao = P1.length;
         Pattern[] Pnovo = new Pattern[tamanhoPopulacao];
         int[] indicesP1 = SELECAO.torneioBinario(tamanhoPopulacao, P1);
         int[] indicesP2 = SELECAO.torneioBinario(tamanhoPopulacao, P2);
-        
+
         for(int i = 0; i < tamanhoPopulacao; i++){
-            Pattern p1 = P1[indicesP1[i]];       
+            Pattern p1 = P1[indicesP1[i]];
             Pattern p2 = P2[indicesP2[i]];
+            Pattern filho = CRUZAMENTO.AND(p1, p2, tipoAvaliacao);
+            tracker.registrar(filho, "AND");
             Pnovo[i] = CRUZAMENTO.AND(p1, p2, tipoAvaliacao);
-        }        
+        }
         return Pnovo;
-    }    
+    }
     
     /**Reliza cruzamento do tipo AND entre dois indivíduos
      *@author Tarcísio Pontes

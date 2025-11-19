@@ -13,6 +13,8 @@ import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Random;
+
+import newSD.logging.PatternTracker;
 import simulacoes.DPinfo;
 
 /**
@@ -35,6 +37,8 @@ public class SSDPmais {
         //System.out.println("Inicializando população...");
         //Inicializa garantindo que P maior que Pk sempre! em bases pequenas isso nem sempre ocorre
         Pattern[] Paux = INICIALIZAR.D1(tipoAvaliacao);//P recebe população inicial
+
+
         if (Paux.length < k) {
             P = new Pattern[k];
             for (int i = 0; i < k; i++) {
@@ -49,9 +53,11 @@ public class SSDPmais {
         }
 
         Arrays.sort(P);
+        PatternTracker tracker = new PatternTracker(P, P.length/100);
+        PatternTracker trackerK = new PatternTracker(P, P.length/100, k);
 
         //System.arraycopy(P, 0, Pk, 0, k); //Inicializa Pk com os melhores indivíduos da população inicial
-        SELECAO.salvandoRelevantesDPmais(Pk, P, similaridade);
+        SELECAO.salvandoRelevantesDPmais(Pk, P, similaridade, trackerK);
 
 //        System.out.println("P0");        
 //        System.out.println("Qualidade média k/P: " + Avaliador.avaliarMedia(Pk,k) + "/" + Avaliador.avaliarMedia(P,P.length));
@@ -80,15 +86,18 @@ public class SSDPmais {
             while (numeroGeracoesSemMelhoraPk < 3) {
 
                 if (indiceGeracoes == 1) {
-                    Pnovo = CRUZAMENTO.ANDduasPopulacoes(P, P, tipoAvaliacao);
+                    Pnovo = CRUZAMENTO.ANDduasPopulacoes(P, P, tipoAvaliacao, tracker);
                     indiceGeracoes++;
                 } else {
-                    Pnovo = CRUZAMENTO.uniforme2Pop(P, mutationTax, tipoAvaliacao);
+                    Pnovo = CRUZAMENTO.uniforme2Pop(P, mutationTax, tipoAvaliacao, tracker);
                 }
+
                 PAsterisco = SELECAO.selecionarMelhores(P, Pnovo);
                 P = PAsterisco;
 
-                int novosK = SELECAO.salvandoRelevantesDPmais(Pk, PAsterisco, similaridade);//Atualizando Pk e coletando número de indivíduos substituídos
+                int novosK = SELECAO.salvandoRelevantesDPmais(Pk, PAsterisco, similaridade, trackerK);//Atualizando Pk e coletando número de indivíduos substituídos
+                // Registrar Pk atualizado
+
                 double tempo = (System.currentTimeMillis() - t0) / 1000.0; //time
                 if (maxTimeSegundos > 0 && tempo > maxTimeSegundos) {
                     return Pk;
@@ -133,6 +142,8 @@ public class SSDPmais {
         }
 
         //return Pbest;
+        tracker.exportarCSV("C:/Users/jc160/IdeaProjects/PDSAstudy/pastas/logRelatorio", "SSDPmais");
+        trackerK.exportarCSV("C:/Users/jc160/IdeaProjects/PDSAstudy/pastas/logRelatorioK", "SSDPmais", k);
         return Pk;
     }
 

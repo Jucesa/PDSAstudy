@@ -3,27 +3,51 @@ import dp.Pattern;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.Map;
 import java.util.Set;
 
 
 public class PatternInfo implements Serializable {
-    private static long contador = 0;
 
+    private static long contador = 0;
     private final long id;
     private final Pattern pattern;
     private final long timestamp;
+    private final String itensComRanking;
     private final String categoria;
     private final String operador;
 
-    public PatternInfo(Pattern pattern, String operador, Set<Integer> triviais) {
+    public PatternInfo(Pattern pattern, String operador, Set<Integer> triviais, Map<Integer, Integer> ranking) {
         this.id = ++contador;
         this.operador = operador;
         this.pattern = pattern;
         this.timestamp = Instant.now().toEpochMilli();
-        this.categoria = categorizar(pattern, triviais, 50);
+        this.categoria = categorizar(pattern, triviais);
+        this.itensComRanking = construirDescricaoItens(pattern.getItens(), ranking);
     }
 
-    private String categorizar(Pattern pattern,  Set<Integer> triviais, int limiteTrivial) {
+
+    public static void resetContador() {
+        contador = 0;
+    }
+
+    private String construirDescricaoItens(Set<Integer> itens, Map<Integer, Integer> ranking) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("[");
+        boolean first = true;
+        for (int item : itens) {
+            if (!first) sb.append("; ");
+            int rank = ranking.getOrDefault(item, -1);
+            sb.append(item).append("(").append(rank).append(")");
+            first = false;
+        }
+        sb.append("]");
+        return sb.toString();
+    }
+
+
+
+    private String categorizar(Pattern pattern,  Set<Integer> triviais) {
         Set<Integer> itens = pattern.getItens();
         if (itens.isEmpty()) {
             return "Vazio";
@@ -66,10 +90,13 @@ public class PatternInfo implements Serializable {
     public String getCategoria() { return categoria; }
 
     public String getOperador(){ return operador; }
+    public String getItensComRanking() { return itensComRanking; }
+
     @Override
     public String toString() {
         return "PatternInfo{" +
                 "id=" + id +
+                ", qualidade=" + pattern.getQualidade() +
                 ", itens=" + pattern.getItens() +
                 ", categoria='" + categoria + '\'' +
                 ", operador=" + operador +

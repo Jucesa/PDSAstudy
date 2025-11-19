@@ -6,6 +6,8 @@ import dp.D;
 import dp.Pattern;
 import evolucionario.SELECAO;
 import evolucionario.SSDPmais;
+import sd.SD;
+
 import java.io.FileNotFoundException;
 import java.util.*;
 import java.util.logging.Level;
@@ -15,7 +17,6 @@ public class Threshold {
 
     /**
      * Mede a diversidade de um conjunto de padrões.
-     *
      * Diversidade = 1 - média das similaridades entre os pares de padrões
      *
      * @param P - conjunto de padrões
@@ -116,27 +117,38 @@ public class Threshold {
             return;
         }
 
-        Const.random = new Random(Const.SEEDS[0]); //Seed
+        Const.random = new Random(Const.SEEDS[9]); //Seed
         D.GerarDpDn("p");
 
         //Parameters of the algorithm
         int k = 10;
-        String metricaAvaliacao = Const.METRICA_WRACC;
-        int quantidadeTorneio = 5;
+        String metricaAvaliacao = Const.METRICA_Qg;
+        int quantidadeTorneio = 50;
+        double similaridade = 0.5;
         int passoTorneio = 5;
-
+//
         System.out.println("\n\n\n\nFIXO");
         PBSD_FIXO fixo = new PBSD_FIXO();
-        Pattern[] pk = fixo.run(quantidadeTorneio, 0.5, metricaAvaliacao, k);
+        Pattern[] pk = fixo.run(quantidadeTorneio, similaridade, metricaAvaliacao, k);
         Avaliador.imprimirRegras(pk, k);
         System.out.println("Testes: " + Pattern.numeroIndividuosGerados);
 
-
-        Pattern.numeroIndividuosGerados = 0;
+////        System.out.println("\n\n\n\nVAR");
+//        PBSD_VAR var  = new PBSD_VAR();
+//        pk = var.run(passoTorneio, similaridade, metricaAvaliacao, k);
+//        Avaliador.imprimirRegras(pk, k);
+//        Pattern.numeroIndividuosGerados = 0;
+//        System.out.println("Testes: " + Pattern.numeroIndividuosGerados);
 
         System.out.println("\n\n\n\nSSDP+");
-        Pattern[] p = SSDPmais.run(10, metricaAvaliacao, 0.5, 120);
+        Pattern[] p = SSDPmais.run(k, metricaAvaliacao, similaridade, 120);
         Avaliador.imprimirRegras(p, k);
         System.out.println("Testes: " + Pattern.numeroIndividuosGerados);
+
+        System.out.println("\nSD");
+        SD sd = new SD();
+        double min_suport = Math.sqrt(D.numeroExemplosPositivo) / D.numeroExemplos;
+        Pattern[] pk1 = sd.run(min_suport, 2*k, metricaAvaliacao, k, 120);
+        Avaliador.imprimirRegras(pk1, k);
     }
 }

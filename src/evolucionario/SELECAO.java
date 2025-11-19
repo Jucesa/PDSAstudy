@@ -8,6 +8,7 @@ package evolucionario;
 import dp.Avaliador;
 import dp.Const;
 import dp.Pattern;
+import newSD.logging.PatternTracker;
 
 import java.util.*;
 
@@ -402,6 +403,98 @@ public class SELECAO {
         }
         return novosk;
     }
+    public static int salvandoRelevantesDPmais(
+            Pattern[] Pk,
+            Pattern[] PAsterisco,
+            double similaridadeLimite,
+            PatternTracker tracker
+    ) {
+        int novosk = 0;
+
+        for (int i = 0; i < PAsterisco.length &&
+                (PAsterisco[i].getQualidade() > Pk[Pk.length - 1].getQualidade()); i++) {
+
+            Pattern p_PAsterisco = PAsterisco[i];
+
+            for (int j = 0; j < Pk.length; j++) {
+
+                Pattern p_Pk = Pk[j];
+
+                double similaridade = Avaliador.similaridade(
+                        p_Pk, p_PAsterisco, Pattern.medidaSimilaridade
+                );
+
+                if (similaridade >= similaridadeLimite) {
+
+                    // (1) Igual → descartar
+                    if (p_PAsterisco.ehIgual(p_Pk)) {
+                        break;
+                    }
+
+                    // (3) Caso exista similaridade mas Pk é melhor → absorve p*
+                    if (p_Pk.getQualidade() > p_PAsterisco.getQualidade() ||
+                            (p_Pk.getQualidade() == p_PAsterisco.getQualidade() &&
+                                    p_Pk.getItens().size() <= p_PAsterisco.getItens().size())
+                    ) {
+
+                        boolean aproveitadoEmPk = p_Pk.addSimilar(p_PAsterisco);
+
+                        if (aproveitadoEmPk) {
+                            tracker.registrar(p_PAsterisco, "PK-ABSORVIDO");
+                            novosk++;
+                        }
+
+                    } else {
+                        // (3.2) p* melhor → substitui posição j e p* entra no Pk
+                        Pk[j] = new Pattern(
+                                p_PAsterisco.getItens(),
+                                p_PAsterisco.getTipoAvaliacao()
+                        );
+
+                        // adiciona p_Pk como similar ao novo p*
+                        Pk[j].addSimilar(p_Pk);
+
+                        // Recursivamente adiciona similares do p_Pk também
+                        if (p_Pk.getSimilares() != null) {
+                            SELECAO.salvandoRelevantesDPmais(
+                                    Pk,
+                                    p_Pk.getSimilares(),
+                                    similaridadeLimite,
+                                    tracker
+                            );
+                        }
+
+                        Arrays.sort(Pk);
+                        novosk++;
+
+                        // ✔ Registrar entrada real no Pk
+                        tracker.registrar(p_PAsterisco, "PK-REPLACE");
+
+                    }
+
+                    break; // parar laço sobre Pk
+                }
+
+                // (2) Não é similar a ninguém → substitui último
+                else if (j == Pk.length - 1) {
+
+                    Pk[Pk.length - 1] = new Pattern(
+                            p_PAsterisco.getItens(),
+                            p_PAsterisco.getTipoAvaliacao()
+                    );
+
+                    Arrays.sort(Pk);
+                    novosk++;
+
+                    // ✔ Registrar novo padrão não-similar
+                    tracker.registrar(p_PAsterisco, "PK-NEW");
+                }
+            }
+        }
+
+        return novosk;
+    }
+
 
 
     /**
