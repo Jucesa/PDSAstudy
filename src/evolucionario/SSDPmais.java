@@ -53,11 +53,10 @@ public class SSDPmais {
         }
 
         Arrays.sort(P);
-        PatternTracker tracker = new PatternTracker(P, P.length/100);
-        PatternTracker trackerK = new PatternTracker(P, P.length/100, k);
+        PatternTracker tracker = new PatternTracker(P, P.length/100, k);
 
         //System.arraycopy(P, 0, Pk, 0, k); //Inicializa Pk com os melhores indivíduos da população inicial
-        SELECAO.salvandoRelevantesDPmais(Pk, P, similaridade, trackerK);
+        SELECAO.salvandoRelevantesDPmais(Pk, P, similaridade, tracker);
 
 //        System.out.println("P0");        
 //        System.out.println("Qualidade média k/P: " + Avaliador.avaliarMedia(Pk,k) + "/" + Avaliador.avaliarMedia(P,P.length));
@@ -95,7 +94,7 @@ public class SSDPmais {
                 PAsterisco = SELECAO.selecionarMelhores(P, Pnovo);
                 P = PAsterisco;
 
-                int novosK = SELECAO.salvandoRelevantesDPmais(Pk, PAsterisco, similaridade, trackerK);//Atualizando Pk e coletando número de indivíduos substituídos
+                int novosK = SELECAO.salvandoRelevantesDPmais(Pk, PAsterisco, similaridade, tracker);//Atualizando Pk e coletando número de indivíduos substituídos
                 // Registrar Pk atualizado
 
                 double tempo = (System.currentTimeMillis() - t0) / 1000.0; //time
@@ -142,8 +141,7 @@ public class SSDPmais {
         }
 
         //return Pbest;
-        tracker.exportarCSV("C:/Users/jc160/IdeaProjects/PDSAstudy/pastas/logRelatorio", "SSDPmais");
-        trackerK.exportarCSV("C:/Users/jc160/IdeaProjects/PDSAstudy/pastas/logRelatorioK", "SSDPmais", k);
+        tracker.exportarCSV("C:/Users/jc160/IdeaProjects/PDSAstudy/pastas/logRelatorioK", D.nomeBase,"SSDPmais", k);
         return Pk;
     }
 

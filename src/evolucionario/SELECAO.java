@@ -440,7 +440,7 @@ public class SELECAO {
                         boolean aproveitadoEmPk = p_Pk.addSimilar(p_PAsterisco);
 
                         if (aproveitadoEmPk) {
-                            tracker.registrar(p_PAsterisco, "PK-ABSORVIDO");
+                            tracker.registrarK(p_PAsterisco, "PK-ABSORVIDO");
                             novosk++;
                         }
 

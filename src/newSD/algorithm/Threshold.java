@@ -127,11 +127,11 @@ public class Threshold {
         double similaridade = 0.5;
         int passoTorneio = 5;
 //
-        System.out.println("\n\n\n\nFIXO");
-        PBSD_FIXO fixo = new PBSD_FIXO();
-        Pattern[] pk = fixo.run(quantidadeTorneio, similaridade, metricaAvaliacao, k);
-        Avaliador.imprimirRegras(pk, k);
-        System.out.println("Testes: " + Pattern.numeroIndividuosGerados);
+//        System.out.println("\n\n\n\nFIXO");
+//        PBSD_FIXO fixo = new PBSD_FIXO();
+//        Pattern[] pk = fixo.run(quantidadeTorneio, similaridade, metricaAvaliacao, k);
+//        Avaliador.imprimirRegras(pk, k);
+//        System.out.println("Testes: " + Pattern.numeroIndividuosGerados);
 
 ////        System.out.println("\n\n\n\nVAR");
 //        PBSD_VAR var  = new PBSD_VAR();

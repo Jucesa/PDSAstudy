@@ -308,18 +308,15 @@ public class SimulacaoGeral {
     }
 
     public static void main(String[] args) throws IOException, InterruptedException {
-
         Pattern.ITENS_OPERATOR = Const.PATTERN_AND;
         Pattern.maxSimulares = 3;
         Pattern.medidaSimilaridade = Const.SIMILARIDADE_JACCARD;
 
         int[] K = {10};
-        int numeroRepeticoes = 30;
+        int numeroRepeticoes = 1;
         double  tempoMaximoSegundosAlgoritmos = 60;
 
         String[] algoritmos = {
-                ALGORITMO_PBSD_TF_10,
-                ALGORITMO_PBSD_TF_20,
                 ALGORITMO_PBSD_TF_50,
 
                 ALGORITMO_PBSD_TV_10,

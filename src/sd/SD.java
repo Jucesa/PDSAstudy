@@ -14,9 +14,7 @@ import evolucionario.INICIALIZAR;
 import evolucionario.SSDP;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Random;
+import java.util.*;
 
 import newSD.logging.PatternTracker;
 import simulacoes.DPinfo;
@@ -37,7 +35,6 @@ public class SD {
         }
         Pattern[] I = INICIALIZAR.D1(tipoAvaliacao);
         Arrays.sort(I);
-        PatternTracker tracker = new PatternTracker(I, I.length/100);
         PatternTracker trackerK = new PatternTracker(I, I.length/100, k);
         boolean houveMelhoria = true;
         int ciclo = 0;
@@ -58,7 +55,7 @@ public class SD {
                     HashSet<Integer> itens = (HashSet<Integer>)beam[i].getItens().clone();
                     itens.add(D.itensUtilizados[j]);
                     Pattern p = new Pattern(itens, tipoAvaliacao);
-                    tracker.registrar(p, "BEAM");
+                    trackerK.registrar(p, "BEAM", new ArrayList<>());
                     double suporte = (double)p.getTP()/(double)D.numeroExemplos;
                     boolean ehRelevante = this.ehRelevante(p, newBeam);
                     double qualidade = p.getQualidade();
@@ -84,11 +81,10 @@ public class SD {
         
         System.arraycopy(newBeam, 0, Pk, 0, Pk.length); 
         for(Pattern p : Pk){
-            trackerK.registrar(p, "K");
+            trackerK.registrarK(p, "K", new ArrayList<>());
         }
 
-        trackerK.exportarCSV("C:/Users/jc160/IdeaProjects/PDSAstudy/pastas/logRelatorioK", "SD", k);
-        tracker.exportarCSV("C:/Users/jc160/IdeaProjects/PDSAstudy/pastas/logRelatorio", "SD");
+        trackerK.exportarCSV("C:/Users/jc160/IdeaProjects/PDSAstudy/pastas/logRelatorioK", D.nomeBase,"SD", k);
 
         return Pk;
     }

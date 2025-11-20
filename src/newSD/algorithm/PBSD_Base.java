@@ -159,8 +159,7 @@ public abstract class PBSD_Base extends Threshold {
 
         // População inicial
         Pattern[] I = INICIALIZAR.D1(tipoAvaliacao);
-        PatternTracker tracker = new PatternTracker(I, I.length/100);
-        PatternTracker trackerK = new PatternTracker(I, I.length/100, k);
+        PatternTracker tracker = new PatternTracker(I, I.length/100, k);
 
         Arrays.sort(I);
 
@@ -192,7 +191,7 @@ public abstract class PBSD_Base extends Threshold {
 
             tamanhoTorneio = calcularTamanhoTorneio(tamanhoTorneio, paramTorneio);
 
-            while (numeroGeracoesSemMelhoraPk < tamanhoPopulacao || limiar == 0) {
+            while (numeroGeracoesSemMelhoraPk < 1000 || limiar == 0) {
                 Pattern pai1 = P[SELECAO.torneioN(P, tamanhoTorneio, 0, limiar)];
                 Pattern pai2;
                 String operador;
@@ -212,13 +211,17 @@ public abstract class PBSD_Base extends Threshold {
                     pai2 = P[SELECAO.torneioN(P, tamanhoTorneio, limiar, P.length)];
                     operador = "AND_ITEMxPATTERN";
                 }
-
                 Pattern paux = CRUZAMENTO.AND(pai1, pai2, tipoAvaliacao);
+                ArrayList<HashSet<Integer>> gene = new ArrayList<>();
+                gene.add(pai1.getItens());
+                gene.add(pai2.getItens());
+
+                tracker.registrar(paux, operador, gene);
+
 
                 if (paux.getQualidade() >= P[limiar - 1].getQualidade() && limiar > 1) {
                     P[limiar - 1] = paux;
                     limiar--;
-                    tracker.registrar(paux, operador);
                 }
 
                 if (Pattern.numeroIndividuosGerados % P.length == 0) {
@@ -226,7 +229,7 @@ public abstract class PBSD_Base extends Threshold {
 
                     int novosK = SELECAO.salvandoRelevantesDPmais(Pk,
                             Arrays.copyOfRange(P, limiar, P.length),
-                            similaridade, trackerK);
+                            similaridade, tracker);
                     //System.out.println(novosK);
                     if (novosK == 0) numeroGeracoesSemMelhoraPk++;
                     else numeroGeracoesSemMelhoraPk = 0;
@@ -239,8 +242,7 @@ public abstract class PBSD_Base extends Threshold {
         }
         //footer(P, Pk);
 
-        trackerK.exportarCSV("C:/Users/jc160/IdeaProjects/PDSAstudy/pastas/logRelatorioK", this.getClass().getSimpleName(), k);
-        tracker.exportarCSV("C:/Users/jc160/IdeaProjects/PDSAstudy/pastas/logRelatorio", this.getClass().getSimpleName());
+        tracker.exportarCSV("C:/Users/jc160/IdeaProjects/PDSAstudy/pastas/logRelatorioK",D.nomeBase, this.getClass().getSimpleName(), k);
         return Pk;
     }
 
@@ -263,7 +265,7 @@ public abstract class PBSD_Base extends Threshold {
         //Parameters of the algorithm
         int k = 10;
         String metricaAvaliacao = Const.METRICA_WRACC;
-        int quantidadeTorneio = 10;
+        int quantidadeTorneio = 50;
         int passoTorneio = 5;
 
         System.out.println("\n\n\n\nFIXO");
@@ -272,11 +274,5 @@ public abstract class PBSD_Base extends Threshold {
         Avaliador.imprimirRegras(pk, k);
         System.out.println("Testes: " + Pattern.numeroIndividuosGerados);
 
-        Pattern.numeroIndividuosGerados = 0;
-
-        System.out.println("\n\n\n\nSSDP+");
-        Pattern[] p = SSDPmais.run(10, metricaAvaliacao, 0.5, 120);
-        Avaliador.imprimirRegras(p, k);
-        System.out.println("Testes: " + Pattern.numeroIndividuosGerados);
     }
 }
