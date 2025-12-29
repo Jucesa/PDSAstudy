@@ -178,7 +178,7 @@ public class D {
         for(int i = 0; i < dadosString.size(); i++){
             String[] exemploBase = dadosString.get(i);//recebe linha de dados
             for(int j = 0; j < exemploBase.length; j++){
-                dadosStr[i][j] = exemploBase[j].replaceAll("[\"\r\']", "");
+                dadosStr[i][j] = exemploBase[j].replaceAll("[\"\r']", "");
             }
             //valoresAlvoHasSet.add(exemploBase[D.numeroAtributos]);
             valoresAlvoHasSet.add(dadosStr[i][D.numeroAtributos]);           
@@ -186,10 +186,10 @@ public class D {
         
         //Coletanto valores distintos do atributo alvo
         D.valoresAlvo = new String[valoresAlvoHasSet.size()];
-        Iterator iterator = valoresAlvoHasSet.iterator();
+        Iterator<String> iterator = valoresAlvoHasSet.iterator();
         int indice = 0;
         while(iterator.hasNext()){
-            D.valoresAlvo[indice++] = (String) iterator.next();
+            D.valoresAlvo[indice++] = iterator.next();
         }
         Arrays.sort(D.valoresAlvo);
         
@@ -230,7 +230,7 @@ public class D {
         int[][] dadosInt = new int[D.numeroExemplos][D.numeroAtributos]; //dados no formato inteiro: mais rápido compararinteiros que strings
         int indiceItem = 0; //Indice vai de zero ao número de itens total
         for(int indiceAtributo = 0; indiceAtributo < valoresDistintosAtributos.size(); indiceAtributo++){
-            Iterator valoresDistintosAtributoIterator = valoresDistintosAtributos.get(indiceAtributo).iterator(); //Capturando valores distintos do atributo de indice.txt i
+            Iterator<String> valoresDistintosAtributoIterator = valoresDistintosAtributos.get(indiceAtributo).iterator(); //Capturando valores distintos do atributo de indice.txt i
             int indiceValor = 0; //vai mapear um inteiro distinto para cada valor distinto de cada variável
             
             //Para cada atributo: 
@@ -238,7 +238,7 @@ public class D {
             //Realizar mapeamento na matriz de dados no formato inteiro
             while(valoresDistintosAtributoIterator.hasNext()){
                 D.itemAtributoStr[indiceItem] = D.nomeVariaveis[indiceAtributo]; //
-                D.itemValorStr[indiceItem] = (String)valoresDistintosAtributoIterator.next();
+                D.itemValorStr[indiceItem] = valoresDistintosAtributoIterator.next();
 
                 D.itemAtributo[indiceItem] = indiceAtributo;
                 D.itemValor[indiceItem] = indiceValor;               
@@ -331,9 +331,9 @@ public class D {
     }
     
     /**
-     * Imprime dicionário no console. É um alternativa ao método recordDicionario que salva em arquivo.
+     * Imprime dicionário no console. É um alternativa ao mét0do recordDicionario que salva em arquivo.
      * @deprecated 
-     * OBS: esse método pode estar defasado!
+     * OBS: esse mét0do pode estar defasado!
      */
     public static void imprimirDicionario(){        
         System.out.println("@Nome:" + D.nomeBase);
@@ -348,7 +348,7 @@ public class D {
     }
 
     /**
-     * Filtra atributos, valores e itens (atributo,valor) passados como parâmetros.
+     * Filtra atributos, valores e itens (atributo, valor) passados como parâmetros.
      * Os itens filtrados não serão consideraodos pelos algoritmos nas buscas.
      * @param atributos
      * @param valores
@@ -360,7 +360,6 @@ public class D {
             if(D.filtroAtributoContempla(atributos, i) || 
                     D.filtroValorContempla(valores, i) || 
                     D.filtroAtributoValorContempla(atributosValores, i)){
-                continue;
             }else{
                 itensPosFiltro.add(i); //Adicione caso não perteça a nenhum filtro
             }
@@ -374,18 +373,18 @@ public class D {
     }
     
     /**
-     * Método retorna se item passado como parâmetro pertence ao grupo de atributos que devem ser desconsiderados na busca
+     * Mét0do retorna se item passado como parâmetro pertence ao grupo de atributos que devem ser desconsiderados na busca
      * @param atributos - String[] com valores de atributos que devem ser filtrados
      * @param item - item que deve ou não ser filtrado com base no filtro
-     * @return 
+     * @return boolean
      */
     private static boolean filtroAtributoContempla(String[] atributos, int item){
         if(atributos == null){
             return false;
         }else{
-            for(int j = 0; j < atributos.length; j++){
+            for (String atributo : atributos) {
                 //if(D.comparaStrVar(atributos[j], D.itemAtributoStr[item])){
-                if(atributos[j].equals(itemAtributoStr[item])){
+                if (atributo.equals(itemAtributoStr[item])) {
                     return true;
                 }
             }            
@@ -395,10 +394,10 @@ public class D {
             
     
     /**
-     * Método retorna se item passado como parâmetro pertence ao grupo de VALORES que devem ser desconsiderados na busca
+     * Mét0do retorna se item passado como parâmetro pertence ao grupo de VALORES que devem ser desconsiderados na busca
      * @param valores - String[] com valores de atributos que devem ser filtrados
      * @param item - item que deve ou não ser filtrado com base no filtro
-     * @return 
+     * @return boolean
      */
     private static boolean filtroValorContempla(String[] valores, int item){
         if(valores == null){
@@ -419,18 +418,18 @@ public class D {
      * Método retorna se item passado como parâmetro pertence ao grupo de intens (atributo, valor) que devem ser desconsiderados na busca
      * @param atributosValores - String[][]
      * @param item - item que deve ou não ser filtrado com base no filtro
-     * @return 
+     * @return boolean
      */
     private static boolean filtroAtributoValorContempla(String[][] atributosValores, int item){
         if(atributosValores == null){
             return false;
         }else{
-            for(int j = 0; j < atributosValores.length; j++){
+            for (String[] atributosValore : atributosValores) {
                 //if(D.comparaStrVar(atributosValores[j][0], D.itemAtributoStr[item]) &&
                 //   D.comparaStrVar(atributosValores[j][1], D.itemValorStr[item]) ){
-                if(atributosValores[j][0].equals(D.itemAtributoStr[item]) &&
-                    atributosValores[j][1].equals(D.itemValorStr[item]) ){
-                
+                if (atributosValore[0].equals(D.itemAtributoStr[item]) &&
+                        atributosValore[1].equals(D.itemValorStr[item])) {
+
                     return true;
                 }
             }            

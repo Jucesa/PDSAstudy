@@ -11,127 +11,14 @@ import evolucionario.SSDPmais;
 import newSD.logging.PatternTracker;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.Arrays;
-import java.util.Comparator;
-import java.util.OptionalDouble;
 
-public abstract class PBSD_Base extends Threshold {
+public abstract class PBSD_Base {
 
-    private void header(Pattern[] P, int k, double similaridade, String tipoAvaliacao, int paramTorneio) {
-        String className = this.getClass().getSimpleName();
-
-        System.out.println("\n================= EXECUÇÃO =================");
-        System.out.printf("%-32s: %s%n", "Base de dados", D.nomeBase);
-        System.out.printf("%-32s: %s%n", "Métrica de avaliação", tipoAvaliacao);
-        System.out.printf("%-32s: %d%n", "k (Top-K)", k);
-        System.out.printf("%-32s: %.4f%n", "Similaridade", similaridade);
-        System.out.printf("%-32s: %d%n", "Torneio inicial", 2);
-        System.out.printf("%-32s: %s%n", "Classe", className);
-        System.out.printf("%-32s: %d%n", "Parâmetro torneio", paramTorneio);
-        System.out.printf("%-32s: %d%n", "População inicial", P.length);
-        System.out.printf("%-32s: %d%n", "Máx. reinicializações", 3);
-        System.out.printf("%-32s: %d%n", "Máx. gerações sem melhora Pk", 3);
-        System.out.println("============================================");
-    }
-
-    private void body(Pattern[] P, Pattern[] Pk){
-        logPk(Pk);
-        System.out.println();
-        System.out.println("-----------------------------");
-        logP(P);
-        System.out.println("-----------------------------");
-    }
-
-    private void footer(Pattern[] P, Pattern[] Pk){
-        System.out.println("Distintos Pk");
-        logDistintosPk(Pk);
-        System.out.println("-----------------------------");
-    }
-
-    private void logP(Pattern[] P) {
-
-        if (P == null || P.length == 0) {
-            System.out.println(" - População vazia.");
-            return;
-        }
-
-        double avgFitness = Avaliador.avaliarMedia(P, P.length);
-        double avgSize = Avaliador.avaliarMediaDimensoes(P, P.length);
-        OptionalDouble bestOpt = Arrays.stream(P)
-                .mapToDouble(Pattern::getQualidade)
-                .max();
-        double bestFitness = bestOpt.getAsDouble();
-        int distinctItemsCount = Avaliador.itensDistintosPk(P, P.length).size();
-
-        System.out.println("População P:");
-        System.out.println(" - Média de qualidade: " + avgFitness);
-        System.out.println(" - Melhor qualidade: " + bestFitness);
-        System.out.println(" - Tamanho médio: " + avgSize);
-        System.out.println(" - Itens distintos: " + distinctItemsCount);
-
-        logTopIndividuals(P, 3);
-    }
-
-    private void logTopIndividuals(Pattern[] P, int topN) {
-        if (P == null || P.length == 0) {
-            System.out.println("Nenhum indivíduo para mostrar.");
-            return;
-        }
-
-        Pattern[] copy = Arrays.copyOf(P, P.length);
-
-        Comparator<Pattern> comparatorDesc = Comparator
-                .comparingDouble(Pattern::getQualidade)
-                .reversed();
-
-        Arrays.sort(copy, comparatorDesc);
-
-        int limit = Math.min(topN, copy.length);
-        System.out.println("Top " + limit + " indivíduos:");
-        for (int i = 0; i < limit; i++) {
-            Pattern pat = copy[i];
-            double fitness = pat.getQualidade();
-            System.out.println("  #" + (i + 1) + ": " + pat.getItens() + " fitness=" + fitness);
-        }
-    }
-
-
-    private void logPk(Pattern[] Pk){
-
-        double qualidadeMediaPk = Avaliador.avaliarMedia(Pk, Pk.length);
-        double tamMedioPk = Avaliador.avaliarMediaDimensoes(Pk, Pk.length);
-        System.out.println("População Pk:");
-        System.out.println("Média de qualidade Pk: " + qualidadeMediaPk);
-        System.out.println("Tamanho médio de Pk: " + tamMedioPk);
-    }
-
-    private void logDistintosPk(Pattern[] Pk) {
-        HashSet<Integer> distintosPk = Avaliador.itensDistintosPk(Pk, Pk.length);
-
-        // Transforma cada item em Pattern
-        ArrayList<Pattern> itens = new ArrayList<>();
-        for (Integer i : distintosPk) {
-            HashSet<Integer> singleton = new HashSet<>();
-            singleton.add(i);
-
-            Pattern p = new Pattern(singleton, Pk[0].getTipoAvaliacao());
-            itens.add(p);
-        }
-
-        // Ordena por qualidade decrescente
-        itens.sort(Comparator.comparingDouble(Pattern::getQualidade).reversed());
-
-        // Log ordenado
-        for (Pattern p : itens) {
-            Integer item = p.getItens().iterator().next(); // pega o único item do conjunto
-            System.out.print("| item: " + item);
-            System.out.print(" qualidade: " + p.getQualidade());
-            System.out.print(" |\n");
-        }
-    }
 
     //mapear eventos
     //Evento
@@ -144,9 +31,9 @@ public abstract class PBSD_Base extends Threshold {
      * Mét0d0 abstrato para determinar o tamanho do torneio na geração atual.
      * Cada implementação (FIXO ou VARIÁVEL) define sua lógica.
      */
-    protected abstract int calcularTamanhoTorneio(int tamanhoTorneio, int saltoTorneio);
+    protected abstract int calcularTamanhoTorneio(int tamanhoTorneio, int saltoTorneio, int tamanhoP);
 
-    public Pattern[] run(int paramTorneio, double similaridade, String tipoAvaliacao, int k) {
+    public Pattern[] run(int paramTorneio, double similaridade, String tipoAvaliacao, int k) throws IOException {
 
         Pattern[] P;
 
@@ -159,9 +46,9 @@ public abstract class PBSD_Base extends Threshold {
 
         // População inicial
         Pattern[] I = INICIALIZAR.D1(tipoAvaliacao);
-        PatternTracker tracker = new PatternTracker(I, I.length/100, k);
-
         Arrays.sort(I);
+        PatternTracker tracker = new PatternTracker(I, I.length/100, Const.SAIDA_LOG, D.nomeBase, "JSD", k);
+
 
         if (I.length < k) {
             P = new Pattern[k];
@@ -173,14 +60,13 @@ public abstract class PBSD_Base extends Threshold {
             P = I;
         }
 
-        SELECAO.salvandoRelevantesDPmais(Pk, P, similaridade);
+        SELECAO.salvandoRelevantesDPmais(Pk, P, similaridade, tracker);
 
         int limiar = P.length;
         int tamanhoPopulacao = P.length;
         int numeroGeracoesSemMelhoraPk = 0;
         int tamanhoTorneio = 2;
 
-        //header(P, k, similaridade, tipoAvaliacao, paramTorneio);
         for (int numeroReinicializacoes = 0; numeroReinicializacoes < 3; numeroReinicializacoes++) {
 
             if (numeroReinicializacoes > 0) {
@@ -189,9 +75,9 @@ public abstract class PBSD_Base extends Threshold {
                 limiar = Math.max(1, (int) (P.length * 0.9));
             }
 
-            tamanhoTorneio = calcularTamanhoTorneio(tamanhoTorneio, paramTorneio);
+            tamanhoTorneio = calcularTamanhoTorneio(tamanhoTorneio, paramTorneio, tamanhoPopulacao);
 
-            while (numeroGeracoesSemMelhoraPk < 1000 || limiar == 0) {
+            while (numeroGeracoesSemMelhoraPk < 1000 && limiar > 0) {
                 Pattern pai1 = P[SELECAO.torneioN(P, tamanhoTorneio, 0, limiar)];
                 Pattern pai2;
                 String operador;
@@ -201,7 +87,6 @@ public abstract class PBSD_Base extends Threshold {
 
                 // Probabilidade teórica
                 double Pth = (double) limiar / (P.length);
-
                 if (r < Pth) {
                     // Seleção acima do limiar: faixa 0..limiar-1
                     pai2 = P[SELECAO.torneioN(P, tamanhoTorneio, 0, limiar)];
@@ -211,17 +96,20 @@ public abstract class PBSD_Base extends Threshold {
                     pai2 = P[SELECAO.torneioN(P, tamanhoTorneio, limiar, P.length)];
                     operador = "AND_ITEMxPATTERN";
                 }
+
+                //operador de cruzamento
                 Pattern paux = CRUZAMENTO.AND(pai1, pai2, tipoAvaliacao);
-                ArrayList<HashSet<Integer>> gene = new ArrayList<>();
-                gene.add(pai1.getItens());
-                gene.add(pai2.getItens());
 
-                tracker.registrar(paux, operador, gene);
+                //tracking da genealogia
+                List<Pattern> idsPais = Arrays.asList(pai1, pai2);
 
-
+                //se paux melhor que o pior item, substitui
                 if (paux.getQualidade() >= P[limiar - 1].getQualidade() && limiar > 1) {
+                    tracker.registrar(paux, operador, idsPais);
                     P[limiar - 1] = paux;
                     limiar--;
+                } else if (Pattern.numeroIndividuosGerados % 50 == 0) { //se foram criados "lixos" suficientes, registra
+                    tracker.registrar(paux, operador+"_lixo", idsPais);
                 }
 
                 if (Pattern.numeroIndividuosGerados % P.length == 0) {
@@ -235,19 +123,27 @@ public abstract class PBSD_Base extends Threshold {
                     else numeroGeracoesSemMelhoraPk = 0;
 
                     // Atualiza tamanho do torneio usando mét0do polimórfico
-                    tamanhoTorneio = calcularTamanhoTorneio(tamanhoTorneio, paramTorneio);
-                    //body(P, Pk);
+                    tamanhoTorneio = calcularTamanhoTorneio(tamanhoTorneio, paramTorneio, tamanhoPopulacao);
                 }
             }
-        }
-        //footer(P, Pk);
+            Arrays.sort(P, limiar, P.length);
 
-        tracker.exportarCSV("C:/Users/jc160/IdeaProjects/PDSAstudy/pastas/logRelatorioK",D.nomeBase, this.getClass().getSimpleName(), k);
+            int novosK = SELECAO.salvandoRelevantesDPmais(Pk,
+                    Arrays.copyOfRange(P, limiar, P.length),
+                    similaridade, tracker);
+        }
+
+        Arrays.sort(P);
+        SELECAO.salvandoRelevantesDPmais(Pk,
+                P,
+                similaridade, tracker);
+
+        tracker.close();
         return Pk;
     }
 
-    public static void main(String[] args) throws FileNotFoundException {
-        Logger logger = Logger.getLogger(Threshold.class.getName());
+    public static void main(String[] args) throws IOException {
+        Logger logger = Logger.getLogger(PBSD_Base.class.getName());
 
         String base = "pastas/Bases BIO 10/alon-pn-freq-2.CSV";
         D.SEPARADOR = ",";
@@ -264,7 +160,7 @@ public abstract class PBSD_Base extends Threshold {
 
         //Parameters of the algorithm
         int k = 10;
-        String metricaAvaliacao = Const.METRICA_WRACC;
+        String metricaAvaliacao = Const.METRICA_Qg;
         int quantidadeTorneio = 50;
         int passoTorneio = 5;
 
@@ -272,6 +168,18 @@ public abstract class PBSD_Base extends Threshold {
         PBSD_FIXO fixo = new PBSD_FIXO();
         Pattern[] pk = fixo.run(quantidadeTorneio, 0.5, metricaAvaliacao, k);
         Avaliador.imprimirRegras(pk, k);
+        System.out.println("Testes: " + Pattern.numeroIndividuosGerados);
+
+        System.out.println("\n\n\n\nVAR");
+        PBSD_VAR var = new PBSD_VAR();
+        pk = fixo.run(quantidadeTorneio, 0.5, metricaAvaliacao, k);
+        Avaliador.imprimirRegras(pk, k);
+        System.out.println("Testes: " + Pattern.numeroIndividuosGerados);
+
+        System.out.println("\nSSDP");
+        pk = SSDPmais.run(k, metricaAvaliacao, 0.5, 120);
+        Avaliador.imprimirRegras(pk, k);
+
         System.out.println("Testes: " + Pattern.numeroIndividuosGerados);
 
     }

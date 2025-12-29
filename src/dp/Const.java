@@ -128,7 +128,8 @@ public class Const {
     
     public final static int PATTERN_OR = 0;
     public final static int PATTERN_AND = 1;
-//    C:\IdeaProjects\PDSAstudy\pastas\indice.txt
+    public static final String SAIDA_LOG = "C:/Users/jc160/IdeaProjects/PDSAstudy/pastas/logRelatorioK";
+    //    C:\IdeaProjects\PDSAstudy\pastas\indice.txt
     private final static String CAMINHO_PC = "/Users/jc160/IdeaProjects/PDSAstudy";
     //private final static String CAMINHO_PC = "C:/Users/11305645413/IdeaProjects/PDSAstudy";
     public final static String CAMINHO_BASES = CAMINHO_PC+"/pastas/Bases BIO 10/";

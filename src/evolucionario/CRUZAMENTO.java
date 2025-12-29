@@ -9,10 +9,7 @@ import dp.Const;
 import dp.Pattern;
 import newSD.logging.PatternTracker;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.*;
 
 /**
  *
@@ -46,12 +43,16 @@ public class CRUZAMENTO {
             if(Const.random.nextDouble() > taxaMutacao){
                 Pattern p1 = P[selecao[indiceSelecao]];
                 Pattern p2 = P[selecao[indiceSelecao+1]];
+
                 Pattern[] novos = CRUZAMENTO.uniforme2Individuos(p1, p2, tipoAvaliacao);
-                ArrayList<HashSet<Integer>> gene = new ArrayList<>();
-                gene.add(p1.getItens());
-                gene.add(p2.getItens());
+
+                List<Pattern> gene = new ArrayList<>();
+                gene.add(p1);
+                gene.add(p2);
+
                 tracker.registrar(novos[0], "CruzamentoUniforme",gene);
                 tracker.registrar(novos[1], "CruzamentoUniforme", gene);
+
                 indiceSelecao += 2;
                 Pnovo[indicePnovo++] = novos[0];                    
                 if(indicePnovo < Pnovo.length){
@@ -60,8 +61,8 @@ public class CRUZAMENTO {
                 
             }else{
                 Pattern filho = MUTACAO.unGeneTrocaOuAdicionaOuExclui(P[selecao[indiceSelecao++]],  tipoAvaliacao);
-                ArrayList<HashSet<Integer>> gene = new ArrayList<>();
-                gene.add(P[selecao[indiceSelecao++]].getItens());
+                List<Pattern> gene = new ArrayList<>();
+                gene.add(P[selecao[indiceSelecao]]);
                 tracker.registrar(filho, "Mutacao",  gene);
                 Pnovo[indicePnovo++] = filho;
             }         
@@ -138,9 +139,9 @@ public class CRUZAMENTO {
             Pattern p1 = P1[indicesP1[i]];
             Pattern p2 = P2[indicesP2[i]];
             Pattern filho = CRUZAMENTO.AND(p1, p2, tipoAvaliacao);
-            ArrayList<HashSet<Integer>> gene = new ArrayList<>();
-            gene.add(p1.getItens());
-            gene.add(p2.getItens());
+            List<Pattern> gene = new ArrayList<>();
+            gene.add(p1);
+            gene.add(p2);
             tracker.registrar(filho, "AND", gene);
             Pnovo[i] = CRUZAMENTO.AND(p1, p2, tipoAvaliacao);
         }

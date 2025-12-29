@@ -9,6 +9,7 @@ import dp.Avaliador;
 import dp.Const;
 import dp.D;
 import dp.Pattern;
+import newSD.logging.PatternTracker;
 
 import java.util.*;
 
@@ -124,7 +125,7 @@ public class INICIALIZAR {
      * @param tamanhoPopulacao int - tamanho da população
      * @return Pattern[] - nova população
      */
-    public static Pattern[] aleatorio1_D_Pk(String tipoAvaliacao, int tamanhoPopulacao, Pattern[] Pk){
+    public static Pattern[] aleatorio1_D_Pk(String tipoAvaliacao, int tamanhoPopulacao, Pattern[] Pk, PatternTracker tracker){
         //Ajeitar isso!!!
         int numeroDimensoes =  (int) Avaliador.avaliarMediaDimensoes(Pk, Pk.length);
         if(numeroDimensoes < 2){
@@ -144,17 +145,18 @@ public class INICIALIZAR {
             }            
             
             P0[i] = new Pattern(itens, tipoAvaliacao);
+            tracker.registrar(P0[i], "REINICIALIZAR");
         }        
         
         
         //Coletanto todos os itens distintos da população Pk.
         HashSet<Integer> itensPk = new HashSet<>();
-        for(int n = 0; n < Pk.length; n++){
-            itensPk.addAll(Pk[n].getItens());
+        for (Pattern pattern : Pk) {
+            itensPk.addAll(pattern.getItens());
         }
         int[] itensPkArray = new int[itensPk.size()];
         
-        Iterator iterator = itensPk.iterator();
+        Iterator<Integer> iterator = itensPk.iterator();
         int n = 0;        
         while(iterator.hasNext()){
             itensPkArray[n++] = (int)iterator.next();
@@ -178,6 +180,7 @@ public class INICIALIZAR {
             }
                   
             P0[j] = new Pattern(itens, tipoAvaliacao);
+            tracker.registrar(P0[j], "REINICIALIZAR");
         }        
         return P0;
     }

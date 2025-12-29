@@ -468,7 +468,7 @@ public class SELECAO {
                         novosk++;
 
                         // ✔ Registrar entrada real no Pk
-                        tracker.registrar(p_PAsterisco, "PK-REPLACE");
+                        tracker.registrarK(p_PAsterisco, "PK-REPLACE");
 
                     }
 
@@ -487,7 +487,7 @@ public class SELECAO {
                     novosk++;
 
                     // ✔ Registrar novo padrão não-similar
-                    tracker.registrar(p_PAsterisco, "PK-NEW");
+                    tracker.registrarK(p_PAsterisco, "PK-NEW");
                 }
             }
         }

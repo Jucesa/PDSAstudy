@@ -7,9 +7,9 @@ import dp.Pattern;
 import evolucionario.INICIALIZAR;
 import evolucionario.SELECAO;
 import evolucionario.SSDPmais;
-import newSD.algorithm.Threshold;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -104,8 +104,8 @@ public class ExaustivoR {
     }
 
 
-    public static void main(String[] args) throws FileNotFoundException {
-        Logger logger = Logger.getLogger(Threshold.class.getName());
+    public static void main(String[] args) throws IOException {
+        Logger logger = Logger.getLogger(ExaustivoR.class.getName());
 
         String base = "pastas/Bases BIO 10/alon-pn-freq-2.CSV";
         D.SEPARADOR = ",";

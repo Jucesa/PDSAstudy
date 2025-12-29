@@ -170,9 +170,6 @@ public class SimulacaoGeral {
                         Pattern[] p = null;
                         Const.random = new Random(Const.SEEDS[n]);
                         long t0 = System.currentTimeMillis();
-                        int quantidadeTorneio = 3;
-                        int tentivasMelhoria = 20;
-                        int maxIndividuos = 1000000;
                         switch(algoritmo){
                             case Const.ALGORITMO_SSDP:
                                 p = SSDP.run(k, tipoAvaliacao, tempoMaximoSegundosAlgoritmos);
@@ -198,9 +195,6 @@ public class SimulacaoGeral {
                                 double min_suport2 = Math.sqrt(D.numeroExemplosPositivo) / D.numeroExemplos;
                                 p = sd2.run(min_suport2, 2*k, tipoAvaliacao, 2*k, tempoMaximoSegundosAlgoritmos);
                                 p = RSS.run(p, k);
-                                break;
-                            case Const.ALGORITMO_SSDPmais:
-                                p = SSDPmais.run(k, tipoAvaliacao, 0.7, tempoMaximoSegundosAlgoritmos);
                                 break;
                             case Const.ALGORITMO_SSDPmaisS00:
                                 p = SSDPmais.run(k, tipoAvaliacao, 0.0, tempoMaximoSegundosAlgoritmos);
@@ -291,8 +285,9 @@ public class SimulacaoGeral {
                             System.out.println("Cobertura +: " + Avaliador.coberturaPositivo(p,k));
                             System.out.println("Tempo +: " + tempo);
                             System.out.println("Tentativas +: " + numeroTentativas);
+                            assert p != null;
                             System.out.println("Size: " + p.length);
-                            Avaliador.imprimirRegras(p, k);
+                            //Avaliador.imprimirRegras(p, k);
                         }
                         resultados[n] = new Resultado(p, tempo, numeroTentativas, Const.SEEDS[n]);
                     }
@@ -318,9 +313,7 @@ public class SimulacaoGeral {
 
         String[] algoritmos = {
                 ALGORITMO_PBSD_TF_50,
-
-                ALGORITMO_PBSD_TV_10,
-
+                ALGORITMO_PBSD_TV_1,
                 Const.ALGORITMO_SSDPmaisS50,
                 ALGORITMO_SD
         };
@@ -360,6 +353,5 @@ public class SimulacaoGeral {
         Relatorio.gerarTabelaoCSV(metricas, separadorBase, separadorRelatorio);
 
         System.out.println("Tabelão concluído");
-
     }
 }

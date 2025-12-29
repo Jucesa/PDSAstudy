@@ -73,7 +73,7 @@ public class SSDP {
         for(int numeroReinicializacoes = 0; numeroReinicializacoes < 3; numeroReinicializacoes++){//Controle número de reinicializações
             //System.out.println("Reinicialização: " + numeroReinicializacoes);
             if(numeroReinicializacoes > 0){
-                P = INICIALIZAR.aleatorio1_D_Pk(tipoAvaliacao, tamanhoPopulacao, Pk);
+                P = INICIALIZAR.aleatorio1_D_Pk(tipoAvaliacao, tamanhoPopulacao, Pk, null);
             }
         
             double mutationTax = 0.4; //Mutação inicia em 0.4. Crossover é sempre 1-mutationTax.
