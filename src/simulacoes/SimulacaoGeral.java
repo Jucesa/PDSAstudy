@@ -23,8 +23,7 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Scanner;
 
-import newSD.algorithm.PBSD_FIXO;
-import newSD.algorithm.PBSD_VAR;
+import newSD.algorithm.fixo.v2.JSD_V2_TORNEIOP;
 import sd.Aleatorio;
 import sd.ExaustivoK;
 import sd.SD;
@@ -177,8 +176,14 @@ public class SimulacaoGeral {
                             case Const.ALGORITMO_ExaustivoK:
                                 p = ExaustivoK.run(k, tipoAvaliacao);
                                 break;
-                            case Const.ALGORITMO_Aleatorio1M:
-                                p = Aleatorio.runNtentativas(tipoAvaliacao, k, 1000000, 10);
+                            case Const.ALGORITMO_Aleatorio1Mp1:
+                                p = Aleatorio.run(tipoAvaliacao, k, 0.5,1000000, 0.01);
+                                break;
+                            case Const.ALGORITMO_Aleatorio1Mp10:
+                                p = Aleatorio.run(tipoAvaliacao, k, 0.5,1000000, 0.1);
+                                break;
+                            case Const.ALGORITMO_Aleatorio1Mp50:
+                                p = Aleatorio.run(tipoAvaliacao, k, 0.5,1000000, 0.5);
                                 break;
                             case Const.ALGORITMO_Aleatorio2M:
                                 p = Aleatorio.runNtentativas(tipoAvaliacao, k, 2000000, 10);
@@ -232,48 +237,43 @@ public class SimulacaoGeral {
                             case Const.ALGORITMO_GulosoDplus:
                                 p = GulosoD.run(k, D.numeroExemplosPositivo, tipoAvaliacao, 0.7, tempoMaximoSegundosAlgoritmos, 4);
                                 break;
-
-
-                            // ===================== PBSD FIXO =====================
-                            case ALGORITMO_PBSD_TF_5:
-                                PBSD_FIXO fixo5 = new PBSD_FIXO();
-                                p = fixo5.run(5, 0.5, tipoAvaliacao, k);
-                                break;
-                            case ALGORITMO_PBSD_TF_10:
-                                PBSD_FIXO fixo10 = new PBSD_FIXO();
-                                p = fixo10.run(10, 0.5, tipoAvaliacao, k);
-                                break;
-                            case Const.ALGORITMO_PBSD_TF_20:
-                                PBSD_FIXO fixo20 = new PBSD_FIXO();
-                                p = fixo20.run(20, 0.5, tipoAvaliacao, k);
-                                break;
-                            case Const.ALGORITMO_PBSD_TF_50:
-                                PBSD_FIXO fixo50 = new PBSD_FIXO();
-
-                                p = fixo50.run(50, 0.5, tipoAvaliacao, k);
-                                break;
-                            case Const.ALGORITMO_PBSD_TF_100:
-                                PBSD_FIXO fixo100 = new PBSD_FIXO();
-                                p = fixo100.run(100, 0.5, tipoAvaliacao, k);
+                            case Const.ALGORITMO_JSD_ENTROPY:
+                                newSD.algorithm.fixo.v1.JSD_ENTROPY jsdEntropy = new newSD.algorithm.fixo.v1.JSD_ENTROPY();
+                                p = jsdEntropy.run(50, 0.5, tipoAvaliacao, k);
                                 break;
 
-                            // ===================== PBSD VARIÁVEL =====================
-                            case Const.ALGORITMO_PBSD_TV_1:
-                                PBSD_VAR var1 = new PBSD_VAR();
-                                p = var1.run(1, 0.5, tipoAvaliacao, k);
-                                break;
-                            case Const.ALGORITMO_PBSD_TV_5:
-                                PBSD_VAR var5 = new PBSD_VAR();
-                                p = var5.run(5, 0.5, tipoAvaliacao, k);
-                                break;
-                                case ALGORITMO_PBSD_TV_10:
-                                    PBSD_VAR var10 = new PBSD_VAR();
-
-                                p = var10.run(10, 0.5, tipoAvaliacao, k);
+                            case Const.ALGORITMO_JSD_INC:
+                                newSD.algorithm.fixo.v1.JSD_INC jsdInc = new newSD.algorithm.fixo.v1.JSD_INC();
+                                p = jsdInc.run(50, 0.5, tipoAvaliacao, k);
                                 break;
 
+                            case Const.ALGORITMO_JSD_QUAD:
+                                newSD.algorithm.fixo.v1.JSD_QUAD jsdQuad = new newSD.algorithm.fixo.v1.JSD_QUAD();
+                                p = jsdQuad.run(50, 0.5, tipoAvaliacao, k);
+                                break;
+
+                            case Const.ALGORITMO_JSD_V2:
+                                newSD.algorithm.fixo.v2.JSD_V2 jsdV2 = new newSD.algorithm.fixo.v2.JSD_V2();
+                                p = jsdV2.run(50, 0.5, tipoAvaliacao, k);
+                                break;
+
+                            case Const.ALGORITMO_JSD_V2_TORNEIO:
+                                JSD_V2_TORNEIOP jsdV2Torneio = new JSD_V2_TORNEIOP();
+                                p = jsdV2Torneio.run(50, 0.5, tipoAvaliacao, k);
+                                break;
+
+                            case Const.ALGORITMO_JSD_V2_ROLETA:
+                                newSD.algorithm.fixo.v2.JSD_V2_ROLETA jsdV2Roleta = new newSD.algorithm.fixo.v2.JSD_V2_ROLETA();
+                                p = jsdV2Roleta.run(50, 0.5, tipoAvaliacao, k);
+                                break;
+
+                            case Const.ALGORITMO_JSD_V2_ESTRATIFICADA:
+                                newSD.algorithm.fixo.v2.JSD_V2_ESTRATIFICADA jsdV2Estrat = new newSD.algorithm.fixo.v2.JSD_V2_ESTRATIFICADA();
+                                p = jsdV2Estrat.run(50, 0.5, tipoAvaliacao, k);
+                                break;
+                            case ALGORITMO_SSDPmais_E:
+                                p = SSDPmais_E.run(k, tipoAvaliacao, 0.5, tempoMaximoSegundosAlgoritmos);break;
                         }
-
 
                         double tempo = (System.currentTimeMillis() - t0)/1000.0;
                         int numeroTentativas = Pattern.numeroIndividuosGerados;
@@ -296,7 +296,6 @@ public class SimulacaoGeral {
 
                     this.salvarResultado(simulacao);
                     indiceSimulacoes++;
-                    //Thread.sleep(10000);
                 }
             }
         }
@@ -308,13 +307,18 @@ public class SimulacaoGeral {
         Pattern.medidaSimilaridade = Const.SIMILARIDADE_JACCARD;
 
         int[] K = {10};
-        int numeroRepeticoes = 1;
+        int numeroRepeticoes = 20;
         double  tempoMaximoSegundosAlgoritmos = 60;
 
         String[] algoritmos = {
-                ALGORITMO_PBSD_TF_50,
-                ALGORITMO_PBSD_TV_1,
-                Const.ALGORITMO_SSDPmaisS50,
+                Const.ALGORITMO_JSD_ENTROPY,
+                Const.ALGORITMO_JSD_INC,
+                Const.ALGORITMO_JSD_QUAD,
+                Const.ALGORITMO_JSD_V2,
+                Const.ALGORITMO_JSD_V2_TORNEIO,
+                Const.ALGORITMO_JSD_V2_ROLETA,
+                Const.ALGORITMO_JSD_V2_ESTRATIFICADA,
+                ALGORITMO_SSDPmaisS50,
                 ALGORITMO_SD
         };
 //

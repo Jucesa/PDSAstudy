@@ -1,6 +1,8 @@
-package newSD.algorithm;
+package newSD.algorithm.fixo;
 
-public class PBSD_FIXO extends PBSD_Base {
+import newSD.algorithm.JSD;
+
+public class PBSD_FIXO extends JSD {
 
     @Override
     protected int calcularTamanhoTorneio(int tamanhoTorneio, int saltoTorneio, int tamanhoP) {

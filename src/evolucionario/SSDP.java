@@ -13,7 +13,6 @@ import dp.Pattern;
 import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.Random;
-import simulacoes.Base;
 import simulacoes.DPinfo;
 
 /**
@@ -25,7 +24,7 @@ public class SSDP {
         long t0 = System.currentTimeMillis(); //Initial time
                         
         Pattern[] Pk = new Pattern[k];                
-        Pattern[] P = null;
+        Pattern[] P;
         
         //Inicializa garantindo que P maior que Pk sempre! em bases pequenas isso nem sempre ocorre
         Pattern[] Paux = INICIALIZAR.D1(tipoAvaliacao);//P recebe população inicial
@@ -65,15 +64,15 @@ public class SSDP {
         int indiceGeracoes = 1;
         
         //Laço do AG
-        Pattern[] Pnovo = null;
-        Pattern[] PAsterisco = null;
+        Pattern[] Pnovo;
+        Pattern[] PAsterisco;
         
         int tamanhoPopulacao = P.length;
         
         for(int numeroReinicializacoes = 0; numeroReinicializacoes < 3; numeroReinicializacoes++){//Controle número de reinicializações
             //System.out.println("Reinicialização: " + numeroReinicializacoes);
             if(numeroReinicializacoes > 0){
-                P = INICIALIZAR.aleatorio1_D_Pk(tipoAvaliacao, tamanhoPopulacao, Pk, null);
+                P = INICIALIZAR.aleatorio1_D_Pk(tipoAvaliacao, tamanhoPopulacao, Pk);
             }
         
             double mutationTax = 0.4; //Mutação inicia em 0.4. Crossover é sempre 1-mutationTax.
@@ -81,10 +80,10 @@ public class SSDP {
             while(numeroGeracoesSemMelhoraPk < 3){
 
                 if(indiceGeracoes == 1){
-                    Pnovo = CRUZAMENTO.ANDduasPopulacoes(P, P, tipoAvaliacao, null);
+                    Pnovo = CRUZAMENTO.ANDduasPopulacoes(P, P, tipoAvaliacao);
                     indiceGeracoes++; 
                 }else{
-                    Pnovo = CRUZAMENTO.uniforme2Pop(P, mutationTax, tipoAvaliacao, null);
+                    Pnovo = CRUZAMENTO.uniforme2Pop(P, mutationTax, tipoAvaliacao);
                 }                   
                 PAsterisco = SELECAO.selecionarMelhores(P, Pnovo); 
                 P = PAsterisco;   
@@ -147,7 +146,7 @@ public class SSDP {
     }
        
     
-    public static void main(String args[]) throws FileNotFoundException{
+    public static void main(String[] args) throws FileNotFoundException{
         //====================================================================
         //== CONFIGURATION ===================================================
         //====================================================================
@@ -179,7 +178,7 @@ public class SSDP {
         //String tipoAvaliacao = Avaliador.METRICA_AVALIACAO_LIFT; //Fitness
         //String tipoAvaliacao = Avaliador.METRICA_AVALIACAO_CHI_QUAD; //Fitness
         
-        double maxTimeSecond =  60*1; //1 minutos
+        double maxTimeSecond = 60; //1 minutos
         
         Pattern.ITENS_OPERATOR = Const.PATTERN_AND;
         //Pattern.ITENS_OPERATOR = Const.PATTERN_OR;

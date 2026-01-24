@@ -1,6 +1,8 @@
-package newSD.algorithm;
+package newSD.algorithm.var;
 
-public class PBSD_VAR extends PBSD_Base {
+import newSD.algorithm.JSD;
+
+public class PBSD_VAR extends JSD {
 
     @Override
     protected int calcularTamanhoTorneio(int tamanhoTorneio, int saltoTorneio, int tamanhoP) {

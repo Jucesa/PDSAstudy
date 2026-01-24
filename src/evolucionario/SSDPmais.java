@@ -14,7 +14,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Random;
 
-import newSD.logging.PatternTracker;
 import simulacoes.DPinfo;
 
 /**
@@ -27,11 +26,11 @@ public class SSDPmais {
         long t0 = System.currentTimeMillis(); //Initial time
 
         Pattern[] Pk = new Pattern[k];
-        Pattern[] P = null;
+        Pattern[] P;
 
         //Inicializa Pk com indivíduos vazios
         for (int i = 0; i < Pk.length; i++) {
-            Pk[i] = new Pattern(new HashSet<Integer>(), tipoAvaliacao);
+            Pk[i] = new Pattern(new HashSet<>(), tipoAvaliacao);
         }
 
         //Inicializa garantindo que P maior que Pk sempre! em bases pequenas isso nem sempre ocorre
@@ -53,8 +52,7 @@ public class SSDPmais {
         Arrays.sort(P);
 
 
-        PatternTracker tracker = new PatternTracker(P, P.length/100, Const.SAIDA_LOG, D.nomeBase, "SSDP+", k);
-        SELECAO.salvandoRelevantesDPmais(Pk, P, similaridade, tracker);
+        SELECAO.salvandoRelevantesDPmais(Pk, P, similaridade);
 
         int numeroGeracoesSemMelhoraPk = 0;
         int indiceGeracoes = 1;
@@ -68,7 +66,7 @@ public class SSDPmais {
         for (int numeroReinicializacoes = 0; numeroReinicializacoes < 3; numeroReinicializacoes++) {//Controle número de reinicializações
 
             if (numeroReinicializacoes > 0) {
-                P = INICIALIZAR.aleatorio1_D_Pk(tipoAvaliacao, tamanhoPopulacao, Pk, tracker);
+                P = INICIALIZAR.aleatorio1_D_Pk(tipoAvaliacao, tamanhoPopulacao, Pk);
             }
 
             double mutationTax = 0.4; //Mutação inicia em 0.4. Crossover é sempre 1-mutationTax.
@@ -76,16 +74,16 @@ public class SSDPmais {
             while (numeroGeracoesSemMelhoraPk < 3) {
 
                 if (indiceGeracoes == 1) {
-                    Pnovo = CRUZAMENTO.ANDduasPopulacoes(P, P, tipoAvaliacao, tracker);
+                    Pnovo = CRUZAMENTO.ANDduasPopulacoes(P, P, tipoAvaliacao);
                     indiceGeracoes++;
                 } else {
-                    Pnovo = CRUZAMENTO.uniforme2Pop(P, mutationTax, tipoAvaliacao, tracker);
+                    Pnovo = CRUZAMENTO.uniforme2Pop(P, mutationTax, tipoAvaliacao);
                 }
 
                 PAsterisco = SELECAO.selecionarMelhores(P, Pnovo);
                 P = PAsterisco;
 
-                int novosK = SELECAO.salvandoRelevantesDPmais(Pk, PAsterisco, similaridade, tracker);//Atualizando Pk e coletando número de indivíduos substituídos
+                int novosK = SELECAO.salvandoRelevantesDPmais(Pk, PAsterisco, similaridade);//Atualizando Pk e coletando número de indivíduos substituídos
                 // Registrar Pk atualizado
 
                 double tempo = (System.currentTimeMillis() - t0) / 1000.0; //time
@@ -111,7 +109,6 @@ public class SSDPmais {
 
             numeroGeracoesSemMelhoraPk = 0;
         }
-        tracker.close();
         return Pk;
     }
 
@@ -197,7 +194,6 @@ public class SSDPmais {
         long t0 = System.currentTimeMillis(); //Initial time
         //Pattern[] p = SSDPmais.run(k, tipoAvaliacao, similaridade);
         Pattern[] p = SSDPmais.run(k, tipoAvaliacao, similaridade, maxTimeSecond);
-        double tempo = (System.currentTimeMillis() - t0) / 1000.0; //time
 
         System.out.println("\n### Top-k DPs:");
         Avaliador.imprimirRegras(p, k);

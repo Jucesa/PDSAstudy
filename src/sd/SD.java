@@ -14,7 +14,7 @@ import evolucionario.INICIALIZAR;
 import java.io.IOException;
 import java.util.*;
 
-import newSD.logging.PatternTracker;
+import evolucionario.SELECAO;
 import simulacoes.DPinfo;
 
 /**
@@ -33,7 +33,6 @@ public class SD {
         }
         Pattern[] I = INICIALIZAR.D1(tipoAvaliacao);
         Arrays.sort(I);
-        PatternTracker trackerK = new PatternTracker(I, I.length/100, Const.SAIDA_LOG, D.nomeBase, "SD", k);
         boolean houveMelhoria = true;
         while(houveMelhoria){
             //System.out.println("\nCiclo: " + ciclo++);
@@ -52,7 +51,6 @@ public class SD {
                     HashSet<Integer> itens = (HashSet<Integer>)beam[i].getItens().clone();
                     itens.add(D.itensUtilizados[j]);
                     Pattern p = new Pattern(itens, tipoAvaliacao);
-                    trackerK.registrar(p, "BEAM", new ArrayList<>());
                     double suporte = (double)p.getTP()/(double)D.numeroExemplos;
                     boolean ehRelevante = ehRelevante(p, newBeam);
                     double qualidade = p.getQualidade();
@@ -73,22 +71,14 @@ public class SD {
         }
 
         System.arraycopy(newBeam, 0, Pk, 0, Pk.length); 
-        for(Pattern p : Pk){
-            trackerK.registrarK(p, "K", new ArrayList<>());
-        }
 
-        trackerK.close();
+
 
         return Pk;
     }
 
     private static boolean ehRelevante(Pattern p, Pattern[] newBeam) {
-        for (Pattern pattern : newBeam) {
-            if (pattern.sobrescreve(p) != -1) {
-                return false;
-            }
-        }
-        return true;
+        return SELECAO.ehRelevante(p, newBeam);
     }
     
     

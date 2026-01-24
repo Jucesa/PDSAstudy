@@ -15,33 +15,19 @@ import java.util.Random;
 public class Const {
     public final static String ALGORITMO_SSDP = "SSDP";
 
-    public final static String ALGORITMO_FixIgnAceitat3 = "FixIgnAceitat3";
-    public final static String ALGORITMO_FixIgnAceitat5 = "FixIgnAceitat5";
-    public final static String ALGORITMO_FixIgnAceitat10 = "FixIgnAceitat10";
-    public final static String ALGORITMO_FixIgnAceitat20 = "FixIgnAceitat20";
+    // --- NOVOS ALGORITMOS (JSD V1 - Melhorias Isoladas) ---
+    public final static String ALGORITMO_JSD_ENTROPY = "JSD_Entropy";
+    public final static String ALGORITMO_JSD_INC = "JSD_Inc";
+    public final static String ALGORITMO_JSD_QUAD = "JSD_Quad";
 
-    public final static String ALGORITMO_FixIgnNaoAceitat3 = "FixIgnNaoAceitat3";
-    public final static String ALGORITMO_FixIgnNaoAceitat5 = "FixIgnNaoAceitat5";
-    public final static String ALGORITMO_FixIgnNaoAceitat10 = "FixIgnNaoAceitat10";
-    public final static String ALGORITMO_FixIgnNaoAceitat20 = "FixIgnNaoAceitat20";
-
-    public final static String ALGORITMO_FixSortAceitat3 = "FixSortAceitat3";
-    public final static String ALGORITMO_FixSortAceitat5 = "FixSortAceitat5";
-    public final static String ALGORITMO_FixSortAceitat10 = "FixSortAceitat10";
-    public final static String ALGORITMO_FixSortAceitat20 = "FixSortAceitat20";
-
-    public final static String ALGORITMO_FixSortNaoAceitat3 = "FixSortNaoAceitat3";
-    public final static String ALGORITMO_FixSortNaoAceitat5 = "FixSortNaoAceitat5";
-    public final static String ALGORITMO_FixSortNaoAceitat10 = "FixSortNaoAceitat10";
-    public final static String ALGORITMO_FixSortNaoAceitat20 = "FixSortNaoAceitat20";
-
-    public final static String ALGORITMO_VarIgnAceita = "VarIgnAceita";
-    public final static String ALGORITMO_VarIgnNaoAceita = "VarIgnNaoAceita";
-    public final static String ALGORITMO_VarSortAceita = "VarSortAceita";
-    public final static String ALGORITMO_VarSortNaoAceita = "VarSortNaoAceita";
-
+    // --- NOVOS ALGORITMOS (JSD V2 - Combinados) ---
+    public final static String ALGORITMO_JSD_V2 = "JSD_V2";
+    public final static String ALGORITMO_JSD_V2_TORNEIO = "JSD_V2_Torneio";
+    public final static String ALGORITMO_JSD_V2_ROLETA = "JSD_V2_Roleta";
+    public final static String ALGORITMO_JSD_V2_ESTRATIFICADA = "JSD_V2_Estratificada";
 
     public final static String ALGORITMO_SSDPmais = "SSDPplus";
+    public final static String ALGORITMO_SSDPmais_E = "SSDPplus-E";
     public final static String ALGORITMO_SSDPmaisS00 = "SSDPplusS00";
     public final static String ALGORITMO_SSDPmaisS10 = "SSDPplusS10";
     public final static String ALGORITMO_SSDPmaisS20 = "SSDPplusS20";
@@ -55,45 +41,16 @@ public class Const {
     public final static String ALGORITMO_SSDPmaisS100 = "SSDPplusS100";
     
     public final static String ALGORITMO_GulosoDplus = "GulosoDplus";
-    public final static String ALGORITMO_GulosoDplus4D = "GulosoDplus4D";
-    
-//    public final static String ALGORITMO_SSDPmais90Pbest = "SSDPplusS90Pbest";
-//    public final static String ALGORITMO_SSDPmais50Pbest = "SSDPplusS50Pbest";
-//    public final static String ALGORITMO_SSDPmais10Pbest = "SSDPplusS10Pbest";
-//    public final static String ALGORITMO_SSDPmais90Prb = "SSDPplusS90Prb";
-//    public final static String ALGORITMO_SSDPmais50Prb = "SSDPplusS50Prb";
-//    public final static String ALGORITMO_SSDPmais10Prb = "SSDPplusS10Prb";
-//    
-//    public final static String ALGORITMO_SSDPmaisPbest = "SSDPplusPbest";
-//    public final static String ALGORITMO_SSDPmaisPbest2k = "SSDPplusPbest2k";
-//    public final static String ALGORITMO_SSDPmaisPbest2kselection = "SSDPplusPbest2kS";
-//    public final static String ALGORITMO_SSDPmaisRandom50Best50 = "SSDPplusPrb";
-//    public final static String ALGORITMO_SSDPmaisRandom50Best502k = "SSDPplusPrb2k";
-//    public final static String ALGORITMO_SSDPmaisRandom50Best502kselection = "SSDPplusPrb2kS";
-//
-
-    // ===================== PBSD FIXO =====================
-    public final static String ALGORITMO_PBSD_TF_5   = "PBSD_TF_5";
-    public final static String ALGORITMO_PBSD_TF_10  = "PBSD_TF_10";
-    public final static String ALGORITMO_PBSD_TF_20  = "PBSD_TF_20";
-    public final static String ALGORITMO_PBSD_TF_50  = "PBSD_TF_50";
-    public final static String ALGORITMO_PBSD_TF_100 = "PBSD_TF_100";
-
-    // ===================== PBSD VARIÁVEL =====================
-    public final static String ALGORITMO_PBSD_TV_1   = "PBSD_TV_1";
-    public final static String ALGORITMO_PBSD_TV_5   = "PBSD_TV_5";
-    public final static String ALGORITMO_PBSD_TV_10  = "PBSD_TV_10";
-
-
-
-
-    public final static String ALGORITMO_SSDPmaisRandom = "SSDPmaisRandom";
        
     public final static String ALGORITMO_SD = "SD";
     public final static String ALGORITMO_SD_RSS = "SDrss";
     
     public final static String ALGORITMO_ExaustivoK = "ExaustivoK";
     public final static String ALGORITMO_Aleatorio1M = "Aleatorio1M";
+    public final static String ALGORITMO_Aleatorio1Mp1 = "Aleatorio1Mp1";
+    public final static String ALGORITMO_Aleatorio1Mp10 = "Aleatorio1Mp10";
+    public final static String ALGORITMO_Aleatorio1Mp50 = "Aleatorio1Mp50";
+
     public final static String ALGORITMO_Aleatorio2M = "Aleatorio2M";
     
     public final static String METRICA_QUALIDADE = "Qualidade";
@@ -129,9 +86,7 @@ public class Const {
     public final static int PATTERN_OR = 0;
     public final static int PATTERN_AND = 1;
     public static final String SAIDA_LOG = "C:/Users/jc160/IdeaProjects/PDSAstudy/pastas/logRelatorioK";
-    //    C:\IdeaProjects\PDSAstudy\pastas\indice.txt
     private final static String CAMINHO_PC = "/Users/jc160/IdeaProjects/PDSAstudy";
-    //private final static String CAMINHO_PC = "C:/Users/11305645413/IdeaProjects/PDSAstudy";
     public final static String CAMINHO_BASES = CAMINHO_PC+"/pastas/Bases BIO 10/";
     public final static String CAMINHO_BASES_EDITADAS = CAMINHO_PC+"/pastas/bases_editadas/";
     public final static String CAMINHO_RESULTADOS = CAMINHO_PC+"/pastas/resultados/";

@@ -7,7 +7,6 @@ package evolucionario;
 
 import dp.Const;
 import dp.Pattern;
-import newSD.logging.PatternTracker;
 
 import java.util.*;
 
@@ -30,58 +29,102 @@ public class CRUZAMENTO {
      * @param tipoAvaliacao int - tipo de função de avaliação utilizada
      * @return Pattern[] - nova população
      */
-    public static Pattern[] uniforme2Pop(Pattern[] P, double taxaMutacao, String tipoAvaliacao, PatternTracker tracker){
+    public static Pattern[] uniforme2Pop(Pattern[] P, double taxaMutacao, String tipoAvaliacao) {
         int tamanhoPopulacao = P.length;
         Pattern[] Pnovo = new Pattern[tamanhoPopulacao];
-        
-        //int[] selecao = SELECAO.proporcao25_75(tamanhoPopulacao);
-        int[] selecao = SELECAO.torneioBinario(tamanhoPopulacao, P);           
-        
+
+        // Garante que temos pais suficientes para gerar a nova população 1 para 1
+        int[] selecao = SELECAO.torneioBinario(tamanhoPopulacao, P);
+
         int indiceSelecao = 0;
         int indicePnovo = 0;
-        while(indicePnovo < Pnovo.length-1){//Cuidado para não acessar índices maiores que o tamanho do array                
-            if(Const.random.nextDouble() > taxaMutacao){
+
+        // Loop principal
+        while (indicePnovo < tamanhoPopulacao) {
+
+            // Verifica se ainda cabem 2 filhos E se há 2 pais disponíveis para cruzamento
+            boolean podeCruzar = (indicePnovo < tamanhoPopulacao - 1) && (indiceSelecao < selecao.length - 1);
+
+            // Lógica de decisão: Cruzamento vs Mutação
+            // Se random > mutação, tentamos cruzar. Caso contrário, ou se não der pra cruzar, mutamos.
+            if (podeCruzar && Const.random.nextDouble() > taxaMutacao) {
                 Pattern p1 = P[selecao[indiceSelecao]];
-                Pattern p2 = P[selecao[indiceSelecao+1]];
+                Pattern p2 = P[selecao[indiceSelecao + 1]];
 
                 Pattern[] novos = CRUZAMENTO.uniforme2Individuos(p1, p2, tipoAvaliacao);
 
-                List<Pattern> gene = new ArrayList<>();
-                gene.add(p1);
-                gene.add(p2);
-
-                tracker.registrar(novos[0], "CruzamentoUniforme",gene);
-                tracker.registrar(novos[1], "CruzamentoUniforme", gene);
-
-                indiceSelecao += 2;
-                Pnovo[indicePnovo++] = novos[0];                    
-                if(indicePnovo < Pnovo.length){
-                    Pnovo[indicePnovo++] = novos[1];                                                        
+                Pnovo[indicePnovo++] = novos[0];
+                // Verificação redundante mas segura
+                if (indicePnovo < tamanhoPopulacao) {
+                    Pnovo[indicePnovo++] = novos[1];
                 }
-                
-            }else{
-                Pattern filho = MUTACAO.unGeneTrocaOuAdicionaOuExclui(P[selecao[indiceSelecao++]],  tipoAvaliacao);
-                List<Pattern> gene = new ArrayList<>();
-                gene.add(P[selecao[indiceSelecao]]);
-                tracker.registrar(filho, "Mutacao",  gene);
-                Pnovo[indicePnovo++] = filho;
-            }         
-        
-        //Imprimir itens nos idivíduos gerados via cruzamento
-//        DPinfo.imprimirItens(P[selecao[indiceSelecao-2]]);
-//        DPinfo.imprimirItens(P[selecao[indiceSelecao-1]]);
-//        System.out.print("->");
-//        DPinfo.imprimirItens(Pnovo[indicePnovo-2]);
-//        DPinfo.imprimirItens(Pnovo[indicePnovo-1]);
-//        System.out.println();
+                indiceSelecao += 2; // Consumimos 2 pais
+
+            } else {
+                // Mutação (ou fallback se só sobrou 1 espaço)
+                if (indiceSelecao < selecao.length) {
+                    Pattern pai = P[selecao[indiceSelecao]];
+                    Pattern filho = MUTACAO.unGeneTrocaOuAdicionaOuExclui(pai, tipoAvaliacao);
+                    Pnovo[indicePnovo++] = filho;
+                    indiceSelecao++; // Consumimos 1 pai
+                } else {
+                    // Caso extremo de segurança: acabaram os pais selecionados?
+                    // Clona ou gera aleatório, ou break.
+                    break;
+                }
+            }
         }
-        
-        if(indicePnovo < Pnovo.length){
-            Pnovo[indicePnovo] = MUTACAO.unGeneTrocaOuAdicionaOuExclui(P[selecao[indiceSelecao++]], tipoAvaliacao);                                                                   
-        }
-                     
+
         return Pnovo;
-        
+    }
+
+    public static Pattern[] uniforme2PopE(Pattern[] P, double taxaMutacao, String tipoAvaliacao) {
+        int tamanhoPopulacao = P.length;
+        Pattern[] Pnovo = new Pattern[tamanhoPopulacao];
+
+        // Garante que temos pais suficientes para gerar a nova população 1 para 1
+        int[] selecao = SELECAO.torneioBinario(tamanhoPopulacao, P);
+
+        int indiceSelecao = 0;
+        int indicePnovo = 0;
+
+        // Loop principal
+        while (indicePnovo < tamanhoPopulacao) {
+
+            // Verifica se ainda cabem 2 filhos E se há 2 pais disponíveis para cruzamento
+            boolean podeCruzar = (indicePnovo < tamanhoPopulacao - 1) && (indiceSelecao < selecao.length - 1);
+
+            // Lógica de decisão: Cruzamento vs Mutação
+            // Se random > mutação, tentamos cruzar. Caso contrário, ou se não der pra cruzar, mutamos.
+            if (podeCruzar && Const.random.nextDouble() > taxaMutacao) {
+                Pattern p1 = P[selecao[indiceSelecao]];
+                Pattern p2 = P[selecao[indiceSelecao + 1]];
+
+                Pattern[] novos = CRUZAMENTO.uniforme2Individuos(p1, p2, tipoAvaliacao);
+
+                Pnovo[indicePnovo++] = novos[0];
+                // Verificação redundante mas segura
+                if (indicePnovo < tamanhoPopulacao) {
+                    Pnovo[indicePnovo++] = novos[1];
+                }
+                indiceSelecao += 2; // Consumimos 2 pais
+
+            } else {
+                // Mutação (ou fallback se só sobrou 1 espaço)
+                if (indiceSelecao < selecao.length) {
+                    Pattern pai = P[selecao[indiceSelecao]];
+                    Pattern filho = MUTACAO.unGeneTrocaOuAdicionaOuExclui(pai, tipoAvaliacao);
+                    Pnovo[indicePnovo++] = filho;
+                    indiceSelecao++; // Consumimos 1 pai
+                } else {
+                    // Caso extremo de segurança: acabaram os pais selecionados?
+                    // Clona ou gera aleatório, ou break.
+                    break;
+                }
+            }
+        }
+
+        return Pnovo;
     }
         
     /**Cruzamento gera dois indivíduos a partir do método uniforme
@@ -129,7 +172,7 @@ public class CRUZAMENTO {
      * @param tipoAvaliacao int - tipo de função de avaliação
      * @return Pattern[] - nova população
      */
-    public static Pattern[] ANDduasPopulacoes(Pattern[] P1, Pattern[] P2, String tipoAvaliacao, PatternTracker tracker){
+    public static Pattern[] ANDduasPopulacoes(Pattern[] P1, Pattern[] P2, String tipoAvaliacao){
         int tamanhoPopulacao = P1.length;
         Pattern[] Pnovo = new Pattern[tamanhoPopulacao];
         int[] indicesP1 = SELECAO.torneioBinario(tamanhoPopulacao, P1);
@@ -139,11 +182,7 @@ public class CRUZAMENTO {
             Pattern p1 = P1[indicesP1[i]];
             Pattern p2 = P2[indicesP2[i]];
             Pattern filho = CRUZAMENTO.AND(p1, p2, tipoAvaliacao);
-            List<Pattern> gene = new ArrayList<>();
-            gene.add(p1);
-            gene.add(p2);
-            tracker.registrar(filho, "AND", gene);
-            Pnovo[i] = CRUZAMENTO.AND(p1, p2, tipoAvaliacao);
+            Pnovo[i] = filho;
         }
         return Pnovo;
     }
@@ -213,8 +252,8 @@ public class CRUZAMENTO {
         Pattern[] Pnovo = new Pattern[tamanhoPopulacao];
                
         int indicePnovo = 0;
-        int indiceP1 = 0;
-        int indiceP2 = 0;
+        int indiceP1;
+        int indiceP2;
         while(indicePnovo < Pnovo.length){//Cuidado para não acessar índices maiores que o tamanho do array                     
             if(Const.random.nextDouble() > taxaMutacao){                                    
                 //Obtendo índices do indivíduos que serão cruzados
@@ -326,12 +365,12 @@ public class CRUZAMENTO {
         int dimensaoExigida = PD[0].getItens().size()+1;
         Pattern[] Pnovo = new Pattern[tamanhoPopulacao];
         int indicePNovo = 0;
-        int indiceP1 = 0;
-        int indicePD = 0;
+        int indiceP1;
+        int indicePD;
         while(indicePNovo < Pnovo.length){
             if(Const.random.nextDouble() > 0.75){//75% de chanses de ser selecionado um dos 25% mais relevantes
-                indiceP1 = Const.random.nextInt(P1.length*1/4);
-                indicePD = Const.random.nextInt(PD.length*1/4);
+                indiceP1 = Const.random.nextInt(P1.length /4);
+                indicePD = Const.random.nextInt(PD.length /4);
             }else{//25% de chanses de ser selecionado totalmente aleatório
                 indiceP1 = Const.random.nextInt(P1.length);
                 indicePD = Const.random.nextInt(PD.length);

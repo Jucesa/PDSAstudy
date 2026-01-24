@@ -7,18 +7,79 @@
 package sd;
 
 import dp.Avaliador;
+import dp.Const;
 import dp.D;
 import dp.Pattern;
 import evolucionario.SELECAO;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Random;
+
+import java.util.*;
 
 /**
  *
  * @author tarcisio_pontes
  */
 public class Aleatorio {
+
+
+    public static Pattern[] run(String tipoAvaliacao, int k, double similaridade, int maximoTentativas, double p){
+        int[] itens = D.itensUtilizados;
+        Pattern[] Pk =  new Pattern[k];
+
+        // Inicializa Pk com padrões vazios
+        for (int i = 0; i < Pk.length; i++) {
+            Pk[i] = new Pattern(new HashSet<>(), tipoAvaliacao);
+        }
+
+        // 1. Buffer reutilizável (evita criar milhões de HashSets)
+        HashSet<Integer> bufferCandidato = new HashSet<>();
+        double r;
+
+        for(int i = 0; i < maximoTentativas; i++){
+            // Limpa o buffer para reuso (operação barata)
+            bufferCandidato.clear();
+
+            // Preenche o buffer
+            for (int iten : itens) {
+                r = Const.random.nextDouble();
+                if (r < p) {
+                    bufferCandidato.add(iten);
+                }
+            }
+
+            // Evita processar vazio
+            if(bufferCandidato.isEmpty()) continue;
+
+            // 2. Cria a "Sonda": Um Pattern temporário que aponta para o buffer.
+            // O objetivo dele é apenas calcular a qualidade (getQualidade).
+            // Nota: Assumimos que o construtor do Pattern calcula a qualidade imediatamente.
+            Pattern sonda = new Pattern(bufferCandidato, tipoAvaliacao);
+
+            // 3. OTIMIZAÇÃO DE MEMÓRIA (Gatekeeper):
+            // Verificamos se vale a pena tentar salvar.
+            // Só entramos no IF se a sonda for melhor que o pior elemento atual de Pk.
+            // (Assumindo que Pk está ordenado do melhor para o pior e o último é o pior)
+            if (sonda.getQualidade() > Pk[Pk.length - 1].getQualidade()) {
+
+                // 4. ALOCAÇÃO TARDIA (Lazy Allocation):
+                // Agora sim, gastamos memória. Criamos um novo HashSet independente do buffer.
+                HashSet<Integer> itensPermanentes = new HashSet<>(bufferCandidato);
+
+                // Criamos o candidato oficial com os itens clonados
+                Pattern candidatoOficial = new Pattern(itensPermanentes, tipoAvaliacao);
+
+                // Chama o mét0do de salvamento original (sem alterações nele)
+                SELECAO.salvandoRelevanteDPmaisSingle(Pk, candidatoOficial, similaridade);
+
+                // Nota: O mét0do SELECAO deve reordenar Pk para que Pk[Pk.length-1]
+                // continue sendo o pior na próxima iteração.
+            }
+
+            // Se não entrou no IF, 'sonda' é descartada e 'bufferCandidato' é limpo na próxima volta.
+            // Nenhuma memória permanente foi criada para o candidato ruim.
+        }
+
+        return Pk;
+    }
     //Máximo até dimensão 3
     public static Pattern [] run(String tipoAvaliacao, int k, int tempoMaximoMinutos){
         Pattern[] DP1k = new Pattern[k];
@@ -49,7 +110,6 @@ public class Aleatorio {
             }
         }
         double tempoDimensao1 = (double) (System.currentTimeMillis() - t0Dimensao1)/1000.0;
-        System.out.println("");
         Avaliador.imprimir(DP1k, k);
         System.out.println("\n1D");
         System.out.println("Qualidade média: " + Avaliador.avaliarMedia(DP1k, k));
@@ -92,7 +152,6 @@ public class Aleatorio {
             }             
         }        
         double tempoDimensao2 = (double) (System.currentTimeMillis() - t0Dimensao2)/1000.0;
-        System.out.println("");     
         Avaliador.imprimir(DP2k, k);
         System.out.println("\n2D");
         System.out.println("Qualidade média: " + Avaliador.avaliarMedia(DP2k, k));
@@ -115,8 +174,7 @@ public class Aleatorio {
             if(tempoTotal > tempoMaximoMinutos){
                 //Caso não tenha inicializado a busca na dimensão 3, retornar os melhores entre DP1 e DP2. Mas ao mesmo tempo garantir que pelo menos o DP2 será realizado até o fim!
                 if(DP3k[DP3k.length-1] == null){
-                    Pattern[] Pk = SELECAO.selecionarMelhoresDistintos(DP1k, DP2k);                       
-                    return Pk;
+                    return SELECAO.selecionarMelhoresDistintos(DP1k, DP2k);
                 }
                 else{
                     break;
@@ -148,7 +206,6 @@ public class Aleatorio {
         }       
         
         double tempoDimensao3 = (double) (System.currentTimeMillis() - t0Dimensao3)/1000.0;        
-        System.out.println("");
         Avaliador.imprimir(DP3k, k);
         System.out.println("3D");
         System.out.println("Qualidade média: " + Avaliador.avaliarMedia(DP3k, k));
@@ -156,12 +213,9 @@ public class Aleatorio {
         System.out.println("Tentativas: " + quantidadeTestes);
         System.out.println("Tempo: " + tempoDimensao3);
 
-        Pattern[] Pk = SELECAO.selecionarMelhoresDistintos(DP1k, DP2k, DP3k);               
-        
-        return Pk;
+        return SELECAO.selecionarMelhoresDistintos(DP1k, DP2k, DP3k);
     }
 
-    
     public static Pattern [] runNtentativas(String tipoAvaliacao, int k, int numeroTentativas, int numeroMaximoDimensoes){
         Pattern[] DPk = new Pattern[k];
         Pattern[] DPtentativas = new Pattern[numeroTentativas];
@@ -179,7 +233,7 @@ public class Aleatorio {
         Arrays.sort(DPtentativas);
                 
         for(int i = 0; i < k; i++){
-            DPk[i] = new Pattern(new HashSet<Integer>(), tipoAvaliacao);
+            DPk[i] = new Pattern(new HashSet<>(), tipoAvaliacao);
         }
         
         int indiceDPk = 0;
