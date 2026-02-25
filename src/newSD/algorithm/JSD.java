@@ -19,7 +19,6 @@ import java.util.Arrays;
 
 public abstract class JSD {
 
-
     // P = d1 com item de torneio de 5
     // P = roleta
     // P = roleta com faixa
@@ -401,26 +400,30 @@ public abstract class JSD {
         return P;
     }
 
-    public static double calcularEntropiaPopulacao(Pattern[] P) {
-        Map<Integer, Integer> frequenciaItens = new HashMap<>();
+    protected double calcularEntropiaPopulacao(Pattern[] populacao, int inicio) {
+        if (populacao == null || populacao.length == 0) return 0.0;
+
+        HashMap<Integer, Integer> frequenciaItens = new HashMap<>();
         int totalItens = 0;
 
-        // 1. Contar frequência de cada item na população
-        for (Pattern pat : P) {
-            if (pat == null) continue;
-            for (Integer item : pat.getItens()) {
-                frequenciaItens.put(item, frequenciaItens.getOrDefault(item, 0) + 1);
-                totalItens++;
+        // Contabiliza a frequência de cada item na população ativa
+        for (int i = inicio; i < populacao.length; i++) {
+            if (populacao[i] != null) {
+                for (Integer item : populacao[i].getItens()) {
+                    frequenciaItens.put(item, frequenciaItens.getOrDefault(item, 0) + 1);
+                    totalItens++;
+                }
             }
         }
 
         if (totalItens == 0) return 0.0;
 
-        // 2. Calcular Entropia: H = -Sum(p_i * log2(p_i))
         double entropia = 0.0;
+        double log2 = Math.log(2);
+
         for (Integer count : frequenciaItens.values()) {
-            double p_i = (double) count / totalItens;
-            entropia -= p_i * (Math.log(p_i) / Math.log(2));
+            double p = (double) count / totalItens;
+            entropia -= p * (Math.log(p) / log2);
         }
 
         return entropia;

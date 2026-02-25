@@ -20,11 +20,22 @@ public class Const {
     public final static String ALGORITMO_JSD_INC = "JSD_Inc";
     public final static String ALGORITMO_JSD_QUAD = "JSD_Quad";
 
+    public static final String ALGORITMO_ENTROPY_INC = "JSD_Entropy_Inc";
+    public static final String ALGORITMO_JSD_ENTROPY_QUAD = "JSD_Entropy_Quad";
+    public static final String ALGORITMO_JSD_INC_QUAD = "JSD_Inc_Quad";
+
+
     // --- NOVOS ALGORITMOS (JSD V2 - Combinados) ---
     public final static String ALGORITMO_JSD_V2 = "JSD_V2";
     public final static String ALGORITMO_JSD_V2_TORNEIO = "JSD_V2_Torneio";
     public final static String ALGORITMO_JSD_V2_ROLETA = "JSD_V2_Roleta";
     public final static String ALGORITMO_JSD_V2_ESTRATIFICADA = "JSD_V2_Estratificada";
+
+    public final static String ALGORITMO_JSD_V2_PKplus = "ALGORITMO_JSD_V2_PKplus";
+    public final static String ALGORITMO_JSD_V2_PKplus_ESTRATIFICADA = "ALGORITMO_JSD_V2_PKplus_ESTRATIFICADA";
+    public final static String ALGORITMO_JSD_V2_PKplus_ROLETA = "ALGORITMO_JSD_V2_PKplus_ROLETA";
+    public final static String ALGORITMO_JSD_V2_PKplus_TORNEIOP = "ALGORITMO_JSD_V2_PKplus_TORNEIOP";
+
 
     public final static String ALGORITMO_SSDPmais = "SSDPplus";
     public final static String ALGORITMO_SSDPmais_E = "SSDPplus-E";

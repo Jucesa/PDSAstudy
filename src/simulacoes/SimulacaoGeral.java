@@ -23,7 +23,14 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Scanner;
 
+import newSD.algorithm.fixo.v1.combos.JSD_ENTROPY_INC;
+import newSD.algorithm.fixo.v1.combos.JSD_ENTROPY_QUAD;
+import newSD.algorithm.fixo.v1.combos.JSD_INC_QUAD;
 import newSD.algorithm.fixo.v2.JSD_V2_TORNEIOP;
+import newSD.algorithm.fixo.v3.JSD_V2_PKplus;
+import newSD.algorithm.fixo.v3.JSD_V2_PKplus_ESTRATIFICADA;
+import newSD.algorithm.fixo.v3.JSD_V2_PKplus_ROLETA;
+import newSD.algorithm.fixo.v3.JSD_V2_PKplus_TORNEIOP;
 import sd.Aleatorio;
 import sd.ExaustivoK;
 import sd.SD;
@@ -188,7 +195,6 @@ public class SimulacaoGeral {
                             case Const.ALGORITMO_Aleatorio2M:
                                 p = Aleatorio.runNtentativas(tipoAvaliacao, k, 2000000, 10);
                                 break;
-
                             case Const.ALGORITMO_SD:
                                 SD sd = new SD();
                                 double min_suport = Math.sqrt(D.numeroExemplosPositivo) / D.numeroExemplos;
@@ -237,6 +243,7 @@ public class SimulacaoGeral {
                             case Const.ALGORITMO_GulosoDplus:
                                 p = GulosoD.run(k, D.numeroExemplosPositivo, tipoAvaliacao, 0.7, tempoMaximoSegundosAlgoritmos, 4);
                                 break;
+
                             case Const.ALGORITMO_JSD_ENTROPY:
                                 newSD.algorithm.fixo.v1.JSD_ENTROPY jsdEntropy = new newSD.algorithm.fixo.v1.JSD_ENTROPY();
                                 p = jsdEntropy.run(50, 0.5, tipoAvaliacao, k);
@@ -251,7 +258,18 @@ public class SimulacaoGeral {
                                 newSD.algorithm.fixo.v1.JSD_QUAD jsdQuad = new newSD.algorithm.fixo.v1.JSD_QUAD();
                                 p = jsdQuad.run(50, 0.5, tipoAvaliacao, k);
                                 break;
-
+                            case Const.ALGORITMO_JSD_ENTROPY_QUAD:
+                                JSD_ENTROPY_QUAD jsdEntropyQuad = new JSD_ENTROPY_QUAD();
+                                p = jsdEntropyQuad.run(50, 0.5, tipoAvaliacao, k);
+                                break;
+                            case Const.ALGORITMO_JSD_INC_QUAD:
+                                 JSD_INC_QUAD jsdIncQuad = new JSD_INC_QUAD();
+                                 p = jsdIncQuad.run(50, 0.5, tipoAvaliacao, k);
+                                 break;
+                            case Const.ALGORITMO_ENTROPY_INC:
+                                JSD_ENTROPY_INC jsdEntropyInc = new JSD_ENTROPY_INC();
+                                p = jsdEntropyInc.run(50, 0.5, tipoAvaliacao, k);
+                                break;
                             case Const.ALGORITMO_JSD_V2:
                                 newSD.algorithm.fixo.v2.JSD_V2 jsdV2 = new newSD.algorithm.fixo.v2.JSD_V2();
                                 p = jsdV2.run(50, 0.5, tipoAvaliacao, k);
@@ -271,8 +289,29 @@ public class SimulacaoGeral {
                                 newSD.algorithm.fixo.v2.JSD_V2_ESTRATIFICADA jsdV2Estrat = new newSD.algorithm.fixo.v2.JSD_V2_ESTRATIFICADA();
                                 p = jsdV2Estrat.run(50, 0.5, tipoAvaliacao, k);
                                 break;
+
+                            case ALGORITMO_JSD_V2_PKplus:
+                                JSD_V2_PKplus jsdV2mais = new JSD_V2_PKplus();
+                                p = jsdV2mais.run(50, 0.5, tipoAvaliacao, k);
+                                break;
+
+                            case ALGORITMO_JSD_V2_PKplus_TORNEIOP:
+                                JSD_V2_PKplus_TORNEIOP jsdV2Torneiomais = new JSD_V2_PKplus_TORNEIOP();
+                                p = jsdV2Torneiomais.run(50, 0.5, tipoAvaliacao, k);
+                                break;
+
+                            case Const.ALGORITMO_JSD_V2_PKplus_ROLETA:
+                                JSD_V2_PKplus_ROLETA jsdV2Roletamais = new JSD_V2_PKplus_ROLETA();
+                                p = jsdV2Roletamais.run(50, 0.5, tipoAvaliacao, k);
+                                break;
+
+                            case Const.ALGORITMO_JSD_V2_PKplus_ESTRATIFICADA:
+                                JSD_V2_PKplus_ESTRATIFICADA jsdV2Estratmais = new JSD_V2_PKplus_ESTRATIFICADA();
+                                p = jsdV2Estratmais.run(50, 0.5, tipoAvaliacao, k);
+                                break;
                             case ALGORITMO_SSDPmais_E:
-                                p = SSDPmais_E.run(k, tipoAvaliacao, 0.5, tempoMaximoSegundosAlgoritmos);break;
+                                p = SSDPmais_E.run(k, tipoAvaliacao, 0.5, tempoMaximoSegundosAlgoritmos);
+                                break;
                         }
 
                         double tempo = (System.currentTimeMillis() - t0)/1000.0;
@@ -307,18 +346,33 @@ public class SimulacaoGeral {
         Pattern.medidaSimilaridade = Const.SIMILARIDADE_JACCARD;
 
         int[] K = {10};
-        int numeroRepeticoes = 20;
+        int numeroRepeticoes = 10;
         double  tempoMaximoSegundosAlgoritmos = 60;
 
         String[] algoritmos = {
                 Const.ALGORITMO_JSD_ENTROPY,
                 Const.ALGORITMO_JSD_INC,
                 Const.ALGORITMO_JSD_QUAD,
+
+                ALGORITMO_JSD_INC_QUAD,
+                ALGORITMO_JSD_ENTROPY_QUAD,
+                ALGORITMO_JSD_INC_QUAD,
+
                 Const.ALGORITMO_JSD_V2,
                 Const.ALGORITMO_JSD_V2_TORNEIO,
                 Const.ALGORITMO_JSD_V2_ROLETA,
                 Const.ALGORITMO_JSD_V2_ESTRATIFICADA,
+
+                Const.ALGORITMO_JSD_V2_PKplus,
+                Const.ALGORITMO_JSD_V2_PKplus_ESTRATIFICADA,
+                Const.ALGORITMO_JSD_V2_PKplus_ROLETA,
+                Const.ALGORITMO_JSD_V2_PKplus_TORNEIOP,
+
                 ALGORITMO_SSDPmaisS50,
+                ALGORITMO_Aleatorio1Mp1,
+                ALGORITMO_Aleatorio1Mp10,
+                ALGORITMO_Aleatorio1Mp50,
+                ALGORITMO_SSDPmais_E,
                 ALGORITMO_SD
         };
 //

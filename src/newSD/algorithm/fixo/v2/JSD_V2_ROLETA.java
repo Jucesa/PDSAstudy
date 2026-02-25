@@ -64,15 +64,6 @@ public class JSD_V2_ROLETA extends JSD {
 
                 Pattern paux = CRUZAMENTO.AND(pai1, pai2, tipoAvaliacao);
 
-                // MUTAÇÃO DE GENERALIZAÇÃO
-                if (paux.getItens().size() > 2 && Const.random.nextDouble() < 0.10) {
-                    HashSet<Integer> itensMutados = new HashSet<>(paux.getItens());
-                    Integer itemRemover = itensMutados.iterator().next();
-                    itensMutados.remove(itemRemover);
-                    Pattern pMutado = new Pattern(itensMutados, tipoAvaliacao);
-                    if (pMutado.getQualidade() >= paux.getQualidade()) paux = pMutado;
-                }
-
                 double qualidadeMelhorPai = Math.max(pai1.getQualidade(), pai2.getQualidade());
                 boolean ganhoSignificativo = paux.getQualidade() > (qualidadeMelhorPai * (1.0 + MIN_GANHO_RELATIVO));
                 boolean ehNovo = !paux.ehIgual(pai1) && !paux.ehIgual(pai2);
@@ -88,7 +79,7 @@ public class JSD_V2_ROLETA extends JSD {
                 int intervaloManutencao = Math.max(100, P.length / 5);
                 if (Pattern.numeroIndividuosGerados % intervaloManutencao == 0) {
                     Arrays.sort(P, limiar, P.length);
-                    if (calcularEntropiaPopulacao(P) <= entropiaMinima) diversidadeSuficiente = false;
+                    if (calcularEntropiaPopulacao(P, limiar) <= entropiaMinima) diversidadeSuficiente = false;
 
                     int novosK = SELECAO.salvandoRelevantesDPmais(Pk, Arrays.copyOfRange(P, limiar, P.length), similaridade);
                     if (novosK == 0) numeroGeracoesSemMelhoraPk += (intervaloManutencao / 100);

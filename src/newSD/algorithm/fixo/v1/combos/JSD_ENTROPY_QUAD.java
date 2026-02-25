@@ -1,4 +1,4 @@
-package newSD.algorithm.fixo.v1;
+package newSD.algorithm.fixo.v1.combos;
 
 import dp.Const;
 import dp.Pattern;
@@ -6,11 +6,12 @@ import evolucionario.CRUZAMENTO;
 import evolucionario.INICIALIZAR;
 import evolucionario.SELECAO;
 import newSD.algorithm.JSD;
-import java.io.IOException;
-import java.util.*;
-import java.util.Arrays;
 
-public class JSD_ENTROPY extends JSD {
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
+
+public class JSD_ENTROPY_QUAD extends JSD {
     @Override
     protected int calcularTamanhoTorneio(int tamanhoTorneio, int saltoTorneio, int tamanhoP) {
         return tamanhoTorneio;
@@ -51,7 +52,8 @@ public class JSD_ENTROPY extends JSD {
 
             while (diversidadeSuficiente && numeroGeracoesSemMelhoraPk < 1000 && limiar > 0) {
                 double r = Const.random.nextDouble();
-                double Pth = (double) limiar / P.length; // Pth Linear (Padrão)
+                double razaoLimiar = (double) limiar / P.length;
+                double Pth = Math.pow(razaoLimiar, 2);
 
                 Pattern pai1 = P[SELECAO.torneioN(P, tamanhoTorneio, 0, limiar)];
                 Pattern pai2 = (r < Pth) ? P[SELECAO.torneioN(P, tamanhoTorneio, 0, limiar)]

@@ -1,5 +1,6 @@
 package newSD.algorithm.fixo.v3;
 
+import dp.Avaliador;
 import dp.Const;
 import dp.Pattern;
 import evolucionario.CRUZAMENTO;
@@ -64,31 +65,59 @@ public class JSD_V2_PKplus_TORNEIOP extends JSD {
 
                 Pattern paux = CRUZAMENTO.AND(pai1, pai2, tipoAvaliacao);
 
-                // MUTAÇÃO DE GENERALIZAÇÃO
-                if (paux.getItens().size() > 2 && Const.random.nextDouble() < 0.10) {
-                    HashSet<Integer> itensMutados = new HashSet<>(paux.getItens());
-                    Integer itemRemover = itensMutados.iterator().next();
-                    itensMutados.remove(itemRemover);
-                    Pattern pMutado = new Pattern(itensMutados, tipoAvaliacao);
-                    if (pMutado.getQualidade() >= paux.getQualidade()) paux = pMutado;
-                }
-
                 double qualidadeMelhorPai = Math.max(pai1.getQualidade(), pai2.getQualidade());
                 boolean ganhoSignificativo = paux.getQualidade() > (qualidadeMelhorPai * (1.0 + MIN_GANHO_RELATIVO));
                 boolean ehNovo = !paux.ehIgual(pai1) && !paux.ehIgual(pai2);
 
+                // Se o filho for bom o suficiente para entrar na competição
                 if (ehNovo && ganhoSignificativo && paux.getQualidade() >= P[limiar - 1].getQualidade()) {
+
+                    // Se ainda temos espaço para expandir (não comeu todos os triviais)
                     if (limiar > 1) {
-                        P[limiar - 1] = paux;
-                        limiar--;
-                        if (numeroGeracoesSemMelhoraPk > 0) numeroGeracoesSemMelhoraPk--;
+
+                        boolean substituiuPorSimilaridade = false;
+                        int indicePiorPmais = -1;
+                        double piorQualidadePmais = Double.MAX_VALUE;
+
+                        // 1. Varredura na região "Pmais" (de limiar até o fim)
+                        // Objetivo: Manter diversidade (Similaridade) e encontrar o pior para substituição se necessário
+                        for (int i = limiar; i < P.length; i++) {
+
+                            if (Avaliador.similaridade(paux, P[i], Const.SIMILARIDADE_JACCARD) >= similaridade) {
+                                // Achou alguém muito parecido! Competição direta.
+                                if (paux.getQualidade() > P[i].getQualidade()) {
+                                    P[i] = paux; // Substitui o similar mais fraco
+                                    if (numeroGeracoesSemMelhoraPk > 0) numeroGeracoesSemMelhoraPk--;
+                                }
+                                substituiuPorSimilaridade = true;
+                                break; // Encontrou o "clone", resolveu, sai do loop.
+                            }
+
+                            // Rastreia o pior indivíduo desta região (caso precisemos dele futuramente,
+                            // embora aqui a gente prefira expandir o limiar)
+                            if (P[i].getQualidade() < piorQualidadePmais) {
+                                piorQualidadePmais = P[i].getQualidade();
+                                indicePiorPmais = i;
+                            }
+                        }
+
+                        // 2. Se NÃO substituiu ninguém por similaridade (é um padrão Distinto)
+                        if (!substituiuPorSimilaridade) {
+                            // Estratégia: O padrão é novo e distinto.
+                            // Expandimos a fronteira do Pmais "comendo" um item trivial.
+
+                            P[limiar - 1] = paux; // Coloca na fronteira
+                            limiar--; // Expande a região Pmais (empurra a fronteira para cima)
+
+                            if (numeroGeracoesSemMelhoraPk > 0) numeroGeracoesSemMelhoraPk--;
+                        }
                     }
                 }
 
                 int intervaloManutencao = Math.max(100, P.length / 5);
                 if (Pattern.numeroIndividuosGerados % intervaloManutencao == 0) {
                     Arrays.sort(P, limiar, P.length);
-                    if (calcularEntropiaPopulacao(P) <= entropiaMinima) diversidadeSuficiente = false;
+                    if (calcularEntropiaPopulacao(P, limiar) <= entropiaMinima) diversidadeSuficiente = false;
 
                     int novosK = SELECAO.salvandoRelevantesDPmais(Pk, Arrays.copyOfRange(P, limiar, P.length), similaridade);
                     if (novosK == 0) numeroGeracoesSemMelhoraPk += (intervaloManutencao / 100);

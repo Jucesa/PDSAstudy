@@ -1,4 +1,4 @@
-package newSD.algorithm.fixo.v1;
+package newSD.algorithm.fixo.v1.combos;
 
 import dp.Const;
 import dp.Pattern;
@@ -6,11 +6,12 @@ import evolucionario.CRUZAMENTO;
 import evolucionario.INICIALIZAR;
 import evolucionario.SELECAO;
 import newSD.algorithm.JSD;
-import java.io.IOException;
-import java.util.*;
-import java.util.Arrays;
 
-public class JSD_ENTROPY extends JSD {
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
+
+public class JSD_INC_QUAD extends JSD {
     @Override
     protected int calcularTamanhoTorneio(int tamanhoTorneio, int saltoTorneio, int tamanhoP) {
         return tamanhoTorneio;
@@ -36,8 +37,8 @@ public class JSD_ENTROPY extends JSD {
         int numeroGeracoesSemMelhoraPk = 0;
         int tamanhoTorneio = 2;
 
-        // MELHORIA ISOLADA: Entropia
-        double entropiaMinima = 0.4;
+        // MELHORIA ISOLADA: Ganho Relativo
+        final double MIN_GANHO_RELATIVO = 0.0001;
 
         for (int numeroReinicializacoes = 0; numeroReinicializacoes < 3; numeroReinicializacoes++) {
             if (numeroReinicializacoes > 0) {
@@ -47,11 +48,10 @@ public class JSD_ENTROPY extends JSD {
             }
             tamanhoTorneio = calcularTamanhoTorneio(tamanhoTorneio, paramTorneio, tamanhoPopulacao);
 
-            boolean diversidadeSuficiente = true; // Controle da Entropia
-
-            while (diversidadeSuficiente && numeroGeracoesSemMelhoraPk < 1000 && limiar > 0) {
+            while (numeroGeracoesSemMelhoraPk < 1000 && limiar > 0) {
                 double r = Const.random.nextDouble();
-                double Pth = (double) limiar / P.length; // Pth Linear (Padrão)
+                double razaoLimiar = (double) limiar / P.length;
+                double Pth = Math.pow(razaoLimiar, 2);
 
                 Pattern pai1 = P[SELECAO.torneioN(P, tamanhoTorneio, 0, limiar)];
                 Pattern pai2 = (r < Pth) ? P[SELECAO.torneioN(P, tamanhoTorneio, 0, limiar)]
@@ -59,7 +59,13 @@ public class JSD_ENTROPY extends JSD {
 
                 Pattern paux = CRUZAMENTO.AND(pai1, pai2, tipoAvaliacao);
 
-                if (paux.getQualidade() >= P[limiar - 1].getQualidade()) {
+                // LÓGICA DE GANHO SIGNIFICATIVO
+                double qualidadeMelhorPai = Math.max(pai1.getQualidade(), pai2.getQualidade());
+                boolean ganhoSignificativo = paux.getQualidade() > (qualidadeMelhorPai * (1.0 + MIN_GANHO_RELATIVO));
+                boolean ehNovo = !paux.ehIgual(pai1) && !paux.ehIgual(pai2);
+
+                // Só substitui se houver ganho real e for novo
+                if (ehNovo && ganhoSignificativo && paux.getQualidade() >= P[limiar - 1].getQualidade()) {
                     if (limiar > 1) {
                         P[limiar - 1] = paux;
                         limiar--;
@@ -68,12 +74,6 @@ public class JSD_ENTROPY extends JSD {
 
                 if (Pattern.numeroIndividuosGerados % P.length == 0) {
                     Arrays.sort(P, limiar, P.length);
-
-                    // CHECAGEM DE ENTROPIA
-                    if (calcularEntropiaPopulacao(P, limiar) <= entropiaMinima) {
-                        diversidadeSuficiente = false; // Força parada e reinicialização
-                    }
-
                     int novosK = SELECAO.salvandoRelevantesDPmais(Pk, Arrays.copyOfRange(P, limiar, P.length), similaridade);
                     if (novosK == 0) numeroGeracoesSemMelhoraPk++;
                     else numeroGeracoesSemMelhoraPk = 0;

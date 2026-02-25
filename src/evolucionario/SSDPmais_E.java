@@ -37,8 +37,6 @@ public class SSDPmais_E {
         }
 
         Arrays.sort(P);
-
-
         SELECAO.salvandoRelevantesDPmais(Pk, P, similaridade);
 
         int numeroGeracoesSemMelhoraPk = 0;
@@ -77,7 +75,6 @@ public class SSDPmais_E {
                 if (maxTimeSegundos > 0 && tempo > maxTimeSegundos) {
                     return Pk;
                 }
-
 
                 //Definição automática de mutação de crossover
                 if (novosK > 0 && mutationTax > 0.0) {//Aumenta cruzamento se Pk estiver evoluindo e se mutação não não for a menos possível.

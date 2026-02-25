@@ -83,6 +83,73 @@ public class MUTACAO {
         
         return pNovo;
     }
+
+    public static Pattern unGeneTrocaOuAdicionaOuExcluiE(Pattern p, String tipoAvaliacao) {
+        // 1. CLONAGEM IMEDIATA (Segurança)
+        // Nunca modifique o set original com p.getItens().add(), pois pode afetar o pai na população
+        HashSet<Integer> novoItens = new HashSet<>(p.getItens());
+
+        // 2. PROTEÇÃO CONTRA ENTRADA VAZIA
+        // Se por algum milagre chegou vazio, conserta agora
+        if (novoItens.isEmpty()) {
+            novoItens.add(D.itensUtilizados[Const.random.nextInt(D.numeroItensUtilizados)]);
+            return new Pattern(novoItens, tipoAvaliacao);
+        }
+
+        double r = Const.random.nextDouble();
+
+        // --- LÓGICA DE MUTAÇÃO SEGURA ---
+
+        if (r < 0.33) {
+            // CASO 1: EXCLUSÃO (Com proteção)
+            // Só podemos excluir se sobrar pelo menos 1 item depois (ou seja, tamanho atual > 1)
+            if (novoItens.size() > 1) {
+                // Converte para array/lista para remover aleatório eficientemente
+                Integer[] arrayItens = novoItens.toArray(new Integer[0]);
+                int indiceExcluir = Const.random.nextInt(arrayItens.length);
+                novoItens.remove(arrayItens[indiceExcluir]);
+            } else {
+                // Se tem apenas 1 item, NÃO EXCLUI.
+                // Forçamos uma Troca ou Adição para não devolver vazio.
+                // Aqui escolhi Adicionar para variar.
+                adicionarItemAleatorio(novoItens);
+            }
+
+        } else if (r > 0.66) {
+            // CASO 2: TROCA (Swap)
+            // Remove um e adiciona outro. Seguro para tamanho 1 (fica tamanho 1).
+
+            // Remove um aleatório
+            Integer[] arrayItens = novoItens.toArray(new Integer[0]);
+            int indiceExcluir = Const.random.nextInt(arrayItens.length);
+            novoItens.remove(arrayItens[indiceExcluir]);
+
+            // Adiciona um novo diferente do que já tem
+            adicionarItemAleatorio(novoItens);
+
+        } else {
+            // CASO 3: ADIÇÃO
+            adicionarItemAleatorio(novoItens);
+        }
+
+        return new Pattern(novoItens, tipoAvaliacao);
+    }
+
+    // Método auxiliar para evitar repetição de código e loops infinitos
+    private static void adicionarItemAleatorio(HashSet<Integer> itens) {
+        // Proteção contra Loop Infinito:
+        // Se o padrão já tiver TODOS os itens possíveis, não dá pra adicionar.
+        if (itens.size() >= D.numeroItensUtilizados) return;
+
+        int tamanhoOriginal = itens.size();
+        // Tenta adicionar até conseguir (HashSet não aceita duplicados)
+        // Limite de 100 tentativas para não travar o sistema
+        for (int i = 0; i < 100; i++) {
+            int itemCandidato = D.itensUtilizados[Const.random.nextInt(D.numeroItensUtilizados)];
+            itens.add(itemCandidato);
+            if (itens.size() > tamanhoOriginal) break; // Sucesso
+        }
+    }
  
     /**Gerar uma população a partir de mutações unGeneTrocaOuAdicionaOuExclui
      * 33% das vezes troca (objetivo: explorar aleatoriamente espaço D)

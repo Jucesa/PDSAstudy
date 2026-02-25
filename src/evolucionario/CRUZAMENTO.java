@@ -78,54 +78,54 @@ public class CRUZAMENTO {
         return Pnovo;
     }
 
-    public static Pattern[] uniforme2PopE(Pattern[] P, double taxaMutacao, String tipoAvaliacao) {
-        int tamanhoPopulacao = P.length;
-        Pattern[] Pnovo = new Pattern[tamanhoPopulacao];
+        public static Pattern[] uniforme2PopE(Pattern[] P, double taxaMutacao, String tipoAvaliacao) {
+            int tamanhoPopulacao = P.length;
+            Pattern[] Pnovo = new Pattern[tamanhoPopulacao];
 
-        // Garante que temos pais suficientes para gerar a nova população 1 para 1
-        int[] selecao = SELECAO.torneioBinario(tamanhoPopulacao, P);
+            // Garante que temos pais suficientes para gerar a nova população 1 para 1
+            int[] selecao = SELECAO.torneioBinario(tamanhoPopulacao, P);
 
-        int indiceSelecao = 0;
-        int indicePnovo = 0;
+            int indiceSelecao = 0;
+            int indicePnovo = 0;
 
-        // Loop principal
-        while (indicePnovo < tamanhoPopulacao) {
+            // Loop principal
+            while (indicePnovo < tamanhoPopulacao) {
 
-            // Verifica se ainda cabem 2 filhos E se há 2 pais disponíveis para cruzamento
-            boolean podeCruzar = (indicePnovo < tamanhoPopulacao - 1) && (indiceSelecao < selecao.length - 1);
+                // Verifica se ainda cabem 2 filhos E se há 2 pais disponíveis para cruzamento
+                boolean podeCruzar = (indicePnovo < tamanhoPopulacao - 1) && (indiceSelecao < selecao.length - 1);
 
-            // Lógica de decisão: Cruzamento vs Mutação
-            // Se random > mutação, tentamos cruzar. Caso contrário, ou se não der pra cruzar, mutamos.
-            if (podeCruzar && Const.random.nextDouble() > taxaMutacao) {
-                Pattern p1 = P[selecao[indiceSelecao]];
-                Pattern p2 = P[selecao[indiceSelecao + 1]];
+                // Lógica de decisão: Cruzamento vs Mutação
+                // Se random > mutação, tentamos cruzar. Caso contrário, ou se não der pra cruzar, mutamos.
+                if (podeCruzar && Const.random.nextDouble() > taxaMutacao) {
+                    Pattern p1 = P[selecao[indiceSelecao]];
+                    Pattern p2 = P[selecao[indiceSelecao + 1]];
 
-                Pattern[] novos = CRUZAMENTO.uniforme2Individuos(p1, p2, tipoAvaliacao);
+                    Pattern[] novos = CRUZAMENTO.uniforme2IndividuosE(p1, p2, tipoAvaliacao);
 
-                Pnovo[indicePnovo++] = novos[0];
-                // Verificação redundante mas segura
-                if (indicePnovo < tamanhoPopulacao) {
-                    Pnovo[indicePnovo++] = novos[1];
-                }
-                indiceSelecao += 2; // Consumimos 2 pais
+                    Pnovo[indicePnovo++] = novos[0];
+                    // Verificação redundante mas segura
+                    if (indicePnovo < tamanhoPopulacao) {
+                        Pnovo[indicePnovo++] = novos[1];
+                    }
+                    indiceSelecao += 2; // Consumimos 2 pais
 
-            } else {
-                // Mutação (ou fallback se só sobrou 1 espaço)
-                if (indiceSelecao < selecao.length) {
-                    Pattern pai = P[selecao[indiceSelecao]];
-                    Pattern filho = MUTACAO.unGeneTrocaOuAdicionaOuExclui(pai, tipoAvaliacao);
-                    Pnovo[indicePnovo++] = filho;
-                    indiceSelecao++; // Consumimos 1 pai
                 } else {
-                    // Caso extremo de segurança: acabaram os pais selecionados?
-                    // Clona ou gera aleatório, ou break.
-                    break;
+                    // Mutação (ou fallback se só sobrou 1 espaço)
+                    if (indiceSelecao < selecao.length) {
+                        Pattern pai = P[selecao[indiceSelecao]];
+                        Pattern filho = MUTACAO.unGeneTrocaOuAdicionaOuExcluiE(pai, tipoAvaliacao);
+                        Pnovo[indicePnovo++] = filho;
+                        indiceSelecao++; // Consumimos 1 pai
+                    } else {
+                        // Caso extremo de segurança: acabaram os pais selecionados?
+                        // Clona ou gera aleatório, ou break.
+                        break;
+                    }
                 }
             }
-        }
 
-        return Pnovo;
-    }
+            return Pnovo;
+        }
         
     /**Cruzamento gera dois indivíduos a partir do método uniforme
      *@author Tarcísio Pontes
@@ -160,6 +160,62 @@ public class CRUZAMENTO {
         return novosPattern;           
     }
 
+    public static Pattern[] uniforme2IndividuosE(Pattern p1, Pattern p2, String tipoAvaliacao) {
+        Pattern[] novosPattern = new Pattern[2];
+        HashSet<Integer> novoItens1 = new HashSet<>();
+        HashSet<Integer> novoItens2 = new HashSet<>();
+
+        // --- FASE 1: Distribuição Probabilística (Cruzamento Uniforme) ---
+
+        // Distribui genes do Pai 1
+        for (Integer item : p1.getItens()) {
+            if (Const.random.nextBoolean()) {
+                novoItens1.add(item);
+            } else {
+                novoItens2.add(item);
+            }
+        }
+
+        // Distribui genes do Pai 2
+        for (Integer item : p2.getItens()) {
+            if (Const.random.nextBoolean()) {
+                novoItens1.add(item);
+            } else {
+                novoItens2.add(item);
+            }
+        }
+
+        // --- FASE 2: Reparação Genética (Herança de Emergência) ---
+
+        // Correção Filho 1
+        if (novoItens1.isEmpty()) {
+            // 1. Sorteia qual pai vai doar o gene de salvamento (P1 ou P2)
+            Pattern doador = Const.random.nextBoolean() ? p1 : p2;
+
+            // 2. Pega um item aleatório desse pai
+            Integer[] itensDoador = doador.getItens().toArray(new Integer[0]);
+            if (itensDoador.length > 0) {
+                novoItens1.add(itensDoador[Const.random.nextInt(itensDoador.length)]);
+            }
+        }
+
+        // Correção Filho 2
+        if (novoItens2.isEmpty()) {
+            // 1. Sorteia qual pai vai doar
+            Pattern doador = Const.random.nextBoolean() ? p1 : p2;
+
+            // 2. Pega item aleatório
+            Integer[] itensDoador = doador.getItens().toArray(new Integer[0]);
+            if (itensDoador.length > 0) {
+                novoItens2.add(itensDoador[Const.random.nextInt(itensDoador.length)]);
+            }
+        }
+
+        novosPattern[0] = new Pattern(novoItens1, tipoAvaliacao);
+        novosPattern[1] = new Pattern(novoItens2, tipoAvaliacao);
+
+        return novosPattern;
+    }
     
     /////////////////////////////////////////////////////////////
     // AND                 //////////////////////////////////////
