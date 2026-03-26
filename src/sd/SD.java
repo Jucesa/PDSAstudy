@@ -10,12 +10,11 @@ import dp.Const;
 import dp.D;
 import dp.Pattern;
 import dp.RSS;
-import evolucionario.SSDP;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Random;
+import evolucionario.INICIALIZAR;
+import java.io.IOException;
+import java.util.*;
+
+import evolucionario.SELECAO;
 import simulacoes.DPinfo;
 
 /**
@@ -23,18 +22,18 @@ import simulacoes.DPinfo;
  * @author Marianna
  */
 public class SD {
-    public Pattern[] run(double min_support, int beam_width, String tipoAvaliacao, int k, double maxTimeSegundos){
+    public Pattern[] run(double min_support, int beam_width, String tipoAvaliacao, int k, double maxTimeSegundos) throws IOException {
         long t0 = System.currentTimeMillis(); //Initial time
         Pattern[] beam = new Pattern[beam_width];
         Pattern[] newBeam = new Pattern[beam_width];
         Pattern[] Pk = new Pattern[k];
         for(int i = 0; i < beam_width; i++){
-            beam[i] = new Pattern(new HashSet<Integer>(), tipoAvaliacao);
-            newBeam[i] = new Pattern(new HashSet<Integer>(), tipoAvaliacao);
+            beam[i] = new Pattern(new HashSet<>(), tipoAvaliacao);
+            newBeam[i] = new Pattern(new HashSet<>(), tipoAvaliacao);
         }
-        
+        Pattern[] I = INICIALIZAR.D1(tipoAvaliacao);
+        Arrays.sort(I);
         boolean houveMelhoria = true;
-        int ciclo = 0;
         while(houveMelhoria){
             //System.out.println("\nCiclo: " + ciclo++);
             double qualidadePiorAntes = beam[beam_width-1].getQualidade();
@@ -46,14 +45,14 @@ public class SD {
                     System.arraycopy(newBeam, 0, Pk, 0, Pk.length);
                     return Pk;
                 }
-                
+
                 for(int j = 0; j < D.numeroItensUtilizados; j++){
                     
                     HashSet<Integer> itens = (HashSet<Integer>)beam[i].getItens().clone();
                     itens.add(D.itensUtilizados[j]);
                     Pattern p = new Pattern(itens, tipoAvaliacao);
                     double suporte = (double)p.getTP()/(double)D.numeroExemplos;
-                    boolean ehRelevante = this.ehRelevante(p, newBeam);
+                    boolean ehRelevante = ehRelevante(p, newBeam);
                     double qualidade = p.getQualidade();
                     //Se valor de qualidade é menor que zero ou menor que a qualidade do pior Pattern
                     //ele não será incluido no newBean
@@ -69,28 +68,21 @@ public class SD {
                 houveMelhoria = false;
             }
             beam = newBeam.clone();
-//            Avaliador.imprimir(beam, beam_width);
-            //System.out.println("Qualidade média: " + Avaliador.avaliarMedia(beam,k));
-//            System.out.println("Cobertura +: " + Avaliador.coberturaPositivo(beam,k));
-        }        
-        //Arrays.sort(beam);
-        
+        }
+
         System.arraycopy(newBeam, 0, Pk, 0, Pk.length); 
-        
+
+
+
         return Pk;
     }
 
     private static boolean ehRelevante(Pattern p, Pattern[] newBeam) {
-        for(int i = 0; i < newBeam.length; i++){
-            if(newBeam[i].sobrescreve(p) != -1){
-                return false;
-            }
-        }
-        return true;
+        return SELECAO.ehRelevante(p, newBeam);
     }
     
     
-    public static void main(String[] args) throws FileNotFoundException{
+    public static void main(String[] args) throws IOException {
            
          //====================================================================
         //== CONFIGURATION ===================================================

@@ -8,6 +8,7 @@ package evolucionario;
 import dp.Avaliador;
 import dp.Const;
 import dp.Pattern;
+import newSD.logging.PatternTracker;
 
 import java.util.*;
 
@@ -299,8 +300,6 @@ public class SELECAO {
      * indivíduos NÃO distintos! Ou seja, não controla se indivíduos são
      * distintos.
      *@author Tarcísio Lucas
-     * @param P PAtterns[]
-     * @param Pnovo PAtterns[]
      * @return Pattern[]
      * @since 27/01/2016
      * @version 1.0
@@ -404,11 +403,195 @@ public class SELECAO {
         }
         return novosk;
     }
-    
-    
-    
-    
-    
+    public static int salvandoRelevantesDPmais(
+            Pattern[] Pk,
+            Pattern[] PAsterisco,
+            double similaridadeLimite,
+            PatternTracker tracker
+    ) {
+        int novosk = 0;
+
+        for (int i = 0; i < PAsterisco.length &&
+                (PAsterisco[i].getQualidade() > Pk[Pk.length - 1].getQualidade()); i++) {
+
+            Pattern p_PAsterisco = PAsterisco[i];
+
+            for (int j = 0; j < Pk.length; j++) {
+
+                Pattern p_Pk = Pk[j];
+
+                double similaridade = Avaliador.similaridade(
+                        p_Pk, p_PAsterisco, Pattern.medidaSimilaridade
+                );
+
+                if (similaridade >= similaridadeLimite) {
+
+                    // (1) Igual → descartar
+                    if (p_PAsterisco.ehIgual(p_Pk)) {
+                        break;
+                    }
+
+                    // (3) Caso exista similaridade mas Pk é melhor → absorve p*
+                    if (p_Pk.getQualidade() > p_PAsterisco.getQualidade() ||
+                            (p_Pk.getQualidade() == p_PAsterisco.getQualidade() &&
+                                    p_Pk.getItens().size() <= p_PAsterisco.getItens().size())
+                    ) {
+
+                        boolean aproveitadoEmPk = p_Pk.addSimilar(p_PAsterisco);
+
+                        if (aproveitadoEmPk) {
+                            tracker.registrarK(p_PAsterisco, "PK-ABSORVIDO");
+                            novosk++;
+                        }
+
+                    } else {
+                        // (3.2) p* melhor → substitui posição j e p* entra no Pk
+                        Pk[j] = new Pattern(
+                                p_PAsterisco.getItens(),
+                                p_PAsterisco.getTipoAvaliacao()
+                        );
+
+                        // adiciona p_Pk como similar ao novo p*
+                        Pk[j].addSimilar(p_Pk);
+
+                        // Recursivamente adiciona similares do p_Pk também
+                        if (p_Pk.getSimilares() != null) {
+                            SELECAO.salvandoRelevantesDPmais(
+                                    Pk,
+                                    p_Pk.getSimilares(),
+                                    similaridadeLimite,
+                                    tracker
+                            );
+                        }
+
+                        Arrays.sort(Pk);
+                        novosk++;
+
+                        // ✔ Registrar entrada real no Pk
+                        tracker.registrarK(p_PAsterisco, "PK-REPLACE");
+
+                    }
+
+                    break; // parar laço sobre Pk
+                }
+
+                // (2) Não é similar a ninguém → substitui último
+                else if (j == Pk.length - 1) {
+
+                    Pk[Pk.length - 1] = new Pattern(
+                            p_PAsterisco.getItens(),
+                            p_PAsterisco.getTipoAvaliacao()
+                    );
+
+                    Arrays.sort(Pk);
+                    novosk++;
+
+                    // ✔ Registrar novo padrão não-similar
+                    tracker.registrarK(p_PAsterisco, "PK-NEW");
+                }
+            }
+        }
+
+        return novosk;
+    }
+
+
+
+    /**
+     * Atualiza Pk com um único indivíduo (pNovo) de melhor qualidade se ele for relevante.
+     * Segue a mesma lógica de salvandoRelevantesDPmais, mas processa apenas um Pattern.
+     *
+     * @param Pk Pattern[] - top-k indivíduos ordenados e distintos
+     * @param pNovo Pattern - indivíduo candidato a ser incluído
+     * @param similaridadeLimite double - limite mínimo de similaridade
+     * @return int - número de substituições realizadas em Pk
+     */
+    public static int salvandoRelevanteDPmaisSingle(Pattern[] Pk, Pattern pNovo, double similaridadeLimite) {
+        int novosk = 0;
+
+        double piorQualidade = Pk[Pk.length - 1].getQualidade();
+        // Verifica se ainda estamos na fase de preenchimento (tem buraco ou NaN no fim)
+        boolean temEspacoVazio = Double.isNaN(piorQualidade) || Pk[Pk.length - 1].getItens().isEmpty();
+
+        // Só tenta inserir se for melhor que o pior, OU se houver um espaço vazio
+        if (temEspacoVazio || pNovo.getQualidade() > piorQualidade) {
+
+            for (int j = 0; j < Pk.length; j++) {
+                Pattern p_Pk = Pk[j];
+
+                // FIX 1: Detectar slots vazios/NaN e preencher imediatamente
+                if (p_Pk.getItens().isEmpty() || Double.isNaN(p_Pk.getQualidade())) {
+                    Pk[j] = new Pattern(pNovo.getItens(), pNovo.getTipoAvaliacao());
+                    ordenarPkSeguro(Pk); // Sort imune a NaNs
+                    novosk++;
+                    break; // Inseriu no buraco, pode sair
+                }
+
+                double similaridade = Avaliador.similaridade(p_Pk, pNovo, Pattern.medidaSimilaridade);
+
+                if (similaridade >= similaridadeLimite) { // (1) Houve similaridade
+                    if (pNovo.ehIgual(p_Pk)) {
+                        break; // descarta duplicado
+                    } else {
+                        // (3.1) se p_Pk melhor que pNovo
+                        if (p_Pk.getQualidade() > pNovo.getQualidade() ||
+                                (p_Pk.getQualidade() == pNovo.getQualidade() &&
+                                        p_Pk.getItens().size() <= pNovo.getItens().size())) {
+                            boolean aproveitadoEmPk = p_Pk.addSimilar(pNovo);
+                            if (aproveitadoEmPk) novosk++;
+                        } else {
+                            // (3.2) pNovo melhor — substitui e reordena
+                            Pk[j] = new Pattern(pNovo.getItens(), pNovo.getTipoAvaliacao());
+                            Pk[j].addSimilar(p_Pk);
+
+                            if (p_Pk.getSimilares() != null) {
+                                salvandoRelevantesDPmais(Pk, p_Pk.getSimilares(), similaridadeLimite);
+                            }
+                            ordenarPkSeguro(Pk);
+                            novosk++;
+                        }
+                        break; // terminou comparação com Pk[j]
+                    }
+
+                } else if (j == Pk.length - 1) {
+                    // (2) não similar a nenhum -> substitui o último
+                    Pk[Pk.length - 1] = new Pattern(pNovo.getItens(), pNovo.getTipoAvaliacao());
+                    ordenarPkSeguro(Pk);
+                    novosk++;
+                }
+            }
+        }
+
+        return novosk;
+    }
+
+    // FIX 2: Método auxiliar imune a quebras na ordenação.
+// Substitui o Arrays.sort(Pk) tradicional que quebra ao encontrar NaNs.
+    public static void ordenarPkSeguro(Pattern[] Pk) {
+        Arrays.sort(Pk, new Comparator<Pattern>() {
+            @Override
+            public int compare(Pattern p1, Pattern p2) {
+                boolean p1Vazio = (p1 == null || p1.getItens().isEmpty());
+                boolean p2Vazio = (p2 == null || p2.getItens().isEmpty());
+
+                if (p1Vazio && p2Vazio) return 0;
+                if (p1Vazio) return 1;  // Joga vazios pro final
+                if (p2Vazio) return -1;
+
+                double q1 = p1.getQualidade();
+                double q2 = p2.getQualidade();
+
+                if (Double.isNaN(q1) && Double.isNaN(q2)) return 0;
+                if (Double.isNaN(q1)) return 1;  // Joga NaNs pro final
+                if (Double.isNaN(q2)) return -1;
+
+                return Double.compare(q2, q1); // Decrescente
+            }
+        });
+    }
+
+
+
     /**
      * Retorna se um Pattern P é inédito em relação a um Conjunto de patterns.
      * @author Tarcísio Pontes

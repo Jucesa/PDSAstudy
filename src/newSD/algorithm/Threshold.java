@@ -1,4 +1,4 @@
-package newSD;
+package newSD.algorithm;
 
 import dp.Avaliador;
 import dp.Const;
@@ -6,7 +6,6 @@ import dp.D;
 import dp.Pattern;
 import evolucionario.SELECAO;
 import evolucionario.SSDPmais;
-import sd.Aleatorio;
 import sd.SD;
 
 import java.io.FileNotFoundException;
@@ -18,7 +17,6 @@ public class Threshold {
 
     /**
      * Mede a diversidade de um conjunto de padrões.
-     *
      * Diversidade = 1 - média das similaridades entre os pares de padrões
      *
      * @param P - conjunto de padrões
@@ -58,14 +56,15 @@ public class Threshold {
 
         if (r < Pth) {
             // Seleção acima do limiar: faixa 0..limiar-1
-            aux = P[SELECAO.torneioN(P, quantidadeTorneio, 0, limiar - 1)];
+            aux = P[SELECAO.torneioN(P, quantidadeTorneio, 0, limiar)];
         } else {
             // Seleção abaixo do limiar: faixa limiar..P.length-1
-            aux = P[SELECAO.torneioN(P, quantidadeTorneio, limiar, P.length - 1)];
+            aux = P[SELECAO.torneioN(P, quantidadeTorneio, limiar, P.length )];
         }
 
         return aux;
     }
+
     protected static double mediaQualidade(Pattern[] P){
         return Arrays.stream(P)
                 .mapToDouble(Pattern::getQualidade)
@@ -105,12 +104,10 @@ public class Threshold {
         System.out.println("Tamanho médio dos indivíduos: " + mediaTamanho);
     }
 
-
-
     public static void main(String[] args) throws FileNotFoundException {
         Logger logger = Logger.getLogger(Threshold.class.getName());
 
-        String base = "pastas/bases/alon-pn-freq-2.CSV";
+        String base = "pastas/Bases BIO 10/alon-pn-freq-2.CSV";
         D.SEPARADOR = ",";
 
         try {
@@ -120,32 +117,38 @@ public class Threshold {
             return;
         }
 
-        Const.random = new Random(Const.SEEDS[0]); //Seed
+        Const.random = new Random(Const.SEEDS[9]); //Seed
         D.GerarDpDn("p");
 
         //Parameters of the algorithm
         int k = 10;
-        String metricaAvaliacao = Const.METRICA_WRACC;
-        int quantidadeTorneio = 5;
+        String metricaAvaliacao = Const.METRICA_Qg;
+        int quantidadeTorneio = 50;
+        double similaridade = 0.5;
         int passoTorneio = 5;
+//
+//        System.out.println("\n\n\n\nFIXO");
+//        PBSD_FIXO fixo = new PBSD_FIXO();
+//        Pattern[] pk = fixo.run(quantidadeTorneio, similaridade, metricaAvaliacao, k);
+//        Avaliador.imprimirRegras(pk, k);
+//        System.out.println("Testes: " + Pattern.numeroIndividuosGerados);
 
-        System.out.println("\n\n\n\nFIXO");
-        Pattern[] pk = PBSD_FIXO.run(quantidadeTorneio, 0.5, metricaAvaliacao, k, false);
-        Avaliador.imprimirRegras(pk, k);
+////        System.out.println("\n\n\n\nVAR");
+//        PBSD_VAR var  = new PBSD_VAR();
+//        pk = var.run(passoTorneio, similaridade, metricaAvaliacao, k);
+//        Avaliador.imprimirRegras(pk, k);
+//        Pattern.numeroIndividuosGerados = 0;
+//        System.out.println("Testes: " + Pattern.numeroIndividuosGerados);
 
+        System.out.println("\n\n\n\nSSDP+");
+        Pattern[] p = SSDPmais.run(k, metricaAvaliacao, similaridade, 120);
+        Avaliador.imprimirRegras(p, k);
+        System.out.println("Testes: " + Pattern.numeroIndividuosGerados);
 
-        System.out.println("\n\n\nSSDP+");
-        pk = SSDPmais.run(k, metricaAvaliacao, 0.5, 600);
-        Avaliador.imprimirRegras(pk, k);
-
-        System.out.println("\n\n\nSD");
+        System.out.println("\nSD");
         SD sd = new SD();
         double min_suport = Math.sqrt(D.numeroExemplosPositivo) / D.numeroExemplos;
-        pk = sd.run(min_suport, 2*k, metricaAvaliacao, k, 60);
-        Avaliador.imprimirRegras(pk, k);
-
-        System.out.println("\n\n\nAleatorio");
-        pk = Aleatorio.runNtentativas(metricaAvaliacao, k, 1000000, 10);
-        Avaliador.imprimirRegras(pk, k);
+        Pattern[] pk1 = sd.run(min_suport, 2*k, metricaAvaliacao, k, 120);
+        Avaliador.imprimirRegras(pk1, k);
     }
 }

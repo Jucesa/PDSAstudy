@@ -9,10 +9,11 @@ import dp.Avaliador;
 import dp.Const;
 import dp.D;
 import dp.Pattern;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Random;
+
 import simulacoes.DPinfo;
 
 /**
@@ -21,20 +22,20 @@ import simulacoes.DPinfo;
  */
 public class SSDPmais {
 
-    public static Pattern[] run(int k, String tipoAvaliacao, double similaridade, double maxTimeSegundos) {
+    public static Pattern[] run(int k, String tipoAvaliacao, double similaridade, double maxTimeSegundos) throws IOException {
         long t0 = System.currentTimeMillis(); //Initial time
 
         Pattern[] Pk = new Pattern[k];
-        Pattern[] P = null;
+        Pattern[] P;
 
         //Inicializa Pk com indivíduos vazios
         for (int i = 0; i < Pk.length; i++) {
-            Pk[i] = new Pattern(new HashSet<Integer>(), tipoAvaliacao);
+            Pk[i] = new Pattern(new HashSet<>(), tipoAvaliacao);
         }
 
-        //System.out.println("Inicializando população...");
         //Inicializa garantindo que P maior que Pk sempre! em bases pequenas isso nem sempre ocorre
-        Pattern[] Paux = INICIALIZAR.D1(tipoAvaliacao);//P recebe população inicial
+        Pattern[] Paux = INICIALIZAR.D1(tipoAvaliacao); //P recebe população inicial
+
         if (Paux.length < k) {
             P = new Pattern[k];
             for (int i = 0; i < k; i++) {
@@ -50,33 +51,26 @@ public class SSDPmais {
 
         Arrays.sort(P);
 
-        //System.arraycopy(P, 0, Pk, 0, k); //Inicializa Pk com os melhores indivíduos da população inicial
+
         SELECAO.salvandoRelevantesDPmais(Pk, P, similaridade);
 
-//        System.out.println("P0");        
-//        System.out.println("Qualidade média k/P: " + Avaliador.avaliarMedia(Pk,k) + "/" + Avaliador.avaliarMedia(P,P.length));
-//        System.out.println("Dimensão média k/P: " + Avaliador.avaliarMediaDimensoes(Pk,k) + "/" + Avaliador.avaliarMediaDimensoes(P,P.length));        
-//        System.out.println("Cobertura +: " + Avaliador.coberturaPositivo(Pk,k));       
-//        Avaliador.imprimirDimensaoQuantidade(Pk, k, 15);
-//        Avaliador.imprimirDimensaoQuantidade(P, P.length, 15);
         int numeroGeracoesSemMelhoraPk = 0;
         int indiceGeracoes = 1;
 
         //Laço do AG
-        Pattern[] Pnovo = null;
-        Pattern[] PAsterisco = null;
+        Pattern[] Pnovo;
+        Pattern[] PAsterisco;
 
         int tamanhoPopulacao = P.length;
 
-        //System.out.println("Buscas...");
         for (int numeroReinicializacoes = 0; numeroReinicializacoes < 3; numeroReinicializacoes++) {//Controle número de reinicializações
-            //System.out.println("Reinicialização: " + numeroReinicializacoes);
+
             if (numeroReinicializacoes > 0) {
                 P = INICIALIZAR.aleatorio1_D_Pk(tipoAvaliacao, tamanhoPopulacao, Pk);
             }
 
             double mutationTax = 0.4; //Mutação inicia em 0.4. Crossover é sempre 1-mutationTax.
-            //System.out.println("============================");
+
             while (numeroGeracoesSemMelhoraPk < 3) {
 
                 if (indiceGeracoes == 1) {
@@ -85,15 +79,19 @@ public class SSDPmais {
                 } else {
                     Pnovo = CRUZAMENTO.uniforme2Pop(P, mutationTax, tipoAvaliacao);
                 }
+
                 PAsterisco = SELECAO.selecionarMelhores(P, Pnovo);
                 P = PAsterisco;
 
                 int novosK = SELECAO.salvandoRelevantesDPmais(Pk, PAsterisco, similaridade);//Atualizando Pk e coletando número de indivíduos substituídos
+                // Registrar Pk atualizado
+
                 double tempo = (System.currentTimeMillis() - t0) / 1000.0; //time
                 if (maxTimeSegundos > 0 && tempo > maxTimeSegundos) {
                     return Pk;
                 }
-                //System.out.println("Modificações em Pk: " + novosK);
+
+
                 //Definição automática de mutação de crossover
                 if (novosK > 0 && mutationTax > 0.0) {//Aumenta cruzamento se Pk estiver evoluindo e se mutação não não for a menos possível.
                     mutationTax -= 0.2;
@@ -107,36 +105,14 @@ public class SSDPmais {
                 } else {
                     numeroGeracoesSemMelhoraPk = 0;
                 }
-
-                //Impriminto resultados
-                //Avaliador.imprimirRegrasSimilares(Pk,k);
-                //Avaliador.imprimirRegras(Pk,k);
-                //            System.out.println("P" + indiceGeracoes);        
-                //System.out.println("Qualidade média k/P: " + Avaliador.avaliarMedia(Pk,k) + "/" + Avaliador.avaliarMedia(P,P.length));
-                //System.out.println("Dimensão média k/P: " + Avaliador.avaliarMediaDimensoes(Pk,k) + "/" + Avaliador.avaliarMediaDimensoes(P,P.length));        
-                //System.out.println("Cobertura +: " + Avaliador.coberturaPositivo(Pk,k));
-                //            System.out.println("Novos k: " + novosK);
-                //            System.out.println("P" + indiceGeracoes);        
-                //            System.out.println(Avaliador.avaliarMedia(P,P.length));
-                //            System.out.println(Avaliador.avaliarMediaDimensoes(P,P.length));        
-                //            Avaliador.imprimirDimensaoQuantidade(P, P.length, 15);         
-                //                        
-                //            System.out.println("K" + indiceGeracoes);        
-                //            System.out.println(Avaliador.avaliarMedia(Pk,k));
-                //            System.out.println(Avaliador.avaliarMediaDimensoes(Pk,k));        
-                //            Avaliador.imprimirDimensaoQuantidade(Pk, k, 15);
-                //Acompanhamento de taxa de mutação e cruzamento
-                //System.out.println("Melhorias:" + novosK  + ",M:" + mutationTax + ",C:" + (1.0-mutationTax));                         
             }
 
             numeroGeracoesSemMelhoraPk = 0;
         }
-
-        //return Pbest;
         return Pk;
     }
 
-    public static void main(String[] args) throws FileNotFoundException {
+    public static void main(String[] args) throws IOException {
         //====================================================================
         //== CONFIGURATION ===================================================
         //====================================================================
@@ -218,7 +194,6 @@ public class SSDPmais {
         long t0 = System.currentTimeMillis(); //Initial time
         //Pattern[] p = SSDPmais.run(k, tipoAvaliacao, similaridade);
         Pattern[] p = SSDPmais.run(k, tipoAvaliacao, similaridade, maxTimeSecond);
-        double tempo = (System.currentTimeMillis() - t0) / 1000.0; //time
 
         System.out.println("\n### Top-k DPs:");
         Avaliador.imprimirRegras(p, k);

@@ -7,18 +7,91 @@
 package sd;
 
 import dp.Avaliador;
+import dp.Const;
 import dp.D;
 import dp.Pattern;
 import evolucionario.SELECAO;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashSet;
-import java.util.Random;
+import java.util.*;
 
 /**
  *
  * @author tarcisio_pontes
  */
 public class Aleatorio {
+
+    public static Pattern[] run(String tipoAvaliacao, int k, double similaridade, int maximoTentativas, double p) {
+        int[] itens = D.itensUtilizados;
+        Pattern[] Pk = new Pattern[k];
+
+        for (int i = 0; i < Pk.length; i++) {
+            Pk[i] = new Pattern(new HashSet<>(), tipoAvaliacao);
+        }
+
+        HashSet<Integer> bufferCandidato = new HashSet<>();
+
+        for(int i = 0; i < maximoTentativas; i++) {
+            bufferCandidato.clear();
+
+            for (int iten : itens) {
+                if (Const.random.nextDouble() < p) {
+                    bufferCandidato.add(iten);
+                }
+            }
+
+            if(bufferCandidato.isEmpty()) continue;
+
+            Pattern sonda = new Pattern(bufferCandidato, tipoAvaliacao);
+
+            // Gatekeeper rápido para poupar memória na alocação
+            double piorQualidade = Pk[Pk.length - 1].getQualidade();
+            boolean temEspacoVazio = Double.isNaN(piorQualidade) || Pk[Pk.length - 1].getItens().isEmpty();
+
+            if (temEspacoVazio || sonda.getQualidade() > piorQualidade) {
+                HashSet<Integer> itensPermanentes = new HashSet<>(bufferCandidato);
+                Pattern candidatoOficial = new Pattern(itensPermanentes, tipoAvaliacao);
+
+                SELECAO.salvandoRelevanteDPmaisSingle(Pk, candidatoOficial, similaridade);
+            }
+        }
+
+        return Pk;
+    }
+
+    public static Pattern[] runDnp(String tipoAvaliacao, int k, double similaridade, int maximoTentativas, double p) {
+        Pattern[] Pk = new Pattern[k];
+        for (int i = 0; i < k; i++) {
+            Pk[i] = new Pattern(new HashSet<>(), tipoAvaliacao);
+        }
+
+        // Pre-calculate target size to avoid repeated floating point math
+        int targetSize = (int) (D.numeroItensUtilizados * p);
+        if (targetSize <= 0) targetSize = 1; // Ensure we pick at least one item
+
+        // Reusable buffer to avoid creating thousands of HashSet objects
+        HashSet<Integer> bufferCandidato = new HashSet<>(targetSize * 2);
+
+        for (int i = 0; i < maximoTentativas; i++) {
+            bufferCandidato.clear();
+
+            // Filling the buffer
+            while (bufferCandidato.size() < targetSize) {
+                bufferCandidato.add(Const.random.nextInt(D.numeroItensUtilizados));
+            }
+
+            double piorQualidade = Pk[k - 1].getQualidade();
+
+            Pattern candidatoOficial = new Pattern(bufferCandidato, tipoAvaliacao);
+
+            if (Double.isNaN(piorQualidade) || candidatoOficial.getQualidade() > piorQualidade) {
+                SELECAO.salvandoRelevanteDPmaisSingle(Pk, candidatoOficial, similaridade);
+            }
+        }
+        return Pk;
+    }
+
     //Máximo até dimensão 3
     public static Pattern [] run(String tipoAvaliacao, int k, int tempoMaximoMinutos){
         Pattern[] DP1k = new Pattern[k];
@@ -49,7 +122,6 @@ public class Aleatorio {
             }
         }
         double tempoDimensao1 = (double) (System.currentTimeMillis() - t0Dimensao1)/1000.0;
-        System.out.println("");
         Avaliador.imprimir(DP1k, k);
         System.out.println("\n1D");
         System.out.println("Qualidade média: " + Avaliador.avaliarMedia(DP1k, k));
@@ -92,7 +164,6 @@ public class Aleatorio {
             }             
         }        
         double tempoDimensao2 = (double) (System.currentTimeMillis() - t0Dimensao2)/1000.0;
-        System.out.println("");     
         Avaliador.imprimir(DP2k, k);
         System.out.println("\n2D");
         System.out.println("Qualidade média: " + Avaliador.avaliarMedia(DP2k, k));
@@ -115,8 +186,7 @@ public class Aleatorio {
             if(tempoTotal > tempoMaximoMinutos){
                 //Caso não tenha inicializado a busca na dimensão 3, retornar os melhores entre DP1 e DP2. Mas ao mesmo tempo garantir que pelo menos o DP2 será realizado até o fim!
                 if(DP3k[DP3k.length-1] == null){
-                    Pattern[] Pk = SELECAO.selecionarMelhoresDistintos(DP1k, DP2k);                       
-                    return Pk;
+                    return SELECAO.selecionarMelhoresDistintos(DP1k, DP2k);
                 }
                 else{
                     break;
@@ -148,7 +218,6 @@ public class Aleatorio {
         }       
         
         double tempoDimensao3 = (double) (System.currentTimeMillis() - t0Dimensao3)/1000.0;        
-        System.out.println("");
         Avaliador.imprimir(DP3k, k);
         System.out.println("3D");
         System.out.println("Qualidade média: " + Avaliador.avaliarMedia(DP3k, k));
@@ -156,12 +225,9 @@ public class Aleatorio {
         System.out.println("Tentativas: " + quantidadeTestes);
         System.out.println("Tempo: " + tempoDimensao3);
 
-        Pattern[] Pk = SELECAO.selecionarMelhoresDistintos(DP1k, DP2k, DP3k);               
-        
-        return Pk;
+        return SELECAO.selecionarMelhoresDistintos(DP1k, DP2k, DP3k);
     }
 
-    
     public static Pattern [] runNtentativas(String tipoAvaliacao, int k, int numeroTentativas, int numeroMaximoDimensoes){
         Pattern[] DPk = new Pattern[k];
         Pattern[] DPtentativas = new Pattern[numeroTentativas];
@@ -179,7 +245,7 @@ public class Aleatorio {
         Arrays.sort(DPtentativas);
                 
         for(int i = 0; i < k; i++){
-            DPk[i] = new Pattern(new HashSet<Integer>(), tipoAvaliacao);
+            DPk[i] = new Pattern(new HashSet<>(), tipoAvaliacao);
         }
         
         int indiceDPk = 0;
