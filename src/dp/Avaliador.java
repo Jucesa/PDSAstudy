@@ -5,7 +5,6 @@
  */
 package dp;
 
-import static java.lang.Math.sqrt;
 import java.util.HashSet;
 import java.util.Iterator;
 import org.apache.commons.math3.stat.inference.ChiSquareTest;
@@ -88,12 +87,12 @@ public class Avaliador {
         switch(metricaSimilaridade){
             case Const.SIMILARIDADE_JACCARD://
                 valor = bothAB/(onlyA + onlyB + bothAB);
-                break;            
+                break;
             case Const.SIMILARIDADE_SOKAL_MICHENER://
                 valor = (bothAB + neitherAB) / (onlyA + onlyB + bothAB + neitherAB);
-                break;            
+                break;
         }
-        
+
         return valor;
         
     }
@@ -465,7 +464,16 @@ public class Avaliador {
         }       
         return false; 
     }
-    
+
+    public static Pattern avaliarMelhor(Pattern[] P){
+        Pattern best = P[0];
+        for(Pattern p : P){
+            if(p.getQualidade() > best.getQualidade()){
+                best = p;
+            }
+        }
+        return best;
+    }
     
     /////////////////////////////////////////////////////////////////////////////////////
     // IMPRIMIR CONJUNTO DE DPs /////////////////////////////////////////////////////////
@@ -513,7 +521,14 @@ public class Avaliador {
         System.out.println();
     }
 
-    
+    public static HashSet<Integer> itensDistintosPk(Pattern[] Pk, int kPrimeiros){
+        HashSet<Integer> distintosPk = new HashSet<>();
+
+        for(int i = 0; i < kPrimeiros; i++){
+            distintosPk.addAll(Pk[i].getItens());
+        }
+        return distintosPk;
+    }
 
     
 }

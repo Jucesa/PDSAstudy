@@ -10,7 +10,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Scanner;
-
+import java.io.BufferedReader;
+import java.util.*;
 /**
  *
  * @author Tarcisio Lucas
@@ -50,42 +51,7 @@ public class D {
     
     public static String valorAlvo = "";
     public static String[] valoresAlvo;
-    
-    
-    /** Recebe caminho para base de dados e tipo de formato e carrega base de dados na classe D 
-     * @param caminho - caminho do arquivo completo
-     * @param tipoArquivo - tipodo arquivo: CSV, ARFF, EXCEL, etc.
-     * @throws FileNotFoundException 
-     */    
-    public static void CarregarArquivo_old(String caminho, int tipoArquivo) throws FileNotFoundException{
-          
-        //Passa dados do formato específico para um formato padrão definido por nós: String[][] dadosStr 
-        D.dadosStr = null;
-        switch(tipoArquivo){
-            case D.TIPO_CSV:
-                dadosStr = D.CVStoDadosStr(caminho);
-                break;
-            case D.TIPO_ARFF:
-                //não implementado
-                break;
-            case D.TIPO_EXCEL:
-                //não implementado
-                break;
-        }            
-        
-        //Carrega a partir do nosso formato em D
-        D.dadosStrToD(dadosStr); 
-        
-        //Filtro determina os itens que serão considerados pelos algoritmos
-        //Por padrão todos são aceitos
-        D.numeroItensUtilizados = D.numeroItens;
-        D.itensUtilizados = new int[D.numeroItensUtilizados];
-        for(int l = 0; l < D.numeroItensUtilizados; l++){
-            D.itensUtilizados[l] = l;
-        }           
-    }
-    
-    
+
     /** Recebe caminho para base de dados e tipo de formato e carrega base de dados na classe D 
      * @param caminho - caminho do arquivo completo
      * @param tipoArquivo - tipodo arquivo: CSV, ARFF, EXCEL, etc.
@@ -127,6 +93,97 @@ public class D {
             D.itensUtilizados[l] = l;
         }
     }
+
+
+
+    public static void carregarBaseVertical(String caminho, String valorAlvoDesejado) throws IOException {
+        System.out.println("Carregando base para memória vertical (BitSets)...");
+        D.caminho = caminho;
+
+        // 1. Mapeamento de "Atributo=Valor" para um ID Inteiro único
+        // Ex: "Idade=30" -> ID 0, "Sexo=M" -> ID 1
+        Map<String, Integer> mapaItemParaId = new HashMap<>();
+        List<BitSet> listaBitSets = new ArrayList<>();
+        List<String> listaNomesItens = new ArrayList<>();
+
+        // Configuração do Leitor (BufferedReader é mais rápido que Scanner para arquivos grandes)
+        BufferedReader br = new BufferedReader(new FileReader(caminho));
+
+        String linha = br.readLine();
+        if (linha == null) return;
+
+        // Tratamento do cabeçalho
+        String separador = D.SEPARADOR; // Garanta que D.SEPARADOR esteja definido (ex: "," ou ";")
+        String[] cabecalho = linha.split(separador);
+        for(int i=0; i<cabecalho.length; i++) cabecalho[i] = cabecalho[i].replaceAll("[\"\r']", "").trim();
+
+        D.nomeVariaveis = cabecalho;
+        D.numeroAtributos = cabecalho.length - 1; // Último é o alvo
+
+        // Inicializa BitSet do Target
+        BitSet targetBits = new BitSet();
+        int numeroLinha = 0;
+
+        // 2. Leitura Linha a Linha (Streaming)
+        while ((linha = br.readLine()) != null) {
+            if (linha.trim().isEmpty()) continue;
+
+            String[] colunas = linha.split(separador);
+
+            // Garante que a linha tem o tamanho certo
+            if (colunas.length < cabecalho.length) continue;
+
+            // Processa Atributos (do 0 até penúltimo)
+            for (int i = 0; i < D.numeroAtributos; i++) {
+                String valor = colunas[i].replaceAll("[\"\r']", "").trim();
+
+                // Constrói chave única: "NomeAtributo=Valor"
+                // Se for numérico contínuo, você precisaria discretizar ANTES ou aqui.
+                // Assumindo que já está discretizado ou é categórico:
+                String chaveItem = cabecalho[i] + "=" + valor;
+
+                // Verifica se este item já tem ID
+                int idItem;
+                if (!mapaItemParaId.containsKey(chaveItem)) {
+                    idItem = mapaItemParaId.size();
+                    mapaItemParaId.put(chaveItem, idItem);
+                    listaNomesItens.add(chaveItem);
+                    listaBitSets.add(new BitSet()); // Cria novo vetor vertical
+                } else {
+                    idItem = mapaItemParaId.get(chaveItem);
+                }
+
+                // MARCA O BIT: O exemplo 'numeroLinha' possui o item 'idItem'
+                listaBitSets.get(idItem).set(numeroLinha);
+            }
+
+            // Processa Classe (última coluna)
+            String valorClasse = colunas[D.numeroAtributos].replaceAll("[\"\r']", "").trim();
+            // Se a classe for igual ao alvo que estamos procurando (ex: "sim", "doente", "1")
+            if (valorClasse.equals(valorAlvoDesejado)) {
+                targetBits.set(numeroLinha);
+            }
+
+            numeroLinha++;
+        }
+        br.close();
+
+        // 3. Finalização e Atualização das Estruturas Estáticas
+        D.numeroExemplos = numeroLinha;
+        D.numeroItensUtilizados = listaBitSets.size();
+
+        // Converte listas para arrays estáticos (acesso O(1) muito rápido)
+
+        // Atualiza D.itensUtilizados para o algoritmo genético saber quais IDs existem
+        D.itensUtilizados = new int[D.numeroItensUtilizados];
+        for(int i=0; i<D.numeroItensUtilizados; i++) D.itensUtilizados[i] = i;
+
+        System.out.println("Base carregada com sucesso!");
+        System.out.println("Exemplos: " + D.numeroExemplos);
+        System.out.println("Itens únicos (Atributo=Valor): " + D.numeroItensUtilizados);
+    }
+
+
     
     //Densidade é a quantidade
     public static double densidade(){        
@@ -141,9 +198,9 @@ public class D {
      * (2) Salva os nomes dos atributos e do rótulo em D.nomeVariaveis
      * (3) Salva número de exemplos e de atributos
      * (4) Salva caminho da base em D.caminho
-     * @param caminho
+     * @param caminho - caminho do arquivo csv
      * @return String[][] - String[numeroExemplo][numeroAtributos]
-     * @throws FileNotFoundException 
+     * @throws FileNotFoundException - joga erro se arq nao encontrado
      */
     private static String[][] CVStoDadosStr(String caminho) throws FileNotFoundException{
         //Lendo arquivo no formato padrão
@@ -164,7 +221,7 @@ public class D {
         D.nomeVariaveis = scanner.next().split(D.SEPARADOR); //1º linha: nome das variáveis
         //Lipando nomes dos atributos
         for(int i = 0; i < D.nomeVariaveis.length; i++){
-            D.nomeVariaveis[i] = D.nomeVariaveis[i].replaceAll("[\"\r\']", "");
+            D.nomeVariaveis[i] = D.nomeVariaveis[i].replaceAll("[\"\r']", "");
         }
         
         D.numeroAtributos = D.nomeVariaveis.length-1; //último atributo é o rótulo
@@ -173,12 +230,12 @@ public class D {
         }
         D.numeroExemplos = dadosString.size();
         
-        HashSet<String> valoresAlvoHasSet = new HashSet<String>();
+        HashSet<String> valoresAlvoHasSet = new HashSet<>();
         String[][] dadosStr = new String[D.numeroExemplos][D.numeroAtributos+1];
         for(int i = 0; i < dadosString.size(); i++){
             String[] exemploBase = dadosString.get(i);//recebe linha de dados
             for(int j = 0; j < exemploBase.length; j++){
-                dadosStr[i][j] = exemploBase[j].replaceAll("[\"\r\']", "");
+                dadosStr[i][j] = exemploBase[j].replaceAll("[\"\r']", "");
             }
             //valoresAlvoHasSet.add(exemploBase[D.numeroAtributos]);
             valoresAlvoHasSet.add(dadosStr[i][D.numeroAtributos]);           
@@ -186,10 +243,10 @@ public class D {
         
         //Coletanto valores distintos do atributo alvo
         D.valoresAlvo = new String[valoresAlvoHasSet.size()];
-        Iterator iterator = valoresAlvoHasSet.iterator();
+        Iterator<String> iterator = valoresAlvoHasSet.iterator();
         int indice = 0;
         while(iterator.hasNext()){
-            D.valoresAlvo[indice++] = (String) iterator.next();
+            D.valoresAlvo[indice++] = iterator.next();
         }
         Arrays.sort(D.valoresAlvo);
         
@@ -203,7 +260,7 @@ public class D {
      * OBS: a posição do array é o Item no problema de Grupos Discriminativos. 
      * Posição i, por exemplo é um item que representa o atributo itemAtributoStr[i] com valor itemValorStr[i].
      * Tais valores são mapeados nos inteiros itemAtributo[i] e itemValor[i], formato final da base de dadosutilizadas pelos algoritmos.  
-     * @param dadosStr 
+     * @param dadosStr - conjunto de dados em string
      */
     private static void dadosStrToD(String[][] dadosStr){
                 
@@ -230,7 +287,7 @@ public class D {
         int[][] dadosInt = new int[D.numeroExemplos][D.numeroAtributos]; //dados no formato inteiro: mais rápido compararinteiros que strings
         int indiceItem = 0; //Indice vai de zero ao número de itens total
         for(int indiceAtributo = 0; indiceAtributo < valoresDistintosAtributos.size(); indiceAtributo++){
-            Iterator valoresDistintosAtributoIterator = valoresDistintosAtributos.get(indiceAtributo).iterator(); //Capturando valores distintos do atributo de indice.txt i
+            Iterator<String> valoresDistintosAtributoIterator = valoresDistintosAtributos.get(indiceAtributo).iterator(); //Capturando valores distintos do atributo de indice.txt i
             int indiceValor = 0; //vai mapear um inteiro distinto para cada valor distinto de cada variável
             
             //Para cada atributo: 
@@ -238,7 +295,7 @@ public class D {
             //Realizar mapeamento na matriz de dados no formato inteiro
             while(valoresDistintosAtributoIterator.hasNext()){
                 D.itemAtributoStr[indiceItem] = D.nomeVariaveis[indiceAtributo]; //
-                D.itemValorStr[indiceItem] = (String)valoresDistintosAtributoIterator.next();
+                D.itemValorStr[indiceItem] = valoresDistintosAtributoIterator.next();
 
                 D.itemAtributo[indiceItem] = indiceAtributo;
                 D.itemValor[indiceItem] = indiceValor;               
@@ -260,8 +317,8 @@ public class D {
     
     /**
      * Gerar bases D+ (ou Dp) e D- (ou Dn) no formato numérico considerando D.valorAlvo como classe alvo
-     * @param dadosStr
-     * @param dadosInt 
+     * @param dadosStr - conjunto de dados em string
+     * @param dadosInt - conjunto de dados em int
      */
     private static void geraDpDn(String[][] dadosStr, int[][] dadosInt){
         //Capturar número de exemplo positivos (y="p") e negativos (y="n")
@@ -289,14 +346,10 @@ public class D {
             String yValue = dadosStr[i][indiceRotulo];
             //if(yValue.equals(D.valorAlvo) || yValue.equals("\"" + D.valorAlvo + "\"\r") || yValue.equals("\'" + D.valorAlvo + "\'\r") || yValue.equals(D.valorAlvo + "\r")){
             if(yValue.equals(D.valorAlvo)){
-                for(int j = 0; j < D.numeroAtributos; j++){
-                    Dp[indiceDp][j] = dadosInt[i][j];
-                }
+                if (D.numeroAtributos >= 0) System.arraycopy(dadosInt[i], 0, Dp[indiceDp], 0, D.numeroAtributos);
                 indiceDp++;
             }else{
-                for(int j = 0; j < D.numeroAtributos; j++){
-                    Dn[indiceDn][j] = dadosInt[i][j];
-                }
+                if (D.numeroAtributos >= 0) System.arraycopy(dadosInt[i], 0, Dn[indiceDn], 0, D.numeroAtributos);
                 indiceDn++;            
             }
         }
@@ -306,7 +359,7 @@ public class D {
     /**
      * Gera arquivo de dicionário .txt imprimindo valores de atributo e valor original e respectivos inteiros aos quais forma mapeados 
      * @param caminhoPastaSalvar - onde será salvo o arquivo com o dicionário
-     * @throws IOException 
+     * @throws IOException -
      */
     public static void recordDicionario(String caminhoPastaSalvar) throws IOException{
         String nomeArquivo = caminhoPastaSalvar + "\\" + D.nomeBase + "Dic.txt";
@@ -331,9 +384,9 @@ public class D {
     }
     
     /**
-     * Imprime dicionário no console. É um alternativa ao método recordDicionario que salva em arquivo.
+     * Imprime dicionário no console. É um alternativa ao mét0do recordDicionario que salva em arquivo.
      * @deprecated 
-     * OBS: esse método pode estar defasado!
+     * OBS: esse mét0do pode estar defasado!
      */
     public static void imprimirDicionario(){        
         System.out.println("@Nome:" + D.nomeBase);
@@ -348,22 +401,22 @@ public class D {
     }
 
     /**
-     * Filtra atributos, valores e itens (atributo,valor) passados como parâmetros.
+     * Filtra atributos, valores e itens (atributo, valor) passados como parâmetros.
      * Os itens filtrados não serão consideraodos pelos algoritmos nas buscas.
      * @param atributos
      * @param valores
      * @param atributosValores 
      */
     public static void filtrar(String[] atributos, String[] valores, String[][] atributosValores){
-        ArrayList<Integer> itensPosFiltro = new ArrayList<Integer>();
+        ArrayList<Integer> itensPosFiltro = new ArrayList<>();
         for(int i = 0; i < D.numeroItens; i++){
-            if(D.filtroAtributoContempla(atributos, i) || 
+            if(!(D.filtroAtributoContempla(atributos, i) ||
                     D.filtroValorContempla(valores, i) || 
-                    D.filtroAtributoValorContempla(atributosValores, i)){
-                continue;
-            }else{
+                    D.filtroAtributoValorContempla(atributosValores, i)))
+            {
                 itensPosFiltro.add(i); //Adicione caso não perteça a nenhum filtro
             }
+
         }
         
         D.numeroItensUtilizados = itensPosFiltro.size();
@@ -374,18 +427,18 @@ public class D {
     }
     
     /**
-     * Método retorna se item passado como parâmetro pertence ao grupo de atributos que devem ser desconsiderados na busca
+     * Mét0do retorna se item passado como parâmetro pertence ao grupo de atributos que devem ser desconsiderados na busca
      * @param atributos - String[] com valores de atributos que devem ser filtrados
      * @param item - item que deve ou não ser filtrado com base no filtro
-     * @return 
+     * @return boolean
      */
     private static boolean filtroAtributoContempla(String[] atributos, int item){
         if(atributos == null){
             return false;
         }else{
-            for(int j = 0; j < atributos.length; j++){
+            for (String atributo : atributos) {
                 //if(D.comparaStrVar(atributos[j], D.itemAtributoStr[item])){
-                if(atributos[j].equals(itemAtributoStr[item])){
+                if (atributo.equals(itemAtributoStr[item])) {
                     return true;
                 }
             }            
@@ -395,18 +448,18 @@ public class D {
             
     
     /**
-     * Método retorna se item passado como parâmetro pertence ao grupo de VALORES que devem ser desconsiderados na busca
+     * Mét0do retorna se item passado como parâmetro pertence ao grupo de VALORES que devem ser desconsiderados na busca
      * @param valores - String[] com valores de atributos que devem ser filtrados
      * @param item - item que deve ou não ser filtrado com base no filtro
-     * @return 
+     * @return boolean
      */
     private static boolean filtroValorContempla(String[] valores, int item){
         if(valores == null){
             return false;
         }else{
-            for(int j = 0; j < valores.length; j++){
+            for (String valore : valores) {
                 //if( D.comparaStrVar(valores[j], D.itemValorStr[item]) ){
-                if( valores[j].equals(D.itemValorStr[item]) ){
+                if (valore.equals(D.itemValorStr[item])) {
                     return true;
                 }
             }            
@@ -419,18 +472,18 @@ public class D {
      * Método retorna se item passado como parâmetro pertence ao grupo de intens (atributo, valor) que devem ser desconsiderados na busca
      * @param atributosValores - String[][]
      * @param item - item que deve ou não ser filtrado com base no filtro
-     * @return 
+     * @return boolean
      */
     private static boolean filtroAtributoValorContempla(String[][] atributosValores, int item){
         if(atributosValores == null){
             return false;
         }else{
-            for(int j = 0; j < atributosValores.length; j++){
+            for (String[] atributosValore : atributosValores) {
                 //if(D.comparaStrVar(atributosValores[j][0], D.itemAtributoStr[item]) &&
                 //   D.comparaStrVar(atributosValores[j][1], D.itemValorStr[item]) ){
-                if(atributosValores[j][0].equals(D.itemAtributoStr[item]) &&
-                    atributosValores[j][1].equals(D.itemValorStr[item]) ){
-                
+                if (atributosValore[0].equals(D.itemAtributoStr[item]) &&
+                        atributosValore[1].equals(D.itemValorStr[item])) {
+
                     return true;
                 }
             }            
@@ -441,9 +494,9 @@ public class D {
     /**
      * Compara duas strings com variações de formatos provavelemnte devido a fomatação do testo (ISO, ANSI, etc.) Não sei se estácobrindo todoas as possibilidades.
      * Deve ter uma forma mais elegante de lidar com esse problema!!!
-     * @param palavra
-     * @param palavraVariacoes
-     * @return 
+     * @param palavra -
+     * @param palavraVariacoes -
+     * @return -
      */
     private static boolean comparaStrVar(String palavraVariacoes, String palavra){
         return (palavra.equals(palavraVariacoes) //|| 
@@ -456,7 +509,7 @@ public class D {
     
     
     
-    public static void main(String args[]) throws FileNotFoundException, IOException{
+    public static void main(String[] args) throws IOException{
         
 //        String caminho = Const.CAMINHO_BASES + "amazon_cells_labelled.csv";
 //        
@@ -467,9 +520,9 @@ public class D {
         String caminhoPastaArquivos = Const.CAMINHO_BASES;
         
         File diretorio = new File(caminhoPastaArquivos);
-        File arquivos[] = diretorio.listFiles();
+        File[] arquivos = diretorio.listFiles();
         D.SEPARADOR = ",";
-        for(int i = 0; i < arquivos.length; i++){  
+        for(int i = 0; i < Objects.requireNonNull(arquivos).length; i++){
         //for(int i = 0; i < 2; i++){  
                 String caminhoBase = arquivos[i].getAbsolutePath();
                 D.CarregarArquivo(caminhoBase, D.TIPO_CSV);

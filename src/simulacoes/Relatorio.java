@@ -48,9 +48,24 @@ public class Relatorio{
         
         //Inserindo nomes das métricas
         StringBuilder labels = new StringBuilder();
-        labels.append("Algoritmo" + separadorRelatorio + "Base" + separadorRelatorio + "Repeticao" + separadorRelatorio + "|D|" + separadorRelatorio +
-                "|D+|" + separadorRelatorio + "|D-|" + separadorRelatorio + "Atributos" + separadorRelatorio + "|I|" + separadorRelatorio +
-                "Tempo" + separadorRelatorio + "Testes" + separadorRelatorio + "Seed" + separadorRelatorio);
+        labels.append("Algoritmo").append(separadorRelatorio)
+                .append("Base").append(separadorRelatorio)
+                .append("Repeticao").append(separadorRelatorio)
+                .append("|D|")
+                .append(separadorRelatorio)
+                .append("|D+|")
+                .append(separadorRelatorio)
+                .append("|D-|")
+                .append(separadorRelatorio)
+                .append("Atributos")
+                .append(separadorRelatorio)
+                .append("|I|")
+                .append(separadorRelatorio)
+                .append("Tempo")
+                .append(separadorRelatorio)
+                .append("Testes")
+                .append(separadorRelatorio)
+                .append("Seed").append(separadorRelatorio);
         for (String metrica : metricas) {
             labels.append(metrica);
             labels.append(separadorRelatorio);
