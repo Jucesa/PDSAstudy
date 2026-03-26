@@ -34,6 +34,7 @@ public class JSD_INC_QUAD extends JSD {
 
         int limiar = P.length;
         int tamanhoPopulacao = P.length;
+        int ultimaAval = P.length;
         int numeroGeracoesSemMelhoraPk = 0;
         int tamanhoTorneio = 2;
 

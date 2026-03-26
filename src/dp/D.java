@@ -173,9 +173,6 @@ public class D {
         D.numeroItensUtilizados = listaBitSets.size();
 
         // Converte listas para arrays estáticos (acesso O(1) muito rápido)
-        CacheVertical.cacheItens = listaBitSets.toArray(new BitSet[0]);
-        CacheVertical.targetBitSet = targetBits;
-        CacheVertical.nomeItens = listaNomesItens.toArray(new String[0]);
 
         // Atualiza D.itensUtilizados para o algoritmo genético saber quais IDs existem
         D.itensUtilizados = new int[D.numeroItensUtilizados];
@@ -186,100 +183,7 @@ public class D {
         System.out.println("Itens únicos (Atributo=Valor): " + D.numeroItensUtilizados);
     }
 
-    public static void carregarBaseOtimizada(String caminho, String rotuloAlvo) throws IOException {
-        System.out.println("--- Iniciando Carregamento Otimizado (BitSets) ---");
-        CacheVertical.reset(); // Limpa lixo anterior
 
-        D.caminho = caminho;
-        D.valorAlvo = rotuloAlvo;
-
-        // Mapas temporários para criar IDs únicos para cada "Atributo=Valor"
-        Map<String, Integer> mapaItemParaId = new HashMap<>();
-        List<BitSet> listaBitSets = new ArrayList<>();
-        List<String> listaNomes = new ArrayList<>();
-
-        // Leitor de alta performance (BufferedReader)
-        BufferedReader br = new BufferedReader(new FileReader(caminho));
-
-        // 1. Ler Cabeçalho
-        String linha = br.readLine();
-        if (linha == null) throw new IOException("Arquivo vazio!");
-
-        // Define separador (assume ; ou ,)
-        String separador = D.SEPARADOR != null ? D.SEPARADOR : (linha.contains(";") ? ";" : ",");
-
-        String[] cabecalho = linha.split(separador);
-        for(int i=0; i<cabecalho.length; i++) {
-            cabecalho[i] = cabecalho[i].replaceAll("[\"\r']", "").trim();
-        }
-
-        D.nomeVariaveis = cabecalho;
-        D.numeroAtributos = cabecalho.length - 1; // Último coluna é o alvo
-
-        BitSet targetBits = new BitSet();
-        int rowId = 0;
-
-        // 2. Loop de Leitura (Streaming)
-        while ((linha = br.readLine()) != null) {
-            if (linha.trim().isEmpty()) continue;
-
-            String[] colunas = linha.split(separador);
-            if (colunas.length < cabecalho.length) continue; // Ignora linhas quebradas
-
-            // --- Processa a Classe (Target) ---
-            String valorClasse = colunas[D.numeroAtributos].replaceAll("[\"\r']", "").trim();
-            if (valorClasse.equals(rotuloAlvo)) {
-                targetBits.set(rowId);
-            }
-
-            // --- Processa Atributos ---
-            for (int col = 0; col < D.numeroAtributos; col++) {
-                String valor = colunas[col].replaceAll("[\"\r']", "").trim();
-
-                // Cria a chave única do item: "NomeAtributo=Valor"
-                // IMPORTANTE: Se seus dados forem contínuos (números quebrados),
-                // você deve discretizar AQUI ou arredondar, senão criará infinitos itens.
-                String chaveItem = cabecalho[col] + "=" + valor;
-
-                // Busca ou Cria ID para o Item
-                int itemId;
-                if (mapaItemParaId.containsKey(chaveItem)) {
-                    itemId = mapaItemParaId.get(chaveItem);
-                } else {
-                    itemId = mapaItemParaId.size();
-                    mapaItemParaId.put(chaveItem, itemId);
-                    listaNomes.add(chaveItem);
-                    listaBitSets.add(new BitSet()); // Cria a coluna vertical
-                }
-
-                // Marca que este exemplo (rowId) tem este item (itemId)
-                listaBitSets.get(itemId).set(rowId);
-            }
-            rowId++;
-        }
-        br.close();
-
-        // 3. Finalização e Vínculo com classe D
-        D.numeroExemplos = rowId;
-        D.numeroItens = listaBitSets.size();
-        D.numeroItensUtilizados = D.numeroItens;
-
-        // Transfere para Arrays Estáticos (Acesso O(1))
-        CacheVertical.cacheItens = listaBitSets.toArray(new BitSet[0]);
-        CacheVertical.nomeItens = listaNomes.toArray(new String[0]);
-        CacheVertical.targetBitSet = targetBits;
-
-        // Popula vetor de itens utilizados (exigido pelo seu Genético)
-        D.itensUtilizados = new int[D.numeroItens];
-        for(int i=0; i<D.numeroItens; i++) {
-            D.itensUtilizados[i] = i;
-        }
-
-        System.out.println("Base Carregada!");
-        System.out.println("Exemplos: " + D.numeroExemplos);
-        System.out.println("Itens Únicos: " + D.numeroItens);
-        System.out.println("Alvos Positivos: " + targetBits.cardinality());
-    }
     
     //Densidade é a quantidade
     public static double densidade(){        

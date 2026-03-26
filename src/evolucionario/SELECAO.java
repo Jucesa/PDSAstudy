@@ -509,10 +509,24 @@ public class SELECAO {
     public static int salvandoRelevanteDPmaisSingle(Pattern[] Pk, Pattern pNovo, double similaridadeLimite) {
         int novosk = 0;
 
-        // Só tenta inserir se pNovo for melhor que o pior em Pk
-        if (pNovo.getQualidade() > Pk[Pk.length - 1].getQualidade()) {
+        double piorQualidade = Pk[Pk.length - 1].getQualidade();
+        // Verifica se ainda estamos na fase de preenchimento (tem buraco ou NaN no fim)
+        boolean temEspacoVazio = Double.isNaN(piorQualidade) || Pk[Pk.length - 1].getItens().isEmpty();
+
+        // Só tenta inserir se for melhor que o pior, OU se houver um espaço vazio
+        if (temEspacoVazio || pNovo.getQualidade() > piorQualidade) {
+
             for (int j = 0; j < Pk.length; j++) {
                 Pattern p_Pk = Pk[j];
+
+                // FIX 1: Detectar slots vazios/NaN e preencher imediatamente
+                if (p_Pk.getItens().isEmpty() || Double.isNaN(p_Pk.getQualidade())) {
+                    Pk[j] = new Pattern(pNovo.getItens(), pNovo.getTipoAvaliacao());
+                    ordenarPkSeguro(Pk); // Sort imune a NaNs
+                    novosk++;
+                    break; // Inseriu no buraco, pode sair
+                }
+
                 double similaridade = Avaliador.similaridade(p_Pk, pNovo, Pattern.medidaSimilaridade);
 
                 if (similaridade >= similaridadeLimite) { // (1) Houve similaridade
@@ -533,7 +547,7 @@ public class SELECAO {
                             if (p_Pk.getSimilares() != null) {
                                 salvandoRelevantesDPmais(Pk, p_Pk.getSimilares(), similaridadeLimite);
                             }
-                            Arrays.sort(Pk);
+                            ordenarPkSeguro(Pk);
                             novosk++;
                         }
                         break; // terminou comparação com Pk[j]
@@ -542,13 +556,38 @@ public class SELECAO {
                 } else if (j == Pk.length - 1) {
                     // (2) não similar a nenhum -> substitui o último
                     Pk[Pk.length - 1] = new Pattern(pNovo.getItens(), pNovo.getTipoAvaliacao());
-                    Arrays.sort(Pk);
+                    ordenarPkSeguro(Pk);
                     novosk++;
                 }
             }
         }
 
         return novosk;
+    }
+
+    // FIX 2: Método auxiliar imune a quebras na ordenação.
+// Substitui o Arrays.sort(Pk) tradicional que quebra ao encontrar NaNs.
+    public static void ordenarPkSeguro(Pattern[] Pk) {
+        Arrays.sort(Pk, new Comparator<Pattern>() {
+            @Override
+            public int compare(Pattern p1, Pattern p2) {
+                boolean p1Vazio = (p1 == null || p1.getItens().isEmpty());
+                boolean p2Vazio = (p2 == null || p2.getItens().isEmpty());
+
+                if (p1Vazio && p2Vazio) return 0;
+                if (p1Vazio) return 1;  // Joga vazios pro final
+                if (p2Vazio) return -1;
+
+                double q1 = p1.getQualidade();
+                double q2 = p2.getQualidade();
+
+                if (Double.isNaN(q1) && Double.isNaN(q2)) return 0;
+                if (Double.isNaN(q1)) return 1;  // Joga NaNs pro final
+                if (Double.isNaN(q2)) return -1;
+
+                return Double.compare(q2, q1); // Decrescente
+            }
+        });
     }
 
 

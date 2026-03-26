@@ -31,9 +31,10 @@ public class JSD_INC extends JSD {
             P = I;
         }
 
+        int ultimaAval = P.length;
         int limiar = P.length;
         int tamanhoPopulacao = P.length;
-        int numeroGeracoesSemMelhoraPk = 0;
+        double numeroGeracoesSemMelhoraPk = 0;
         int tamanhoTorneio = 2;
 
         // MELHORIA ISOLADA: Ganho Relativo
@@ -44,10 +45,13 @@ public class JSD_INC extends JSD {
                 P = INICIALIZAR.aleatorioD1_Pk(tipoAvaliacao, tamanhoPopulacao, I, Pk);
                 tamanhoTorneio = paramTorneio;
                 limiar = Math.max(1, (int) (P.length * 0.9));
+
+
+                ultimaAval = limiar;
             }
             tamanhoTorneio = calcularTamanhoTorneio(tamanhoTorneio, paramTorneio, tamanhoPopulacao);
 
-            while (numeroGeracoesSemMelhoraPk < 1000 && limiar > 0) {
+            while ( numeroGeracoesSemMelhoraPk < 3 && limiar > 0) {
                 double r = Const.random.nextDouble();
                 double Pth = (double) limiar / P.length; // Pth Linear (Padrão)
 
@@ -60,26 +64,32 @@ public class JSD_INC extends JSD {
                 // LÓGICA DE GANHO SIGNIFICATIVO
                 double qualidadeMelhorPai = Math.max(pai1.getQualidade(), pai2.getQualidade());
                 boolean ganhoSignificativo = paux.getQualidade() > (qualidadeMelhorPai * (1.0 + MIN_GANHO_RELATIVO));
-                boolean ehNovo = !paux.ehIgual(pai1) && !paux.ehIgual(pai2);
 
                 // Só substitui se houver ganho real e for novo
-                if (ehNovo && ganhoSignificativo && paux.getQualidade() >= P[limiar - 1].getQualidade()) {
+                if (ganhoSignificativo && paux.getQualidade() >= P[limiar - 1].getQualidade()) {
                     if (limiar > 1) {
                         P[limiar - 1] = paux;
                         limiar--;
+                        // Reduz 1 geração inteira de estagnação como recompensa, travando no zero
+                        numeroGeracoesSemMelhoraPk = Math.max(0.0, numeroGeracoesSemMelhoraPk - 1.0);
                     }
                 }
 
-                if (Pattern.numeroIndividuosGerados % P.length == 0) {
-                    Arrays.sort(P, limiar, P.length);
-                    int novosK = SELECAO.salvandoRelevantesDPmais(Pk, Arrays.copyOfRange(P, limiar, P.length), similaridade);
-                    if (novosK == 0) numeroGeracoesSemMelhoraPk++;
-                    else numeroGeracoesSemMelhoraPk = 0;
+                if (Pattern.numeroIndividuosGerados % P.length == 0 && limiar < tamanhoPopulacao) {
+                    Arrays.sort(P, limiar, ultimaAval);
+                    int novosK = SELECAO.salvandoRelevantesDPmais(Pk, Arrays.copyOfRange(P, limiar, ultimaAval), similaridade);
+                    if (novosK == 0) {
+                        numeroGeracoesSemMelhoraPk++;
+                    } else {
+                        numeroGeracoesSemMelhoraPk = 0;
+                    }
+
+                    ultimaAval = limiar;
                     tamanhoTorneio = calcularTamanhoTorneio(tamanhoTorneio, paramTorneio, tamanhoPopulacao);
                 }
+                Arrays.sort(P, limiar, P.length);
+                SELECAO.salvandoRelevantesDPmais(Pk, Arrays.copyOfRange(P, limiar, P.length), similaridade);
             }
-            Arrays.sort(P, limiar, P.length);
-            SELECAO.salvandoRelevantesDPmais(Pk, Arrays.copyOfRange(P, limiar, P.length), similaridade);
         }
         Arrays.sort(P);
         SELECAO.salvandoRelevantesDPmais(Pk, P, similaridade);

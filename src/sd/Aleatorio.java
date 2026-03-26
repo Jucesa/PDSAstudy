@@ -11,7 +11,9 @@ import dp.Const;
 import dp.D;
 import dp.Pattern;
 import evolucionario.SELECAO;
-
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashSet;
 import java.util.*;
 
 /**
@@ -20,66 +22,76 @@ import java.util.*;
  */
 public class Aleatorio {
 
-
-    public static Pattern[] run(String tipoAvaliacao, int k, double similaridade, int maximoTentativas, double p){
+    public static Pattern[] run(String tipoAvaliacao, int k, double similaridade, int maximoTentativas, double p) {
         int[] itens = D.itensUtilizados;
-        Pattern[] Pk =  new Pattern[k];
+        Pattern[] Pk = new Pattern[k];
 
-        // Inicializa Pk com padrões vazios
         for (int i = 0; i < Pk.length; i++) {
             Pk[i] = new Pattern(new HashSet<>(), tipoAvaliacao);
         }
 
-        // 1. Buffer reutilizável (evita criar milhões de HashSets)
         HashSet<Integer> bufferCandidato = new HashSet<>();
-        double r;
 
-        for(int i = 0; i < maximoTentativas; i++){
-            // Limpa o buffer para reuso (operação barata)
+        for(int i = 0; i < maximoTentativas; i++) {
             bufferCandidato.clear();
 
-            // Preenche o buffer
             for (int iten : itens) {
-                r = Const.random.nextDouble();
-                if (r < p) {
+                if (Const.random.nextDouble() < p) {
                     bufferCandidato.add(iten);
                 }
             }
 
-            // Evita processar vazio
             if(bufferCandidato.isEmpty()) continue;
 
-            // 2. Cria a "Sonda": Um Pattern temporário que aponta para o buffer.
-            // O objetivo dele é apenas calcular a qualidade (getQualidade).
-            // Nota: Assumimos que o construtor do Pattern calcula a qualidade imediatamente.
             Pattern sonda = new Pattern(bufferCandidato, tipoAvaliacao);
 
-            // 3. OTIMIZAÇÃO DE MEMÓRIA (Gatekeeper):
-            // Verificamos se vale a pena tentar salvar.
-            // Só entramos no IF se a sonda for melhor que o pior elemento atual de Pk.
-            // (Assumindo que Pk está ordenado do melhor para o pior e o último é o pior)
-            if (sonda.getQualidade() > Pk[Pk.length - 1].getQualidade()) {
+            // Gatekeeper rápido para poupar memória na alocação
+            double piorQualidade = Pk[Pk.length - 1].getQualidade();
+            boolean temEspacoVazio = Double.isNaN(piorQualidade) || Pk[Pk.length - 1].getItens().isEmpty();
 
-                // 4. ALOCAÇÃO TARDIA (Lazy Allocation):
-                // Agora sim, gastamos memória. Criamos um novo HashSet independente do buffer.
+            if (temEspacoVazio || sonda.getQualidade() > piorQualidade) {
                 HashSet<Integer> itensPermanentes = new HashSet<>(bufferCandidato);
-
-                // Criamos o candidato oficial com os itens clonados
                 Pattern candidatoOficial = new Pattern(itensPermanentes, tipoAvaliacao);
 
-                // Chama o mét0do de salvamento original (sem alterações nele)
                 SELECAO.salvandoRelevanteDPmaisSingle(Pk, candidatoOficial, similaridade);
-
-                // Nota: O mét0do SELECAO deve reordenar Pk para que Pk[Pk.length-1]
-                // continue sendo o pior na próxima iteração.
             }
-
-            // Se não entrou no IF, 'sonda' é descartada e 'bufferCandidato' é limpo na próxima volta.
-            // Nenhuma memória permanente foi criada para o candidato ruim.
         }
 
         return Pk;
     }
+
+    public static Pattern[] runDnp(String tipoAvaliacao, int k, double similaridade, int maximoTentativas, double p) {
+        Pattern[] Pk = new Pattern[k];
+        for (int i = 0; i < k; i++) {
+            Pk[i] = new Pattern(new HashSet<>(), tipoAvaliacao);
+        }
+
+        // Pre-calculate target size to avoid repeated floating point math
+        int targetSize = (int) (D.numeroItensUtilizados * p);
+        if (targetSize <= 0) targetSize = 1; // Ensure we pick at least one item
+
+        // Reusable buffer to avoid creating thousands of HashSet objects
+        HashSet<Integer> bufferCandidato = new HashSet<>(targetSize * 2);
+
+        for (int i = 0; i < maximoTentativas; i++) {
+            bufferCandidato.clear();
+
+            // Filling the buffer
+            while (bufferCandidato.size() < targetSize) {
+                bufferCandidato.add(Const.random.nextInt(D.numeroItensUtilizados));
+            }
+
+            double piorQualidade = Pk[k - 1].getQualidade();
+
+            Pattern candidatoOficial = new Pattern(bufferCandidato, tipoAvaliacao);
+
+            if (Double.isNaN(piorQualidade) || candidatoOficial.getQualidade() > piorQualidade) {
+                SELECAO.salvandoRelevanteDPmaisSingle(Pk, candidatoOficial, similaridade);
+            }
+        }
+        return Pk;
+    }
+
     //Máximo até dimensão 3
     public static Pattern [] run(String tipoAvaliacao, int k, int tempoMaximoMinutos){
         Pattern[] DP1k = new Pattern[k];

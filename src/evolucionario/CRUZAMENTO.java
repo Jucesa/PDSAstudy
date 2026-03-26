@@ -251,11 +251,35 @@ public class CRUZAMENTO {
      * @return Pattern - novo indivíduo
      * @since 27/01/2016     * 
      */
+//    public static Pattern AND(Pattern p1, Pattern p2, String tipoAvaliacao){
+//        HashSet<Integer> novoitens = new HashSet<>();
+//        novoitens.addAll(p1.getItens());
+//        novoitens.addAll(p2.getItens());
+//
+//        return new Pattern(novoitens, tipoAvaliacao);
+//    }
+
     public static Pattern AND(Pattern p1, Pattern p2, String tipoAvaliacao){
-        HashSet<Integer> novoitens = new HashSet<>();
-        novoitens.addAll(p1.getItens());
-        novoitens.addAll(p2.getItens());
-        
+        HashSet<Integer> itensP1 = (HashSet<Integer>) p1.getItens();
+        HashSet<Integer> itensP2 = (HashSet<Integer>) p2.getItens();
+
+        // 1. OTIMIZAÇÃO DE OURO (Early Exit):
+        // Se um pai já contém todos os itens do outro, a união será idêntica ao pai maior.
+        // Retornamos a referência do pai diretamente. Isso EVITA acionar o construtor
+        // do Pattern e a leitura do banco de dados! O seu "ehNovo" vai dar false e ignorá-lo.
+        if (itensP1.containsAll(itensP2)) return p1;
+        if (itensP2.containsAll(itensP1)) return p2;
+
+        // 2. OTIMIZAÇÃO DE MEMÓRIA:
+        // Já sabemos o tamanho máximo que o novo set terá.
+        // Inicializar com o tamanho certo e load factor 1.0 evita redimensionamentos pesados.
+        int capacidadeMxima = itensP1.size() + itensP2.size();
+        HashSet<Integer> novoitens = new HashSet<>(capacidadeMxima, 1.0f);
+
+        novoitens.addAll(itensP1);
+        novoitens.addAll(itensP2);
+
+        // A avaliação pesada (banco de dados) acontece aqui dentro:
         return new Pattern(novoitens, tipoAvaliacao);
     }
     

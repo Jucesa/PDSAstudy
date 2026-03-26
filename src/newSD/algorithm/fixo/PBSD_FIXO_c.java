@@ -1,4 +1,4 @@
-package newSD.algorithm.fixo.v1;
+package newSD.algorithm.fixo;
 
 import dp.Const;
 import dp.Pattern;
@@ -11,55 +11,73 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 
-public class JSD_QUAD extends JSD {
+public class PBSD_FIXO_c extends JSD {
+
     @Override
     protected int calcularTamanhoTorneio(int tamanhoTorneio, int saltoTorneio, int tamanhoP) {
         return tamanhoTorneio;
     }
-
-    @Override
     public Pattern[] run(int paramTorneio, double similaridade, String tipoAvaliacao, int k) throws IOException {
-
         Pattern[] P;
         Pattern[] Pk = new Pattern[k];
-        for (int i = 0; i < Pk.length; i++) Pk[i] = new Pattern(new HashSet<>(), tipoAvaliacao);
 
+        // Inicializa Pk
+        for (int i = 0; i < Pk.length; i++) {
+            Pk[i] = new Pattern(new HashSet<>(), tipoAvaliacao);
+        }
+
+        // População inicial
         Pattern[] I = INICIALIZAR.D1(tipoAvaliacao);
-        Arrays.sort(I);
+        Arrays.sort(I); // Ordena do Melhor para o Pior
 
+        // Limita o tamanho da população se a base for gigantesca (Otimização de Memória/Tempo)
+        // Se tiver 50.000 atributos, usar todos é inviável. Pegamos os Top 5000 + alguns aleatórios?
+        // Por enquanto, mantemos a lógica original
         if (I.length < k) {
             P = new Pattern[k];
-            for (int i = 0; i < k; i++) P[i] = (i < I.length) ? I[i] : I[Const.random.nextInt(I.length - 1)];
+            for (int i = 0; i < k; i++) {
+                if (i < I.length) P[i] = I[i];
+                else P[i] = I[Const.random.nextInt(I.length - 1)];
+            }
         } else {
             P = I;
         }
 
         int limiar = P.length;
-        int ultimaAval = P.length;
         int tamanhoPopulacao = P.length;
-        double numeroGeracoesSemMelhoraPk = 0;
+        int numeroGeracoesSemMelhoraPk = 0;
         int tamanhoTorneio = 2;
 
+
         for (int numeroReinicializacoes = 0; numeroReinicializacoes < 3; numeroReinicializacoes++) {
+
             if (numeroReinicializacoes > 0) {
                 P = INICIALIZAR.aleatorioD1_Pk(tipoAvaliacao, tamanhoPopulacao, I, Pk);
                 tamanhoTorneio = paramTorneio;
+                // Reinicia limiar de forma mais agressiva para economizar tempo
                 limiar = Math.max(1, (int) (P.length * 0.9));
-                ultimaAval = limiar;
             }
+
             tamanhoTorneio = calcularTamanhoTorneio(tamanhoTorneio, paramTorneio, tamanhoPopulacao);
 
+            int limiteEstagnacao = 3;
 
-            while (numeroGeracoesSemMelhoraPk < 3 && limiar > 0) {
+            while (numeroGeracoesSemMelhoraPk < limiteEstagnacao && limiar > 0) {
+
                 double r = Const.random.nextDouble();
 
-                // MELHORIA ISOLADA: Decaimento Quadrático
-                double razaoLimiar = (double) limiar / P.length;
-                double Pth = Math.pow(razaoLimiar, 2);
+                double Pth = (double) limiar /P.length;
 
                 Pattern pai1 = P[SELECAO.torneioN(P, tamanhoTorneio, 0, limiar)];
-                Pattern pai2 = (r < Pth) ? P[SELECAO.torneioN(P, tamanhoTorneio, 0, limiar)]
-                        : P[SELECAO.torneioN(P, tamanhoTorneio, limiar, P.length)];
+                Pattern pai2;
+
+                if (r < Pth) {
+                    // Exploração: Trivial x Trivial
+                    pai2 = P[SELECAO.torneioN(P, tamanhoTorneio, 0, limiar)];
+                } else {
+                    // Explotação: Trivial x Raro/Subgrupo
+                    pai2 = P[SELECAO.torneioN(P, tamanhoTorneio, limiar, P.length)];
+                }
 
                 Pattern paux = CRUZAMENTO.AND(pai1, pai2, tipoAvaliacao);
 
@@ -68,29 +86,31 @@ public class JSD_QUAD extends JSD {
                         P[limiar - 1] = paux;
                         limiar--;
                         // Reduz 1 geração inteira de estagnação como recompensa, travando no zero
-                        numeroGeracoesSemMelhoraPk = Math.max(0.0, numeroGeracoesSemMelhoraPk - 1.0);
                     }
                 }
 
-                if (Pattern.numeroIndividuosGerados % P.length == 0 && limiar < tamanhoPopulacao) {
-                    Arrays.sort(P, limiar, ultimaAval);
-                    int novosK = SELECAO.salvandoRelevantesDPmais(Pk, Arrays.copyOfRange(P, limiar, ultimaAval), similaridade);
-                    if (novosK == 0) {
-                        numeroGeracoesSemMelhoraPk++;
-                    } else {
-                        numeroGeracoesSemMelhoraPk = 0;
-                    }
 
-                    ultimaAval = limiar;
+                if (Pattern.numeroIndividuosGerados % P.length == 0) {
+                    Arrays.sort(P, limiar, P.length);
+
+                    int novosK = SELECAO.salvandoRelevantesDPmais(Pk,
+                            Arrays.copyOfRange(P, limiar, P.length),
+                            similaridade);
+
+                    if (novosK == 0) numeroGeracoesSemMelhoraPk += 1;
+                    else numeroGeracoesSemMelhoraPk = 0;
+
                     tamanhoTorneio = calcularTamanhoTorneio(tamanhoTorneio, paramTorneio, tamanhoPopulacao);
                 }
             }
+
+            // Salvamento final da rodada
             Arrays.sort(P, limiar, P.length);
             SELECAO.salvandoRelevantesDPmais(Pk, Arrays.copyOfRange(P, limiar, P.length), similaridade);
         }
+
         Arrays.sort(P);
         SELECAO.salvandoRelevantesDPmais(Pk, P, similaridade);
         return Pk;
     }
-
 }

@@ -37,6 +37,7 @@ public class JSD_ENTROPY_INC extends JSD {
             P = I;
         }
 
+        int ultimaAval = P.length;
         int limiar;
         int tamanhoPopulacao = P.length;
         int numeroGeracoesSemMelhoraPk = 0;

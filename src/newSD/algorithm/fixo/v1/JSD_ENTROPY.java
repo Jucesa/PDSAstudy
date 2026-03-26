@@ -31,9 +31,10 @@ public class JSD_ENTROPY extends JSD {
             P = I;
         }
 
+        int ultimaAval = P.length;
         int limiar = P.length;
         int tamanhoPopulacao = P.length;
-        int numeroGeracoesSemMelhoraPk = 0;
+        double numeroGeracoesSemMelhoraPk = 0;
         int tamanhoTorneio = 2;
 
         // MELHORIA ISOLADA: Entropia
@@ -44,12 +45,14 @@ public class JSD_ENTROPY extends JSD {
                 P = INICIALIZAR.aleatorioD1_Pk(tipoAvaliacao, tamanhoPopulacao, I, Pk);
                 tamanhoTorneio = paramTorneio;
                 limiar = Math.max(1, (int) (P.length * 0.9));
+
+
+                ultimaAval = limiar;
             }
             tamanhoTorneio = calcularTamanhoTorneio(tamanhoTorneio, paramTorneio, tamanhoPopulacao);
 
             boolean diversidadeSuficiente = true; // Controle da Entropia
-
-            while (diversidadeSuficiente && numeroGeracoesSemMelhoraPk < 1000 && limiar > 0) {
+            while (diversidadeSuficiente && numeroGeracoesSemMelhoraPk < 3 && limiar > 0) {
                 double r = Const.random.nextDouble();
                 double Pth = (double) limiar / P.length; // Pth Linear (Padrão)
 
@@ -63,20 +66,28 @@ public class JSD_ENTROPY extends JSD {
                     if (limiar > 1) {
                         P[limiar - 1] = paux;
                         limiar--;
+                        // Reduz 1 geração inteira de estagnação como recompensa, travando no zero
+                        numeroGeracoesSemMelhoraPk = Math.max(0.0, numeroGeracoesSemMelhoraPk - 1.0);
                     }
                 }
 
-                if (Pattern.numeroIndividuosGerados % P.length == 0) {
-                    Arrays.sort(P, limiar, P.length);
+                if (Pattern.numeroIndividuosGerados % P.length == 0 && limiar < tamanhoPopulacao) {
+                    Arrays.sort(P, limiar, ultimaAval);
+
 
                     // CHECAGEM DE ENTROPIA
                     if (calcularEntropiaPopulacao(P, limiar) <= entropiaMinima) {
                         diversidadeSuficiente = false; // Força parada e reinicialização
                     }
 
-                    int novosK = SELECAO.salvandoRelevantesDPmais(Pk, Arrays.copyOfRange(P, limiar, P.length), similaridade);
-                    if (novosK == 0) numeroGeracoesSemMelhoraPk++;
-                    else numeroGeracoesSemMelhoraPk = 0;
+                    int novosK = SELECAO.salvandoRelevantesDPmais(Pk, Arrays.copyOfRange(P, limiar, ultimaAval), similaridade);
+                    if (novosK == 0) {
+                        numeroGeracoesSemMelhoraPk++;
+                    } else {
+                        numeroGeracoesSemMelhoraPk = 0;
+                    }
+
+                    ultimaAval = limiar;
                     tamanhoTorneio = calcularTamanhoTorneio(tamanhoTorneio, paramTorneio, tamanhoPopulacao);
                 }
             }

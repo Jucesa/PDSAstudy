@@ -35,26 +35,32 @@ public class JSD_V2_PKplus_TORNEIOP extends JSD {
             P = I;
         }
 
+        int ultimaAval = P.length;
         int limiar = P.length;
         int tamanhoPopulacao = P.length;
-        int numeroGeracoesSemMelhoraPk = 0;
+        double numeroGeracoesSemMelhoraPk = 0;
         int tamanhoTorneio = 2;
 
         double entropiaMinima = 0.4;
         final double MIN_GANHO_RELATIVO = 0.0001;
         int limiteInferiorStop = (int) (P.length * 0.10); // Floor de 10%
+        int intervaloManutencao = Math.max(100, P.length / 5);
 
         for (int numeroReinicializacoes = 0; numeroReinicializacoes < 3; numeroReinicializacoes++) {
             if (numeroReinicializacoes > 0) {
                 P = INICIALIZAR.aleatorioD1_Pk_Estrategico(tipoAvaliacao, tamanhoPopulacao, I, Pk, 1);
                 tamanhoTorneio = paramTorneio;
-                limiar = Math.max(1, (int) (P.length * 0.85)); // 0.85 agressivo
+                limiar = Math.max(1, (int) (P.length * 0.9));
+
+                ultimaAval = limiar;
             }
             tamanhoTorneio = calcularTamanhoTorneio(tamanhoTorneio, paramTorneio, tamanhoPopulacao);
-            boolean diversidadeSuficiente = true;
-            int limiteEstagnacao = 500;
+            int limiteEstagnacao = Math.max(50, (int) ((tamanhoPopulacao * 0.01) / (numeroReinicializacoes + 1)));
 
-            while (diversidadeSuficiente && numeroGeracoesSemMelhoraPk < limiteEstagnacao && limiar > limiteInferiorStop) {
+            boolean diversidadeSuficiente = true; // Controle da Entropia
+
+            // O while agora usa a variável adaptativa em vez de um número mágico
+            while (diversidadeSuficiente && numeroGeracoesSemMelhoraPk < 3 && limiar > 0) {
                 double r = Const.random.nextDouble();
                 double razaoLimiar = (double) (limiar - limiteInferiorStop) / (P.length - limiteInferiorStop);
                 double Pth = Math.pow(razaoLimiar, 2);
@@ -67,10 +73,9 @@ public class JSD_V2_PKplus_TORNEIOP extends JSD {
 
                 double qualidadeMelhorPai = Math.max(pai1.getQualidade(), pai2.getQualidade());
                 boolean ganhoSignificativo = paux.getQualidade() > (qualidadeMelhorPai * (1.0 + MIN_GANHO_RELATIVO));
-                boolean ehNovo = !paux.ehIgual(pai1) && !paux.ehIgual(pai2);
 
                 // Se o filho for bom o suficiente para entrar na competição
-                if (ehNovo && ganhoSignificativo && paux.getQualidade() >= P[limiar - 1].getQualidade()) {
+                if (ganhoSignificativo && paux.getQualidade() >= P[limiar - 1].getQualidade()) {
 
                     // Se ainda temos espaço para expandir (não comeu todos os triviais)
                     if (limiar > 1) {
@@ -87,7 +92,8 @@ public class JSD_V2_PKplus_TORNEIOP extends JSD {
                                 // Achou alguém muito parecido! Competição direta.
                                 if (paux.getQualidade() > P[i].getQualidade()) {
                                     P[i] = paux; // Substitui o similar mais fraco
-                                    if (numeroGeracoesSemMelhoraPk > 0) numeroGeracoesSemMelhoraPk--;
+                                    // Reduz 1 geração inteira de estagnação como recompensa, travando no zero
+                                    numeroGeracoesSemMelhoraPk = Math.max(0.0, numeroGeracoesSemMelhoraPk - 1.0);
                                 }
                                 substituiuPorSimilaridade = true;
                                 break; // Encontrou o "clone", resolveu, sai do loop.
@@ -109,19 +115,39 @@ public class JSD_V2_PKplus_TORNEIOP extends JSD {
                             P[limiar - 1] = paux; // Coloca na fronteira
                             limiar--; // Expande a região Pmais (empurra a fronteira para cima)
 
-                            if (numeroGeracoesSemMelhoraPk > 0) numeroGeracoesSemMelhoraPk--;
+                            // Reduz 1 geração inteira de estagnação como recompensa, travando no zero
+                            numeroGeracoesSemMelhoraPk = Math.max(0.0, numeroGeracoesSemMelhoraPk - 1.0);
                         }
                     }
                 }
 
-                int intervaloManutencao = Math.max(100, P.length / 5);
                 if (Pattern.numeroIndividuosGerados % intervaloManutencao == 0) {
-                    Arrays.sort(P, limiar, P.length);
-                    if (calcularEntropiaPopulacao(P, limiar) <= entropiaMinima) diversidadeSuficiente = false;
 
-                    int novosK = SELECAO.salvandoRelevantesDPmais(Pk, Arrays.copyOfRange(P, limiar, P.length), similaridade);
-                    if (novosK == 0) numeroGeracoesSemMelhoraPk += (intervaloManutencao / 100);
-                    else numeroGeracoesSemMelhoraPk = 0;
+                    // TRAVA DE SEGURANÇA: Só faz a lógica pesada se entraram novatos
+                    if (limiar < ultimaAval) {
+                        Arrays.sort(P, limiar, ultimaAval);
+
+                        int novosK = SELECAO.salvandoRelevantesDPmais(Pk, Arrays.copyOfRange(P, limiar, ultimaAval), similaridade);
+
+                        if (novosK == 0) {
+                            numeroGeracoesSemMelhoraPk ++;
+                        } else {
+                            numeroGeracoesSemMelhoraPk = 0;
+                        }
+
+                        // Atualiza o ponteiro para o próximo ciclo
+                        ultimaAval = limiar;
+
+                    } else {
+                        // Ninguém novo entrou na elite nesse ciclo, estagnou.
+                        numeroGeracoesSemMelhoraPk ++;
+                    }
+
+                    // CHECAGEM DE ENTROPIA
+                    if (calcularEntropiaPopulacao(P, limiar) <= entropiaMinima) {
+                        diversidadeSuficiente = false; // Força parada e reinicialização
+                    }
+
                     tamanhoTorneio = calcularTamanhoTorneio(tamanhoTorneio, paramTorneio, tamanhoPopulacao);
                 }
             }

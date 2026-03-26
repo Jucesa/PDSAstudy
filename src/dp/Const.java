@@ -14,6 +14,9 @@ import java.util.Random;
  */
 public class Const {
     public final static String ALGORITMO_SSDP = "SSDP";
+    public final static String ALGORITMO_JSD_classic = "JSD_classic";
+
+    public final static String ALGORITMO_JSD_ganho = "JSD_ganho";
 
     // --- NOVOS ALGORITMOS (JSD V1 - Melhorias Isoladas) ---
     public final static String ALGORITMO_JSD_ENTROPY = "JSD_Entropy";
@@ -27,6 +30,12 @@ public class Const {
 
     // --- NOVOS ALGORITMOS (JSD V2 - Combinados) ---
     public final static String ALGORITMO_JSD_V2 = "JSD_V2";
+
+    public final static String ALGORITMO_JSD_V2_1500 = "JSD_V2_1500e";
+    public final static String ALGORITMO_JSD_V2_500 = "JSD_V2_500e";
+    public final static String ALGORITMO_JSD_V2_100 = "JSD_V2_100e";
+    public final static String ALGORITMO_JSD_V2_3 = "JSD_V2_3e";
+
     public final static String ALGORITMO_JSD_V2_TORNEIO = "JSD_V2_Torneio";
     public final static String ALGORITMO_JSD_V2_ROLETA = "JSD_V2_Roleta";
     public final static String ALGORITMO_JSD_V2_ESTRATIFICADA = "JSD_V2_Estratificada";

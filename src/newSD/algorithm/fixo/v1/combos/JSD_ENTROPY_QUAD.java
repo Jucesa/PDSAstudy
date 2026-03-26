@@ -32,6 +32,7 @@ public class JSD_ENTROPY_QUAD extends JSD {
             P = I;
         }
 
+        int ultimaAval = P.length;
         int limiar = P.length;
         int tamanhoPopulacao = P.length;
         int numeroGeracoesSemMelhoraPk = 0;
