@@ -1,6 +1,7 @@
 package SDp.algorithm.fixo;
 
 import SDp.algorithm.SDp;
+import SDp.algorithm.SelectionManager;
 import dp.Pattern;
 import evolucionario.CRUZAMENTO;
 import evolucionario.INICIALIZAR;
@@ -11,7 +12,7 @@ import java.util.Arrays;
 public class SDp_FIXO_classic extends SDp {
 
     @Override
-    protected int calcularTamanhoTorneio(int tamanhoTorneio, int saltoTorneio, int tamanhoP) {
+    protected int calcularTamanhoTorneio(int tamanhoTorneio, int saltoTorneio) {
         return tamanhoTorneio;
     }
 
@@ -44,12 +45,12 @@ public class SDp_FIXO_classic extends SDp {
                 indexUltimaAval = result.indexUltimaAval();
             }
 
-            tamanhoTorneio = calcularTamanhoTorneio(tamanhoTorneio, paramTorneio, tamanhoPopulacao);
+            tamanhoTorneio = calcularTamanhoTorneio(tamanhoTorneio, paramTorneio);
 
             while (numeroGeracoesSemMelhoraPk < limiteEstagnacao && limiar > 0) {
 
                 // 3. Seleção Linear Modular (Pth = limiar / P.length)
-                Pattern[] pais = selecionarPaisD1DnLinear(P, tamanhoTorneio, limiar);
+                Pattern[] pais = SelectionManager.selecionarPaisD1DnLinear(P, tamanhoTorneio, limiar);
                 double qualidadeMelhorPai = Math.max(pais[0].getQualidade(), pais[1].getQualidade());
 
                 Pattern paux = CRUZAMENTO.AND(pais[0], pais[1], tipoAvaliacao);

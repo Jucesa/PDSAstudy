@@ -335,10 +335,6 @@ public class SimulacaoGeral {
                                 SDp_FIXO_classic jsd = new SDp_FIXO_classic();
                                 p = jsd.run(50, 0.5, tipoAvaliacao, k);
                                 break;
-                            case ALGORITMO_JSD_ganho:
-                                SDp_FIXO jsd1 = new SDp_FIXO();
-                                p = jsd1.run(50, 0.5, tipoAvaliacao, k);
-                                break;
                         }
 
                         double tempo = (System.currentTimeMillis() - t0)/1000.0;

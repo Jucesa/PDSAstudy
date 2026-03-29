@@ -1,7 +1,6 @@
 package SDp.algorithm.fixo.solo;
 
 import SDp.algorithm.SDp;
-import dp.Const;
 import dp.Pattern;
 import evolucionario.CRUZAMENTO;
 import evolucionario.INICIALIZAR;
