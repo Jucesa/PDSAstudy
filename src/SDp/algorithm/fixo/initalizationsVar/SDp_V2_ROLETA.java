@@ -15,7 +15,7 @@ import java.util.Arrays;
 public class SDp_V2_ROLETA extends SDp {
 
     @Override
-    protected int calcularTamanhoTorneio(int tamanhoTorneio, int saltoTorneio, int tamanhoP) {
+    protected int calcularTamanhoTorneio(int tamanhoTorneio, int saltoTorneio) {
         return tamanhoTorneio;
     }
 
@@ -46,7 +46,7 @@ public class SDp_V2_ROLETA extends SDp {
                 indexUltimaAval = limiar;
             }
 
-            tamanhoTorneio = calcularTamanhoTorneio(tamanhoTorneio, paramTorneio, tamanhoPopulacao);
+            tamanhoTorneio = calcularTamanhoTorneio(tamanhoTorneio, paramTorneio);
             int limiteEstagnacao = Math.max(50, (int) ((tamanhoPopulacao * 0.01) / (numeroReinicializacoes + 1)));
             int intervaloManutencao = Math.max(100, P.length / 5);
             boolean diversidadeSuficiente = true;

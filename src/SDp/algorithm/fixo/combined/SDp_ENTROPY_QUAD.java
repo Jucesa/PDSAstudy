@@ -11,7 +11,7 @@ import java.util.Arrays;
 
 public class SDp_ENTROPY_QUAD extends SDp {
     @Override
-    protected int calcularTamanhoTorneio(int tamanhoTorneio, int saltoTorneio, int tamanhoP) {
+    protected int calcularTamanhoTorneio(int tamanhoTorneio, int saltoTorneio) {
         return tamanhoTorneio;
     }
 
@@ -44,7 +44,7 @@ public class SDp_ENTROPY_QUAD extends SDp {
                 indexUltimaAval = result.indexUltimaAval();
             }
 
-            tamanhoTorneio = calcularTamanhoTorneio(tamanhoTorneio, paramTorneio, tamanhoPopulacao);
+            tamanhoTorneio = calcularTamanhoTorneio(tamanhoTorneio, paramTorneio);
             boolean diversidadeSuficiente = true;
 
             while (diversidadeSuficiente && numeroGeracoesSemMelhoraPk < 1000 && limiar > 0) {

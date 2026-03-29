@@ -11,7 +11,7 @@ import java.util.Arrays;
 
 public class SDp_ENTROPY_INC extends SDp {
     @Override
-    protected int calcularTamanhoTorneio(int tamanhoTorneio, int saltoTorneio, int tamanhoP) {
+    protected int calcularTamanhoTorneio(int tamanhoTorneio, int saltoTorneio) {
         return tamanhoTorneio;
     }
 
@@ -45,7 +45,7 @@ public class SDp_ENTROPY_INC extends SDp {
                 indexUltimaAval = result.indexUltimaAval();
             }
 
-            tamanhoTorneio = calcularTamanhoTorneio(tamanhoTorneio, paramTorneio, tamanhoPopulacao);
+            tamanhoTorneio = calcularTamanhoTorneio(tamanhoTorneio, paramTorneio);
             boolean diversidadeSuficiente = true;
 
             // O limite de 1000 gerações sem melhora é generoso para combos

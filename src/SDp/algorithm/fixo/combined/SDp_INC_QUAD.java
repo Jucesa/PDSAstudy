@@ -12,9 +12,10 @@ import static SDp.algorithm.SelectionManager.selecionarPaisD1DnQuad;
 
 public class SDp_INC_QUAD extends SDp {
     @Override
-    protected int calcularTamanhoTorneio(int tamanhoTorneio, int saltoTorneio, int tamanhoP) {
+    protected int calcularTamanhoTorneio(int tamanhoTorneio, int saltoTorneio) {
         return tamanhoTorneio;
     }
+
 
     @Override
     public Pattern[] run(int paramTorneio, double similaridade, String tipoAvaliacao, int k) throws IOException {
@@ -45,7 +46,7 @@ public class SDp_INC_QUAD extends SDp {
                 indexUltimaAval = result.indexUltimaAval();
             }
 
-            tamanhoTorneio = calcularTamanhoTorneio(tamanhoTorneio, paramTorneio, tamanhoPopulacao);
+            tamanhoTorneio = calcularTamanhoTorneio(tamanhoTorneio, paramTorneio);
             boolean diversidadeSuficiente = true;
 
             while (diversidadeSuficiente && numeroGeracoesSemMelhoraPk < 1000 && limiar > 0) {

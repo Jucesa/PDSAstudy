@@ -15,7 +15,7 @@ import java.util.HashSet;
 
 public class SDp_V2_PKplus_ESTRATIFICADA extends SDp {
     @Override
-    protected int calcularTamanhoTorneio(int tamanhoTorneio, int saltoTorneio, int tamanhoP) {
+    protected int calcularTamanhoTorneio(int tamanhoTorneio, int saltoTorneio) {
         return tamanhoTorneio;
     }
     @Override
@@ -54,7 +54,7 @@ public class SDp_V2_PKplus_ESTRATIFICADA extends SDp {
 
                 ultimaAval = limiar;
             }
-            tamanhoTorneio = calcularTamanhoTorneio(tamanhoTorneio, paramTorneio, tamanhoPopulacao);
+            tamanhoTorneio = calcularTamanhoTorneio(tamanhoTorneio, paramTorneio);
             int limiteEstagnacao = Math.max(50, (int) ((tamanhoPopulacao * 0.01) / (numeroReinicializacoes + 1)));
 
 
@@ -150,7 +150,7 @@ public class SDp_V2_PKplus_ESTRATIFICADA extends SDp {
                         diversidadeSuficiente = false; // Força parada e reinicialização
                     }
 
-                    tamanhoTorneio = calcularTamanhoTorneio(tamanhoTorneio, paramTorneio, tamanhoPopulacao);
+                    tamanhoTorneio = calcularTamanhoTorneio(tamanhoTorneio, paramTorneio);
                 }
             }
             Arrays.sort(P, limiar, P.length);

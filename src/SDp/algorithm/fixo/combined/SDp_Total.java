@@ -14,9 +14,10 @@ import java.util.Arrays;
 
 public class SDp_Total extends SDp {
     @Override
-    protected int calcularTamanhoTorneio(int tamanhoTorneio, int saltoTorneio, int tamanhoP) {
+    protected int calcularTamanhoTorneio(int tamanhoTorneio, int saltoTorneio) {
         return tamanhoTorneio;
     }
+
 
     public Pattern[] run(int estagnacao, int paramTorneio, double similaridade, String tipoAvaliacao, int k) throws IOException {
         Pattern[] Pk = new Pattern[k];
@@ -44,7 +45,7 @@ public class SDp_Total extends SDp {
                 indexUltimaAval = result.indexUltimaAval();
             }
 
-            tamanhoTorneio = calcularTamanhoTorneio(tamanhoTorneio, paramTorneio, tamanhoPopulacao);
+            tamanhoTorneio = calcularTamanhoTorneio(tamanhoTorneio, paramTorneio);
             boolean diversidadeSuficiente = true;
             int intervaloManutencao = Math.max(100, P.length / 5);
 
