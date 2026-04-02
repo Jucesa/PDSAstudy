@@ -6,6 +6,12 @@
 
 package simulacoes;
 
+import SDp.algorithm.fixo.solo.SDp_ENTROPY;
+import SDp.algorithm.fixo.solo.SDp_INC;
+import SDp.algorithm.fixo.solo.SDp_QUAD;
+import SDp.algorithm.fixo.combined.SDp_Total;
+import SDp.algorithm.fixo.initalizationsVar.SDp_V2_ESTRATIFICADA;
+import SDp.algorithm.fixo.initalizationsVar.SDp_V2_ROLETA;
 import dp.Avaliador;
 import dp.Const;
 import dp.D;
@@ -23,17 +29,15 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Scanner;
 
-import newSD.algorithm.JSD;
-import newSD.algorithm.fixo.PBSD_FIXO;
-import newSD.algorithm.fixo.PBSD_FIXO_c;
-import newSD.algorithm.fixo.v1.combos.JSD_ENTROPY_INC;
-import newSD.algorithm.fixo.v1.combos.JSD_ENTROPY_QUAD;
-import newSD.algorithm.fixo.v1.combos.JSD_INC_QUAD;
-import newSD.algorithm.fixo.v2.JSD_V2_TORNEIOP;
-import newSD.algorithm.fixo.v3.JSD_V2_PKplus;
-import newSD.algorithm.fixo.v3.JSD_V2_PKplus_ESTRATIFICADA;
-import newSD.algorithm.fixo.v3.JSD_V2_PKplus_ROLETA;
-import newSD.algorithm.fixo.v3.JSD_V2_PKplus_TORNEIOP;
+import SDp.algorithm.fixo.SDp_FIXO_classic;
+import SDp.algorithm.fixo.combined.SDp_ENTROPY_INC;
+import SDp.algorithm.fixo.combined.SDp_ENTROPY_QUAD;
+import SDp.algorithm.fixo.combined.SDp_INC_QUAD;
+import SDp.algorithm.fixo.initalizationsVar.SDp_V2_TORNEIOP;
+import SDp.algorithm.fixo.populationModuleVar.SDp_V2_PKplus;
+import SDp.algorithm.fixo.populationModuleVar.SDp_V2_PKplus_ESTRATIFICADA;
+import SDp.algorithm.fixo.populationModuleVar.SDp_V2_PKplus_ROLETA;
+import SDp.algorithm.fixo.populationModuleVar.SDp_V2_PKplus_TORNEIOP;
 import sd.Aleatorio;
 import sd.ExaustivoK;
 import sd.SD;
@@ -248,92 +252,88 @@ public class SimulacaoGeral {
                                 break;
 
                             case Const.ALGORITMO_JSD_ENTROPY:
-                                newSD.algorithm.fixo.v1.JSD_ENTROPY jsdEntropy = new newSD.algorithm.fixo.v1.JSD_ENTROPY();
+                                SDp_ENTROPY jsdEntropy = new SDp_ENTROPY();
                                 p = jsdEntropy.run(50, 0.5, tipoAvaliacao, k);
                                 break;
 
                             case Const.ALGORITMO_JSD_INC:
-                                newSD.algorithm.fixo.v1.JSD_INC jsdInc = new newSD.algorithm.fixo.v1.JSD_INC();
+                                SDp_INC jsdInc = new SDp_INC();
                                 p = jsdInc.run(50, 0.5, tipoAvaliacao, k);
                                 break;
 
                             case Const.ALGORITMO_JSD_QUAD:
-                                newSD.algorithm.fixo.v1.JSD_QUAD jsdQuad = new newSD.algorithm.fixo.v1.JSD_QUAD();
+                                SDp_QUAD jsdQuad = new SDp_QUAD();
                                 p = jsdQuad.run(50, 0.5, tipoAvaliacao, k);
                                 break;
                             case Const.ALGORITMO_JSD_ENTROPY_QUAD:
-                                JSD_ENTROPY_QUAD jsdEntropyQuad = new JSD_ENTROPY_QUAD();
+                                SDp_ENTROPY_QUAD jsdEntropyQuad = new SDp_ENTROPY_QUAD();
                                 p = jsdEntropyQuad.run(50, 0.5, tipoAvaliacao, k);
                                 break;
                             case Const.ALGORITMO_JSD_INC_QUAD:
-                                 JSD_INC_QUAD jsdIncQuad = new JSD_INC_QUAD();
+                                 SDp_INC_QUAD jsdIncQuad = new SDp_INC_QUAD();
                                  p = jsdIncQuad.run(50, 0.5, tipoAvaliacao, k);
                                  break;
                             case Const.ALGORITMO_ENTROPY_INC:
-                                JSD_ENTROPY_INC jsdEntropyInc = new JSD_ENTROPY_INC();
+                                SDp_ENTROPY_INC jsdEntropyInc = new SDp_ENTROPY_INC();
                                 p = jsdEntropyInc.run(50, 0.5, tipoAvaliacao, k);
                                 break;
                             case Const.ALGORITMO_JSD_V2_1500:
-                                newSD.algorithm.fixo.v2.JSD_V2 jsdV21500 = new newSD.algorithm.fixo.v2.JSD_V2();
+                                SDp_Total jsdV21500 = new SDp_Total();
                                 p = jsdV21500.run(1500, 50, 0.5, tipoAvaliacao, k);
                                 break;
                             case Const.ALGORITMO_JSD_V2_500:
-                                newSD.algorithm.fixo.v2.JSD_V2 jsdV2500 = new newSD.algorithm.fixo.v2.JSD_V2();
+                                SDp_Total jsdV2500 = new SDp_Total();
                                 p = jsdV2500.run(500, 50, 0.5, tipoAvaliacao, k);
                                 break;
                             case ALGORITMO_JSD_V2_100:
-                                newSD.algorithm.fixo.v2.JSD_V2 jsdV2100 = new newSD.algorithm.fixo.v2.JSD_V2();
+                                SDp_Total jsdV2100 = new SDp_Total();
                                 p = jsdV2100.run(100, 50, 0.5, tipoAvaliacao, k);
                                 break;
                             case ALGORITMO_JSD_V2_3:
-                                newSD.algorithm.fixo.v2.JSD_V2 jsdV23 = new newSD.algorithm.fixo.v2.JSD_V2();
+                                SDp_Total jsdV23 = new SDp_Total();
                                 p = jsdV23.run(3, 50, 0.5, tipoAvaliacao, k);
                                 break;
 
                             case Const.ALGORITMO_JSD_V2_TORNEIO:
-                                JSD_V2_TORNEIOP jsdV2Torneio = new JSD_V2_TORNEIOP();
+                                SDp_V2_TORNEIOP jsdV2Torneio = new SDp_V2_TORNEIOP();
                                 p = jsdV2Torneio.run(50, 0.5, tipoAvaliacao, k);
                                 break;
 
                             case Const.ALGORITMO_JSD_V2_ROLETA:
-                                newSD.algorithm.fixo.v2.JSD_V2_ROLETA jsdV2Roleta = new newSD.algorithm.fixo.v2.JSD_V2_ROLETA();
+                                SDp_V2_ROLETA jsdV2Roleta = new SDp_V2_ROLETA();
                                 p = jsdV2Roleta.run(50, 0.5, tipoAvaliacao, k);
                                 break;
 
                             case Const.ALGORITMO_JSD_V2_ESTRATIFICADA:
-                                newSD.algorithm.fixo.v2.JSD_V2_ESTRATIFICADA jsdV2Estrat = new newSD.algorithm.fixo.v2.JSD_V2_ESTRATIFICADA();
+                                SDp_V2_ESTRATIFICADA jsdV2Estrat = new SDp_V2_ESTRATIFICADA();
                                 p = jsdV2Estrat.run(50, 0.5, tipoAvaliacao, k);
                                 break;
 
                             case ALGORITMO_JSD_V2_PKplus:
-                                JSD_V2_PKplus jsdV2mais = new JSD_V2_PKplus();
+                                SDp_V2_PKplus jsdV2mais = new SDp_V2_PKplus();
                                 p = jsdV2mais.run(50, 0.5, tipoAvaliacao, k);
                                 break;
 
                             case ALGORITMO_JSD_V2_PKplus_TORNEIOP:
-                                JSD_V2_PKplus_TORNEIOP jsdV2Torneiomais = new JSD_V2_PKplus_TORNEIOP();
+                                SDp_V2_PKplus_TORNEIOP jsdV2Torneiomais = new SDp_V2_PKplus_TORNEIOP();
                                 p = jsdV2Torneiomais.run(50, 0.5, tipoAvaliacao, k);
                                 break;
 
                             case Const.ALGORITMO_JSD_V2_PKplus_ROLETA:
-                                JSD_V2_PKplus_ROLETA jsdV2Roletamais = new JSD_V2_PKplus_ROLETA();
+                                SDp_V2_PKplus_ROLETA jsdV2Roletamais = new SDp_V2_PKplus_ROLETA();
                                 p = jsdV2Roletamais.run(50, 0.5, tipoAvaliacao, k);
                                 break;
 
                             case Const.ALGORITMO_JSD_V2_PKplus_ESTRATIFICADA:
-                                JSD_V2_PKplus_ESTRATIFICADA jsdV2Estratmais = new JSD_V2_PKplus_ESTRATIFICADA();
+                                SDp_V2_PKplus_ESTRATIFICADA jsdV2Estratmais = new SDp_V2_PKplus_ESTRATIFICADA();
                                 p = jsdV2Estratmais.run(50, 0.5, tipoAvaliacao, k);
                                 break;
                             case ALGORITMO_SSDPmais_E:
                                 p = SSDPmais_E.run(k, tipoAvaliacao, 0.5, tempoMaximoSegundosAlgoritmos);
                                 break;
                             case Const.ALGORITMO_JSD_classic:
-                                PBSD_FIXO_c jsd = new PBSD_FIXO_c();
+                                SDp_FIXO_classic jsd = new SDp_FIXO_classic();
                                 p = jsd.run(50, 0.5, tipoAvaliacao, k);
-                                break;
-                            case ALGORITMO_JSD_ganho:
-                                PBSD_FIXO jsd1 = new PBSD_FIXO();
-                                p = jsd1.run(50, 0.5, tipoAvaliacao, k);
                                 break;
                         }
 

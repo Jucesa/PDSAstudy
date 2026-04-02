@@ -8,7 +8,7 @@ package evolucionario;
 import dp.Avaliador;
 import dp.Const;
 import dp.Pattern;
-import newSD.logging.PatternTracker;
+import SDp.logging.PatternTracker;
 
 import java.util.*;
 
