@@ -18,6 +18,7 @@ import java.util.Arrays;
 
 public abstract class SDp {
     protected DiversityManager diversity = new DiversityManager();
+    protected int INTERVALO_MANUTENCAO = 1000;
 
     protected Pattern[] setupInitialState(int k, Pattern[] Pk, Pattern[] I, String tipoAvaliacao) {
         for (int i = 0; i < Pk.length; i++) {

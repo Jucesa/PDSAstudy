@@ -31,7 +31,7 @@ public class SDp_INC_QUAD extends SDp {
         double numeroGeracoesSemMelhoraPk = 0;
         int tamanhoTorneio = 2;
 
-        int intervaloManutencao = tamanhoPopulacao;
+        INTERVALO_MANUTENCAO = tamanhoPopulacao;
         final double MIN_GANHO_RELATIVO = 0.0001;
 
         for (int numeroReinicializacoes = 0; numeroReinicializacoes < 3; numeroReinicializacoes++) {
@@ -68,10 +68,10 @@ public class SDp_INC_QUAD extends SDp {
                 }
 
                 // 5. Manutenção Periódica Modular
-                if (Pattern.numeroIndividuosGerados % intervaloManutencao == 0) {
+                if (Pattern.numeroIndividuosGerados % INTERVALO_MANUTENCAO == 0) {
                     ManutencaoResult m = processarManutencao(
                             limiar, indexUltimaAval, P, Pk, similaridade,
-                            numeroGeracoesSemMelhoraPk, intervaloManutencao,
+                            numeroGeracoesSemMelhoraPk, INTERVALO_MANUTENCAO,
                             0.0, // Entropia desativada
                             tamanhoTorneio, paramTorneio
                     );

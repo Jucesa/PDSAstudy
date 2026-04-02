@@ -59,7 +59,7 @@ public class SDp_V2_PKplus extends SDp {
 
 
             boolean diversidadeSuficiente = true; // Controle da Entropia
-            int intervaloManutencao = Math.max(100, P.length / 5);
+            INTERVALO_MANUTENCAO = Math.max(100, P.length / 5);
 
             // O while agora usa a variável adaptativa em vez de um número mágico
             while (diversidadeSuficiente && numeroGeracoesSemMelhoraPk < limiteEstagnacao && limiar > 0) {
@@ -204,7 +204,7 @@ public class SDp_V2_PKplus extends SDp {
                     }
                 }
 
-                if (Pattern.numeroIndividuosGerados % intervaloManutencao == 0) {
+                if (Pattern.numeroIndividuosGerados % INTERVALO_MANUTENCAO == 0) {
 
                     // TRAVA DE SEGURANÇA: Só faz a lógica pesada se entraram novatos
                     if (limiar < ultimaAval) {

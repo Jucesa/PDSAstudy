@@ -6,17 +6,14 @@
 
 package simulacoes;
 
-import SDp.algorithm.fixo.solo.SDp_ENTROPY;
-import SDp.algorithm.fixo.solo.SDp_INC;
-import SDp.algorithm.fixo.solo.SDp_QUAD;
-import SDp.algorithm.fixo.combined.SDp_Total;
+import SDp.algorithm.fixo.combined.*;
+import SDp.algorithm.fixo.solo.*;
 import SDp.algorithm.fixo.initalizationsVar.SDp_V2_ESTRATIFICADA;
 import SDp.algorithm.fixo.initalizationsVar.SDp_V2_ROLETA;
 import dp.Avaliador;
 import dp.Const;
 import dp.D;
 import dp.Pattern;
-import dp.RSS;
 import evolucionario.INICIALIZAR;
 import evolucionario.*;
 import exatos.GulosoD;
@@ -30,9 +27,6 @@ import java.util.Random;
 import java.util.Scanner;
 
 import SDp.algorithm.fixo.SDp_FIXO_classic;
-import SDp.algorithm.fixo.combined.SDp_ENTROPY_INC;
-import SDp.algorithm.fixo.combined.SDp_ENTROPY_QUAD;
-import SDp.algorithm.fixo.combined.SDp_INC_QUAD;
 import SDp.algorithm.fixo.initalizationsVar.SDp_V2_TORNEIOP;
 import SDp.algorithm.fixo.populationModuleVar.SDp_V2_PKplus;
 import SDp.algorithm.fixo.populationModuleVar.SDp_V2_PKplus_ESTRATIFICADA;
@@ -208,12 +202,6 @@ public class SimulacaoGeral {
                                 p = sd.run(min_suport, 2*k, tipoAvaliacao, k, tempoMaximoSegundosAlgoritmos);
                                 //p = sd.run(min_suport, k, tipoAvaliacao, k);
                                 break;
-                            case Const.ALGORITMO_SD_RSS:
-                                SD sd2 = new SD();
-                                double min_suport2 = Math.sqrt(D.numeroExemplosPositivo) / D.numeroExemplos;
-                                p = sd2.run(min_suport2, 2*k, tipoAvaliacao, 2*k, tempoMaximoSegundosAlgoritmos);
-                                p = RSS.run(p, k);
-                                break;
                             case Const.ALGORITMO_SSDPmaisS00:
                                 p = SSDPmais.run(k, tipoAvaliacao, 0.0, tempoMaximoSegundosAlgoritmos);
                                 break;
@@ -335,6 +323,19 @@ public class SimulacaoGeral {
                                 SDp_FIXO_classic jsd = new SDp_FIXO_classic();
                                 p = jsd.run(50, 0.5, tipoAvaliacao, k);
                                 break;
+
+                            case Const.ALGORITMO_JSD_SMARTDROP:
+                                SDp_SMARTDROP smd =  new SDp_SMARTDROP();
+                                p = smd.run(50, 0.5, tipoAvaliacao, k);
+                                break;
+                            case Const.ALGORITMO_JSD_ELITESWAP:
+                                SDp_ELITESWAP e = new SDp_ELITESWAP();
+                                p = e.run(50, 0.5, tipoAvaliacao, k);
+                                break;
+                            case Const.ALGORITMO_JSD_DROP_ELITE:
+                                SDp_DROP_ELITE sde = new SDp_DROP_ELITE();
+                                p = sde.run(50, 0.5, tipoAvaliacao, k);
+                                break;
                         }
 
                         double tempo = (System.currentTimeMillis() - t0)/1000.0;
@@ -369,74 +370,50 @@ public class SimulacaoGeral {
         Pattern.medidaSimilaridade = Const.SIMILARIDADE_JACCARD;
 
         int[] K = {10};
-        int numeroRepeticoes = 2;
+        int numeroRepeticoes = 10;
         double  tempoMaximoSegundosAlgoritmos = 60;
 
         String[] algoritmos = {
-//                Const.ALGORITMO_JSD_ENTROPY,
-//                Const.ALGORITMO_JSD_INC,
-//                Const.ALGORITMO_JSD_QUAD,
-//
-//                ALGORITMO_JSD_V2_3,
-//                ALGORITMO_JSD_V2_100,
-//                ALGORITMO_JSD_V2_500,
                 ALGORITMO_JSD_V2_1500,
                 ALGORITMO_JSD_classic,
-                ALGORITMO_JSD_ganho,
-                ALGORITMO_SSDPmaisS50,
-
-//                Const.ALGORITMO_JSD_V2_TORNEIO,
-//                Const.ALGORITMO_JSD_V2_ROLETA,
-//                Const.ALGORITMO_JSD_V2_ESTRATIFICADA,
-
-                //Const.ALGORITMO_JSD_V2_PKplus,
-//                Const.ALGORITMO_JSD_V2_PKplus_ESTRATIFICADA,
-//                Const.ALGORITMO_JSD_V2_PKplus_ROLETA,
-//                Const.ALGORITMO_JSD_V2_PKplus_TORNEIOP,
-
-//                ALGORITMO_SSDPmaisS50,
-                //ALGORITMO_Aleatorio1Mp1,
-               // ALGORITMO_Aleatorio1Mp10,
-                //ALGORITMO_Aleatorio1Mp50,
- //               ALGORITMO_SSDPmais_E,
-//                ALGORITMO_JSD,
-//                ALGORITMO_SD
+                Const.ALGORITMO_JSD_INC,
+                ALGORITMO_JSD_ELITESWAP,
+                ALGORITMO_JSD_SMARTDROP,
+                ALGORITMO_JSD_DROP_ELITE,
+                ALGORITMO_SSDPmaisS50
         };
-//
         SimulacaoGeral sg = new SimulacaoGeral(new File(Const.CAMINHO_INDICE));
-
         sg.run(K, numeroRepeticoes, algoritmos, ",", METRICA_Qg, tempoMaximoSegundosAlgoritmos);
 
-////
 ////        //Tabelão
-//        String[] metricas = {
-//                Const.METRICA_WRACC,
-//                Const.METRICA_Qg,
-//                Const.METRICA_OVERALL_SUPP_POSITIVO,
-//                Const.METRICA_COVER_REDUNDANCY_POSITIVO,
-//                Const.METRICA_DESCRIPTION_REDUNDANCY_DENSITY,
-//                Const.METRICA_DESCRIPTION_REDUNDANCY_DOMINATOR,
-//                Const.METRICA_CHI_QUAD,
-//                Const.METRICA_P_VALUE,
-//                Const.METRICA_LIFT,
-//                Const.METRICA_DIFF_SUP,
-//                Const.METRICA_K,
-//                Const.METRICA_GROWTH_RATE,
-//                Const.METRICA_ODDS_RATIO,
-//                Const.METRICA_COV,
-//                Const.METRICA_CONF,
-//                Const.METRICA_SUPP,
-//                Const.METRICA_SUPP_POSITIVO,
-//                Const.METRICA_SUPP_NEGATIVO,
-//                Const.METRICA_SIZE,
-//                Const.METRICA_NUMERO_TESTES,
-//                Const.METRICA_TIME,
-//        };
-//
-//        String separadorBase = ",";
-//        String separadorRelatorio = ",";
-//        Relatorio.gerarTabelaoCSV(metricas, separadorBase, separadorRelatorio);
-//
-//        System.out.println("Tabelão concluído");
+        String[] metricas = {
+                Const.METRICA_WRACC,
+                Const.METRICA_Qg,
+                Const.METRICA_OVERALL_SUPP_POSITIVO,
+                Const.METRICA_COVER_REDUNDANCY_POSITIVO,
+                Const.METRICA_DESCRIPTION_REDUNDANCY_DENSITY,
+                Const.METRICA_DESCRIPTION_REDUNDANCY_DOMINATOR,
+                Const.METRICA_CHI_QUAD,
+                Const.METRICA_P_VALUE,
+                Const.METRICA_LIFT,
+                Const.METRICA_DIFF_SUP,
+                Const.METRICA_K,
+                Const.METRICA_GROWTH_RATE,
+                Const.METRICA_ODDS_RATIO,
+                Const.METRICA_COV,
+                Const.METRICA_CONF,
+                Const.METRICA_SUPP,
+                Const.METRICA_SUPP_POSITIVO,
+                Const.METRICA_SUPP_NEGATIVO,
+                Const.METRICA_SIZE,
+                Const.METRICA_NUMERO_TESTES,
+                Const.METRICA_TIME,
+        };
+
+        String separadorBase = ",";
+        String separadorRelatorio = ",";
+        Relatorio.gerarTabelaoCSV(metricas, separadorBase, separadorRelatorio);
+
+        System.out.println("Tabelão concluído");
     }
 }

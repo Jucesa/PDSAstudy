@@ -1,16 +1,19 @@
 package SDp.algorithm.fixo.solo;
 
+import SDp.algorithm.MutationManager;
+import SDp.algorithm.SDp;
+import SDp.algorithm.SelectionManager;
+import dp.Const;
 import dp.Pattern;
 import evolucionario.CRUZAMENTO;
 import evolucionario.INICIALIZAR;
 import evolucionario.SELECAO;
-import SDp.algorithm.SDp;
+
 import java.io.IOException;
-import java.util.*;
+import java.util.Arrays;
 
-import static SDp.algorithm.SelectionManager.selecionarPaisD1DnQuad;
+public class SDp_ELITESWAP extends SDp {
 
-public class SDp_ENTROPY extends SDp {
     @Override
     protected int calcularTamanhoTorneio(int tamanhoTorneio, int saltoTorneio) {
         return tamanhoTorneio;
@@ -20,69 +23,77 @@ public class SDp_ENTROPY extends SDp {
     public Pattern[] run(int paramTorneio, double similaridade, String tipoAvaliacao, int k) throws IOException {
         Pattern[] Pk = new Pattern[k];
         Pattern[] I = INICIALIZAR.D1(tipoAvaliacao);
+
+        // 1. Inicialização Modular
         Pattern[] P = setupInitialState(k, Pk, I, tipoAvaliacao);
 
-        // Ajuste: padronizar nome para indexUltimaAval como nos métodos modulares
-        int indexUltimaAval = P.length;
-        int limiar = P.length;
         int tamanhoPopulacao = P.length;
+        int indexUltimaAval = tamanhoPopulacao;
+        int limiar = tamanhoPopulacao;
         double numeroGeracoesSemMelhoraPk = 0;
         int tamanhoTorneio = 2;
-        INTERVALO_MANUTENCAO = Math.max(100, P.length / 5);
-
-        double entropiaMinima = 0.4;
+        INTERVALO_MANUTENCAO = tamanhoPopulacao;
+        int limiteEstagnacao = 3;
 
         for (int numeroReinicializacoes = 0; numeroReinicializacoes < 3; numeroReinicializacoes++) {
+
             if (numeroReinicializacoes > 0) {
+                // 2. Reinicialização Modular
                 ReinicializacaoResult result = realizarReinicializacao(
                         tipoAvaliacao, tamanhoPopulacao, I, Pk, paramTorneio
                 );
-
                 P = result.P();
                 tamanhoTorneio = result.tamanhoTorneio();
                 limiar = result.limiar();
-                // IMPORTANTE: Resetar o index de controle na reinicialização
                 indexUltimaAval = result.indexUltimaAval();
             }
 
             tamanhoTorneio = calcularTamanhoTorneio(tamanhoTorneio, paramTorneio);
-            boolean diversidadeSuficiente = true;
 
-            // Removida a variável estagnacao fixa (3) para fins de exemplo,
-            // mas você pode passá-la por parâmetro se desejar
-            while (diversidadeSuficiente && numeroGeracoesSemMelhoraPk < 3 && limiar > 0) {
+            while (numeroGeracoesSemMelhoraPk < limiteEstagnacao && limiar > 0) {
 
-                Pattern[] pais = selecionarPaisD1DnQuad(P, tamanhoTorneio, limiar);
-                Pattern pai1 = pais[0];
-                Pattern pai2 = pais[1];
+                // 3. Seleção Linear Modular (Pth = limiar / P.length)
+                Pattern[] pais = SelectionManager.selecionarPaisD1DnLinear(P, tamanhoTorneio, limiar);
+                double qualidadeMelhorPai = Math.max(pais[0].getQualidade(), pais[1].getQualidade());
 
-                Pattern paux = CRUZAMENTO.AND(pai1, pai2, tipoAvaliacao);
+                Pattern paux = CRUZAMENTO.AND(pais[0], pais[1], tipoAvaliacao);
+                double r = Const.random.nextDouble();
 
-                // Lógica de aceitação simplificada para a SDp_ENTROPY
-                if (paux.getQualidade() >= P[limiar - 1].getQualidade()) {
-                    if (limiar > 1) {
-                        P[limiar - 1] = paux;
-                        limiar--;
-                        numeroGeracoesSemMelhoraPk = Math.max(0.0, numeroGeracoesSemMelhoraPk - 1.0);
+                if(paux.getItens().size() > 2) {
+                if (r >= 0.90) {
+                        // Range [0.8 - 0.9]: 10% chance for Elite Swap
+                        paux = MutationManager.applyEliteSwap(paux, P, limiar, tipoAvaliacao);
                     }
                 }
 
+                // 4. Aceitação (Ganho 0.0 para manter qualidade >= P[limiar-1])
+                if (pTemGanho(paux, qualidadeMelhorPai, 0.0) && paux.getQualidade() >= P[limiar - 1].getQualidade()) {
+                    if (limiar > 1) {
+                        P[limiar - 1] = paux;
+                        limiar--;
+                    }
+                }
+
+                // 5. Manutenção Periódica Modular
                 if (Pattern.numeroIndividuosGerados % INTERVALO_MANUTENCAO == 0) {
                     ManutencaoResult m = processarManutencao(
                             limiar, indexUltimaAval, P, Pk, similaridade,
                             numeroGeracoesSemMelhoraPk, INTERVALO_MANUTENCAO,
-                            entropiaMinima, tamanhoTorneio, paramTorneio
+                            0.0, // Sem checagem de entropia nesta versão
+                            tamanhoTorneio, paramTorneio
                     );
 
                     numeroGeracoesSemMelhoraPk = m.numeroGeracoesSemMelhoraPk();
                     indexUltimaAval = m.indexUltimaAval();
-                    diversidadeSuficiente = m.diversidadeSuficiente();
                     tamanhoTorneio = m.tamanhoTorneio();
                 }
             }
+
+            // Sincronização final da rodada
             Arrays.sort(P, limiar, P.length);
             SELECAO.salvandoRelevantesDPmais(Pk, Arrays.copyOfRange(P, limiar, P.length), similaridade);
         }
+
         Arrays.sort(P);
         SELECAO.salvandoRelevantesDPmais(Pk, P, similaridade);
         return Pk;

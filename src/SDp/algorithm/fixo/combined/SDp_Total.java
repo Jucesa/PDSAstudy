@@ -47,7 +47,7 @@ public class SDp_Total extends SDp {
 
             tamanhoTorneio = calcularTamanhoTorneio(tamanhoTorneio, paramTorneio);
             boolean diversidadeSuficiente = true;
-            int intervaloManutencao = Math.max(100, P.length / 5);
+            INTERVALO_MANUTENCAO = Math.max(100, P.length / 5);
 
             while (diversidadeSuficiente && numeroGeracoesSemMelhoraPk < estagnacao && limiar > limiteInferiorStop) {
 
@@ -84,10 +84,10 @@ public class SDp_Total extends SDp {
                 }
 
                 //intervalo de manutencao para atualizar condicoes de parada e incluir novos padroes em Pk
-                if (Pattern.numeroIndividuosGerados % intervaloManutencao == 0) {
+                if (Pattern.numeroIndividuosGerados % INTERVALO_MANUTENCAO == 0) {
                     ManutencaoResult m = processarManutencao(
                             limiar, indexUltimaAval, P, Pk, similaridade,
-                            numeroGeracoesSemMelhoraPk, intervaloManutencao,
+                            numeroGeracoesSemMelhoraPk, INTERVALO_MANUTENCAO,
                             entropiaMinima, tamanhoTorneio, paramTorneio
                     );
 

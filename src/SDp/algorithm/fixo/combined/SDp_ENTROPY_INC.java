@@ -30,7 +30,7 @@ public class SDp_ENTROPY_INC extends SDp {
         int tamanhoTorneio = 2;
 
         // Parâmetros específicos deste combo
-        int intervaloManutencao = tamanhoPopulacao;
+        INTERVALO_MANUTENCAO = tamanhoPopulacao;
         double entropiaMinima = 0.5;
 
         for (int numeroReinicializacoes = 0; numeroReinicializacoes < 3; numeroReinicializacoes++) {
@@ -68,10 +68,10 @@ public class SDp_ENTROPY_INC extends SDp {
                 }
 
                 // 5. Manutenção Periódica (Controle de Entropia + Top-K)
-                if (Pattern.numeroIndividuosGerados % intervaloManutencao == 0) {
+                if (Pattern.numeroIndividuosGerados % INTERVALO_MANUTENCAO == 0) {
                     ManutencaoResult m = processarManutencao(
                             limiar, indexUltimaAval, P, Pk, similaridade,
-                            numeroGeracoesSemMelhoraPk, intervaloManutencao,
+                            numeroGeracoesSemMelhoraPk, INTERVALO_MANUTENCAO,
                             entropiaMinima, tamanhoTorneio, paramTorneio
                     );
 

@@ -29,8 +29,7 @@ public class SDp_INC extends SDp {
         int tamanhoTorneio = 2;
 
         // Intervalo de manutenção fixo no tamanho da população para este algoritmo
-        int intervaloManutencao = tamanhoPopulacao;
-        final double MIN_GANHO_RELATIVO = 0.0001;
+        INTERVALO_MANUTENCAO = tamanhoPopulacao;
 
         for (int numeroReinicializacoes = 0; numeroReinicializacoes < 3; numeroReinicializacoes++) {
             if (numeroReinicializacoes > 0) {
@@ -55,7 +54,7 @@ public class SDp_INC extends SDp {
                 Pattern paux = CRUZAMENTO.AND(pais[0], pais[1], tipoAvaliacao);
 
                 // 4. Verificação de Ganho Modular
-                if (pTemGanho(paux, qualidadeMelhorPai, MIN_GANHO_RELATIVO) && paux.getQualidade() >= P[limiar - 1].getQualidade()) {
+                if (pTemGanho(paux, qualidadeMelhorPai, 0) && paux.getQualidade() >= P[limiar - 1].getQualidade()) {
                     if (limiar > 1) {
                         P[limiar - 1] = paux;
                         limiar--;
@@ -64,10 +63,10 @@ public class SDp_INC extends SDp {
                 }
 
                 // 5. Manutenção Periódica Modular
-                if (Pattern.numeroIndividuosGerados % intervaloManutencao == 0 && limiar < tamanhoPopulacao) {
+                if (Pattern.numeroIndividuosGerados % INTERVALO_MANUTENCAO == 0 && limiar < tamanhoPopulacao) {
                     ManutencaoResult m = processarManutencao(
                             limiar, indexUltimaAval, P, Pk, similaridade,
-                            numeroGeracoesSemMelhoraPk, intervaloManutencao,
+                            numeroGeracoesSemMelhoraPk, INTERVALO_MANUTENCAO,
                             0.0, // Entropia desativada para este algoritmo (0.0)
                             tamanhoTorneio, paramTorneio
                     );

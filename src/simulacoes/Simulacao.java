@@ -6,7 +6,6 @@
 
 package simulacoes;
 
-import dp.Pattern;
 import java.io.Serializable;
 
 /**

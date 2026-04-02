@@ -48,7 +48,7 @@ public class SDp_V2_ESTRATIFICADA extends SDp {
 
             tamanhoTorneio = calcularTamanhoTorneio(tamanhoTorneio, paramTorneio);
             int limiteEstagnacao = Math.max(50, (int) ((tamanhoPopulacao * 0.01) / (numeroReinicializacoes + 1)));
-            int intervaloManutencao = Math.max(100, P.length / 5);
+            INTERVALO_MANUTENCAO = Math.max(100, P.length / 5);
             boolean diversidadeSuficiente = true;
 
             while (diversidadeSuficiente && numeroGeracoesSemMelhoraPk < limiteEstagnacao && limiar > 0) {
@@ -81,10 +81,10 @@ public class SDp_V2_ESTRATIFICADA extends SDp {
                 }
 
                 // 5. Manutenção Modular
-                if (Pattern.numeroIndividuosGerados % intervaloManutencao == 0) {
+                if (Pattern.numeroIndividuosGerados % INTERVALO_MANUTENCAO == 0) {
                     ManutencaoResult m = processarManutencao(
                             limiar, indexUltimaAval, P, Pk, similaridade,
-                            numeroGeracoesSemMelhoraPk, intervaloManutencao,
+                            numeroGeracoesSemMelhoraPk, INTERVALO_MANUTENCAO,
                             entropiaMinima, tamanhoTorneio, paramTorneio
                     );
 
