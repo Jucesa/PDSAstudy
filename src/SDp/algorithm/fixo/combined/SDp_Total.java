@@ -31,7 +31,6 @@ public class SDp_Total extends SDp {
         int tamanhoTorneio = 2;
 
         double entropiaMinima = 0.25;
-        int limiteInferiorStop = (int) (P.length * 0.10); // Floor de 10%
 
         for (int numeroReinicializacoes = 0; numeroReinicializacoes < 3; numeroReinicializacoes++) {
             if (numeroReinicializacoes > 0) {
@@ -48,16 +47,22 @@ public class SDp_Total extends SDp {
             tamanhoTorneio = calcularTamanhoTorneio(tamanhoTorneio, paramTorneio);
             boolean diversidadeSuficiente = true;
             INTERVALO_MANUTENCAO = Math.max(100, P.length / 5);
+            int contadorManutencao = INTERVALO_MANUTENCAO;
+            while (diversidadeSuficiente && numeroGeracoesSemMelhoraPk < estagnacao && limiar > 0) {
 
-            while (diversidadeSuficiente && numeroGeracoesSemMelhoraPk < estagnacao && limiar > limiteInferiorStop) {
-
-                Pattern[] pais = SelectionManager.selecionarPaisD1DnQuad(P, tamanhoTorneio, limiar, limiteInferiorStop);
+                Pattern[] pais = SelectionManager.selecionarPaisD1DnQuad(P, tamanhoTorneio, limiar);
                 Pattern pai1 = pais[0];
                 Pattern pai2 = pais[1];
 
                 double qualidadeMelhorPai = Math.max(pai1.getQualidade(), pai2.getQualidade());
 
-                Pattern paux = CRUZAMENTO.AND(pai1, pai2, tipoAvaliacao);
+                Pattern paux;
+                // Se os pais forem idênticos, cruzá-los é desperdício de banco de dados. Forçamos a mutação!
+                if (pai1 == pai2 || pai1.getItens().equals(pai2.getItens())) {
+                    paux = MutationManager.applySmartDrop(pai1, tipoAvaliacao);
+                } else {
+                    paux = CRUZAMENTO.AND(pai1, pai2, tipoAvaliacao);
+                }
 
                 double r = Const.random.nextDouble();
 
@@ -68,7 +73,7 @@ public class SDp_Total extends SDp {
                     }
                     else if (r >= 0.80) {
                         // Range [0.8 - 0.9]: 10% chance for Elite Swap
-                        paux = MutationManager.applyEliteSwap(paux, P, limiar, tipoAvaliacao);
+                        paux = MutationManager.applyEliteSwap(paux, Pk, tipoAvaliacao);
                     }
                 }
 
@@ -83,8 +88,8 @@ public class SDp_Total extends SDp {
                     }
                 }
 
-                //intervalo de manutencao para atualizar condicoes de parada e incluir novos padroes em Pk
-                if (Pattern.numeroIndividuosGerados % INTERVALO_MANUTENCAO == 0) {
+                contadorManutencao--;
+                if (contadorManutencao <= 0) {
                     ManutencaoResult m = processarManutencao(
                             limiar, indexUltimaAval, P, Pk, similaridade,
                             numeroGeracoesSemMelhoraPk, INTERVALO_MANUTENCAO,
@@ -96,6 +101,7 @@ public class SDp_Total extends SDp {
                     indexUltimaAval = m.indexUltimaAval();
                     diversidadeSuficiente = m.diversidadeSuficiente();
                     tamanhoTorneio = m.tamanhoTorneio();
+                    contadorManutencao = INTERVALO_MANUTENCAO;
                 }
 
             }
